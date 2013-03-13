@@ -6,7 +6,7 @@
 // @updateURL     https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book.user.js
 // @match         http://habrahabr.ru/post/*
 // @require       http://github.com/sizzlemctwizzle/GM_config/raw/master/gm_config.js
-// @version       0.1
+// @version       0.1.1
 // @icon          http://www.example.net/icon.png
 // @run-at        document-end
 // ==/UserScript==
