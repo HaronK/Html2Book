@@ -2,8 +2,8 @@
 // @name          Html2Book
 // @namespace     http://www.example.com/gmscripts
 // @description   Converting HTML page to book file (fb2, epub, etc.)
-// @downloadURL   https://dl-web.dropbox.com/get/Projects/Habr2Book/Habr2Book.user.js?w=AAAdfbTjRM2a96tqP6nPteNao5Wfg2saGEF5RKK-405Frw
-// @updateURL     https://dl-web.dropbox.com/get/Projects/Habr2Book/Habr2Book.user.js?w=AAAdfbTjRM2a96tqP6nPteNao5Wfg2saGEF5RKK-405Frw
+// @downloadURL   https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book.user.js
+// @updateURL     https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book.user.js
 // @match         http://habrahabr.ru/post/*
 // @require       http://github.com/sizzlemctwizzle/GM_config/raw/master/gm_config.js
 // @version       0.1
