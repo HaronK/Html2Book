@@ -6,17 +6,37 @@
 // @updateURL     https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book.user.js
 // @match         http://habrahabr.ru/post/*
 // @require       http://github.com/sizzlemctwizzle/GM_config/raw/master/gm_config.js
-// @version       0.1.1
+// @version       0.1.2
 // @icon          http://www.example.net/icon.png
 // @run-at        document-end
 // ==/UserScript==
 
-function appendScriptFile(file){
-    var elem = document.createElement('script');
-    elem.type = "text/javascript";
-    elem.src = file;
-    document.head.appendChild(elem);
-}
+var config = {
+	converters : {
+		xslt : {
+			script : 'https://github.com/HaronK/Html2Book/raw/master/Html2Book/xslt_converter.js',
+			klass : 'XsltConverter',
+		},
+	},
+	savers : {
+		fs : {
+			script : 'https://github.com/HaronK/Html2Book/raw/master/Html2Book/fs_saver.js',
+			klass : 'FsSaver',
+		},
+		// gdrive : {},
+		// dropbox : {},
+	},
+	sites : {
+		'http://habrahabr.ru' : { // site
+			'post/\d+' : { // site page
+				fb2 : {
+					type : 'xslt',
+					params : '"https://github.com/HaronK/Html2Book/raw/master/Html2Book/habr/habr2fb2.xsl"',
+				},
+			},
+		},
+	},
+};
 
 function appendButton(blockClass){
     var h2b_button = document.createElement("button");

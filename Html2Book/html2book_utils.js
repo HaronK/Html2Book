@@ -1,4 +1,12 @@
 
+function appendScriptFile(file)
+{
+    var elem = document.createElement('script');
+    elem.type = "text/javascript";
+    elem.src = file;
+    document.head.appendChild(elem);
+}
+
 // Source: http://www.w3schools.com/xsl/xsl_client.asp
 
 function loadXMLDoc(xml_file)
