@@ -61,7 +61,62 @@ function generateButton(name, converter_klass, converter_params, saver_klass)
     return h2b_button;
 }
 
+// ---------------------------------------------------------------------------
+
+// Source: http://www.w3schools.com/xsl/xsl_client.asp
+
+function requestFile(file_name)
+{
+    if (window.XMLHttpRequest)
+    {
+        xhttp = new XMLHttpRequest();
+    }
+    else
+    {
+        xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xhttp.open("GET", xml_file, false);
+    xhttp.send("");
+
+//    if (xmlhttp.readyState != 4 || xmlhttp.status != 200)
+//        alert("ERROR");
+
+    return xhttp;
+}
+
+function loadFileAsText(text_file)
+{
+    return requestFile(text_file).responseText;
+}
+
+function loadXMLDoc(xml_file)
+{
+    return requestFile(xml_file).responseXML;
+}
+
+function applyXSLT(xsl_data, xml_data)
+{
+    // code for IE
+    if (window.ActiveXObject)
+    {
+        return xml_data.transformNode(xsl_data);
+    }
+    // code for Mozilla, Firefox, Opera, etc.
+    else if (document.implementation && document.implementation.createDocument)
+    {
+        xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xsl_data);
+        return xsltProcessor.transformToFragment(xml_data, document);
+    }
+}
+
 // Config functions
+
+function loadConfig(file_url)
+{
+    var file_data = loadFileAsText(file_url);
+    eval(file_data);
+}
 
 function checkConfigConverters()
 {
@@ -142,6 +197,9 @@ function checkCofigPages(converters)
 
 function checkConfig()
 {
+    if (!Html2BookConfig)
+        alert("Html2BookConfig is not defined");
+
     var converters = checkConfigConverters();
     checkConfigSavers();
     checkCofigPages(converters);
@@ -158,39 +216,4 @@ function getPageConfig(addr)
         }
     }
     return null;
-}
-
-// ---------------------------------------------------------------------------
-
-// Source: http://www.w3schools.com/xsl/xsl_client.asp
-
-function loadXMLDoc(xml_file)
-{
-    if (window.XMLHttpRequest)
-    {
-        xhttp = new XMLHttpRequest();
-    }
-    else
-    {
-        xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xhttp.open("GET", xml_file, false);
-    xhttp.send("");
-    return xhttp.responseXML;
-}
-
-function applyXSLT(xsl_data, xml_data)
-{
-    // code for IE
-    if (window.ActiveXObject)
-    {
-        return xml_data.transformNode(xsl_data);
-    }
-    // code for Mozilla, Firefox, Opera, etc.
-    else if (document.implementation && document.implementation.createDocument)
-    {
-        xsltProcessor = new XSLTProcessor();
-        xsltProcessor.importStylesheet(xsl_data);
-        return xsltProcessor.transformToFragment(xml_data, document);
-    }
 }
