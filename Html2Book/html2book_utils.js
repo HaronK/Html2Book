@@ -112,10 +112,10 @@ function applyXSLT(xsl_data, xml_data)
 
 // Config functions
 
-function loadConfig(file_url)
+function loadConfig(config_text)
 {
-    var file_data = loadFileAsText(file_url);
-    eval(file_data);
+    var config_str = "var Html2BookConfig = {" + config_text + "};";
+    eval(config_str);
 }
 
 function checkConfigConverters()

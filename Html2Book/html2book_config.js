@@ -29,8 +29,8 @@ var Html2BookConfig = {
             embed : function(element) // embedding element into the page
             {
                 var element2 = element.cloneNode(true);
-                embedAfter("title", element);
-                embedAfter("content", element2);
+                embedAfter('title', element);
+                embedAfter('content', element2);
             },
         },
     },
