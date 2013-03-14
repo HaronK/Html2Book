@@ -5,8 +5,8 @@ function FsSaver(file_name)
 }
 
 FsSaver.prototype = {
-    save : function(data)
+    save : function(data, mime)
     {
-        saveAs(new Blob(data, { type : "text/plain;charset=" + document.characterSet }), this.file_name);
+        saveAs(new Blob(data, { type : mime }), this.file_name);
     },
 };

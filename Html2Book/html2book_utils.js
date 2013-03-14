@@ -41,13 +41,13 @@ function appendImports(imports)
     }
 }
 
-function generateButton(name, converter_klass, converter_params, saver_klass)
+function generateButton(name, converter_klass, converter_params, saver_klass, mime)
 {
     // generate button script
     var script_text =
         "function convert2" + name + "(){\n" +
         "    var convert_handler = new " + converter_klass + "(" + (converter_params ? converter_params : "") + ");\n" +
-        "    var save_handler = new " + saver_klass + "('book." + name + ");\n" +
+        "    var save_handler = new " + saver_klass + "('book." + name + ", " + mime + ");\n" +
         "    var book_data = convert_handler.convert(document.documentElement.outerHTML);\n" +
         "    save_handler.save(book_data);\n" +
         "}";
@@ -129,6 +129,7 @@ function checkConfigConverters()
             imports : [ 'http://ejohn.org/files/htmlparser.js',
                         'https://github.com/HaronK/Html2Book/raw/master/Html2Book/xslt_converter.js'],
             klass : 'XsltConverter',
+            mime : 'text/xml;charset=' + document.characterSet,
         };
     }
 
@@ -136,7 +137,15 @@ function checkConfigConverters()
     for (var converter in Html2BookConfig.converters)
     {
         if (!Html2BookConfig.converters[converter].klass)
+        {
             alert("Converter '" + converter + "' doesn't contain mandatory field 'klass'");
+            return null;
+        }
+        if (!Html2BookConfig.converters[converter].mime)
+        {
+            alert("Converter '" + converter + "' doesn't contain mandatory field 'mime'");
+            return null;
+        }
         converters.push(converter);
     }
     return converters;
@@ -161,7 +170,10 @@ function checkConfigSavers()
     for (var saver in Html2BookConfig.savers)
     {
         if (!Html2BookConfig.savers[saver].klass)
+        {
             alert("Saver '" + saver + "' doesn't contain mandatory field 'klass'");
+            return null;
+        }
     }
 }
 
@@ -171,20 +183,35 @@ function checkCofigPages(converters)
     for (var page in Html2BookConfig.pages)
     {
         if (!Html2BookConfig.pages[page].addr)
+        {
             alert("Page '" + page + "' doesn't contain mandatory field 'addr'");
+            return;
+        }
         if (!Html2BookConfig.pages[page].embed)
+        {
             alert("Page '" + page + "' doesn't contain mandatory field 'embed'");
+            return;
+        }
 
         var converters = Html2BookConfig.pages[page].converters;
         if (!converters || len(converters) == 0)
+        {
             alert("Page '" + page + "' should contain at leas one converter"); // ?
+            return;
+        }
         for (var converter in converters)
         {
             if (!converters[converter].type)
+            {
                 alert("Page '" + page + "' converter '" + converter + "' doesn't contain mandatory field 'type'");
+                return;
+            }
             if (converters.indexOf(converters[converter].type) == -1)
+            {
                 alert("Page '" + page + "' converter '" + converter + "' has unknown type '"
                         + converters[converter].type + "'");
+                return;
+            }
         }
     }
 }
@@ -192,7 +219,10 @@ function checkCofigPages(converters)
 function checkConfig()
 {
     if (!Html2BookConfig)
+    {
         alert("Html2BookConfig is not defined");
+        return;
+    }
 
     var converters = checkConfigConverters();
     checkConfigSavers();

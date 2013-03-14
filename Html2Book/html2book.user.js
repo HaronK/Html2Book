@@ -8,7 +8,7 @@
 // @require       http://github.com/sizzlemctwizzle/GM_config/raw/master/gm_config.js
 // @require       https://userscripts.org/scripts/source/50018.user.js
 // @require       https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book_utils.js
-// @version       0.1.6
+// @version       0.1.7
 // @icon          http://www.example.net/icon.png
 // @run-at        document-end
 // ==/UserScript==
@@ -44,14 +44,18 @@ function initConfig()
 
 (function() {
 
-    initConfig();
-    loadConfig(GM_config.get('config'));
+    alert("Html2Book start");
+    initConfig();                        alert("Config initialized");
+    loadConfig(GM_config.get('config')); alert("Config loaded");
 
-    checkConfig();
+    checkConfig();                       alert("Config checked");
 
     var page = getPageConfig(document.location);
     if (!page)
+    {
+        alert("Page is not supported");
         return;
+    }
 
     // add default saver imports
     appendImports(Html2BookConfig.savers.fs.imports);
@@ -66,7 +70,8 @@ function initConfig()
         appendImports(imports);
 
         // generate button and button script
-        var element = generateButton(converter_name, converter.klass, page_converters[converter_name].params);
+        var element = generateButton(converter_name, converter.klass, page_converters[converter_name].params,
+                Html2BookConfig.savers.fs.klass, converter.mime);
         page_converters[converter_name].embed(element);
     }
 
