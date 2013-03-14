@@ -4,10 +4,11 @@
 // @description   Converting HTML page to book file (fb2, epub, etc.)
 // @downloadURL   https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book.user.js
 // @updateURL     https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book.user.js
-// @match         http://habrahabr.ru/post/*
+// @include       *
 // @require       http://github.com/sizzlemctwizzle/GM_config/raw/master/gm_config.js
+// @require       https://userscripts.org/scripts/source/50018.user.js
 // @require       https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book_utils.js
-// @version       0.1.4
+// @version       0.1.5
 // @icon          http://www.example.net/icon.png
 // @run-at        document-end
 // ==/UserScript==

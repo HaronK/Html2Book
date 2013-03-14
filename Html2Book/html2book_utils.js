@@ -123,21 +123,18 @@ function checkConfigConverters()
     // xslt is a default converter
     if (!Html2BookConfig.converters ||
         !Html2BookConfig.converters.xslt ||
-        !Html2BookConfig.converters.xslt.script ||
         !Html2BookConfig.converters.xslt.klass)
     {
         Html2BookConfig.converters.xslt = {
-            script : 'https://github.com/HaronK/Html2Book/raw/master/Html2Book/xslt_converter.js',
+            imports : [ 'http://ejohn.org/files/htmlparser.js',
+                        'https://github.com/HaronK/Html2Book/raw/master/Html2Book/xslt_converter.js'],
             klass : 'XsltConverter',
-            imports : [ 'http://ejohn.org/files/htmlparser.js' ],
         };
     }
 
     var converters = [];
     for (var converter in Html2BookConfig.converters)
     {
-        if (!Html2BookConfig.converters[converter].script)
-            alert("Converter '" + converter + "' doesn't contain mandatory field 'script'");
         if (!Html2BookConfig.converters[converter].klass)
             alert("Converter '" + converter + "' doesn't contain mandatory field 'klass'");
         converters.push(converter);
@@ -151,21 +148,18 @@ function checkConfigSavers()
     // fs is a default saver
     if (!Html2BookConfig.savers ||
         !Html2BookConfig.savers.fs ||
-        !Html2BookConfig.savers.fs.script ||
         !Html2BookConfig.savers.fs.klass)
     {
         Html2BookConfig.savers.fs = {
-            script : 'https://github.com/HaronK/Html2Book/raw/master/Html2Book/fs_saver.js',
-            klass : 'FsSaver',
             imports : [ 'https://raw.github.com/eligrey/FileSaver.js/master/FileSaver.js',
-                        'https://raw.github.com/eligrey/Blob.js/master/Blob.js' ],
+                        'https://raw.github.com/eligrey/Blob.js/master/Blob.js',
+                        'https://github.com/HaronK/Html2Book/raw/master/Html2Book/fs_saver.js'],
+            klass : 'FsSaver',
         };
     }
 
     for (var saver in Html2BookConfig.savers)
     {
-        if (!Html2BookConfig.savers[saver].script)
-            alert("Saver '" + saver + "' doesn't contain mandatory field 'script'");
         if (!Html2BookConfig.savers[saver].klass)
             alert("Saver '" + saver + "' doesn't contain mandatory field 'klass'");
     }
@@ -209,10 +203,13 @@ function getPageConfig(addr)
 {
     for (var page in Html2BookConfig.pages)
     {
-        var patt = new RegExp(Html2BookConfig.pages[page].addr);
-        if (patt.test(addr))
+        for (var a in Html2BookConfig.pages[page].addr)
         {
-            return page;
+            var patt = new RegExp(a);
+            if (patt.test(addr))
+            {
+                return page;
+            }
         }
     }
     return null;
