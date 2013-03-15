@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Html2Book",
-  "description": "This extension demonstrates a 'browser action' with kittens.",
+  "description": "Convertion of HTML pages to book format (fb2, epub, etc.)",
   "version": "0.1.8",
 
   "options_page": "chrome/options.html",
@@ -15,6 +15,6 @@
   },
   
   "permissions": [
-    "tabs", "http://*/*", "https://*/*"
+    "tabs", "storage", "http://*/*", "https://*/*"
   ]
 }

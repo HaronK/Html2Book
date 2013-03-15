@@ -1,17 +1,19 @@
 <html>
 <head>
   <link href="tabs.css" rel="stylesheet" type="text/css">
-  <title>My Test Extension Options</title>
+  <title>Html2Book Settings</title>
 </head>
 
 <body>
+
+<!-- Tab implementation source: http://ruseller.com/lessons.php?rub=2&id=1226 -->
 <div class="tabs">
         
    <div class="tab">
        <input type="radio" id="tab-1" name="tab-group-1" checked>
        <label for="tab-1">Sites/Pages</label>
        
-       <div class="content">
+       <div class="content" id="sites_pages">
            <p>Содержание закладки №1</p>
        </div> 
    </div>
@@ -20,7 +22,7 @@
        <input type="radio" id="tab-2" name="tab-group-1">
        <label for="tab-2">Converters</label>
        
-       <div class="content">
+       <div class="content" id="converters">
            <p>Содержание закладки №2</p>
            
            <img src="http://placekitten.com/200/100">
@@ -31,7 +33,7 @@
        <input type="radio" id="tab-3" name="tab-group-1">
        <label for="tab-3">Savers</label>
      
-       <div class="content">
+       <div class="content" id="savers">
            <p>Содержание закладки №3</p>
            
            <img src="http://placedog.com/200/100">
@@ -39,6 +41,9 @@
    </div>
         
 </div>
-<!-- <script src="chrome/options.js"></script> -->
+
+<button id="save">Save</button>
+
+<script src="options.js"></script>
 
 </html>

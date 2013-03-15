@@ -24,7 +24,7 @@
   left: 0;
   background: white;
   right: 0;
-  bottom: 0;
+  bottom: -20;
   padding: 20px;
   border: 1px solid #ccc;
 }
