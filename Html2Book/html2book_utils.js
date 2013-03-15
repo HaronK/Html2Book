@@ -35,9 +35,9 @@ function embedAfter(blockClass, element)
 
 function appendImports(imports)
 {
-    for (var import in imports)
+    for (var import_ in imports)
     {
-        appendScriptFile(import);
+        appendScriptFile(import_);
     }
 }
 
@@ -118,14 +118,17 @@ function loadConfig(config_text)
     eval(config_str);
 }
 
-function checkConfigConverters()
+function checkConfigConverters(config)
 {
     // xslt is a default converter
-    if (!Html2BookConfig.converters ||
-        !Html2BookConfig.converters.xslt ||
-        !Html2BookConfig.converters.xslt.klass)
+    if (!config.converters)
+        config.converters = {};
+
+    if (!config.converters.xslt ||
+        !config.converters.xslt.klass ||
+        !config.converters.xslt.mime)
     {
-        Html2BookConfig.converters.xslt = {
+        config.converters.xslt = {
             imports : [ 'http://ejohn.org/files/htmlparser.js',
                         'https://github.com/HaronK/Html2Book/raw/master/Html2Book/xslt_converter.js'],
             klass : 'XsltConverter',
@@ -134,14 +137,14 @@ function checkConfigConverters()
     }
 
     var converters = [];
-    for (var converter in Html2BookConfig.converters)
+    for (var converter in config.converters)
     {
-        if (!Html2BookConfig.converters[converter].klass)
+        if (!config.converters[converter].klass)
         {
             alert("Converter '" + converter + "' doesn't contain mandatory field 'klass'");
             return null;
         }
-        if (!Html2BookConfig.converters[converter].mime)
+        if (!config.converters[converter].mime)
         {
             alert("Converter '" + converter + "' doesn't contain mandatory field 'mime'");
             return null;
@@ -152,14 +155,16 @@ function checkConfigConverters()
 
 }
 
-function checkConfigSavers()
+function checkConfigSavers(config)
 {
     // fs is a default saver
-    if (!Html2BookConfig.savers ||
-        !Html2BookConfig.savers.fs ||
-        !Html2BookConfig.savers.fs.klass)
+    if (!config.savers)
+        config.savers = {};
+
+    if (!config.savers.fs ||
+        !config.savers.fs.klass)
     {
-        Html2BookConfig.savers.fs = {
+        config.savers.fs = {
             imports : [ 'https://raw.github.com/eligrey/FileSaver.js/master/FileSaver.js',
                         'https://raw.github.com/eligrey/Blob.js/master/Blob.js',
                         'https://github.com/HaronK/Html2Book/raw/master/Html2Book/fs_saver.js'],
@@ -167,9 +172,9 @@ function checkConfigSavers()
         };
     }
 
-    for (var saver in Html2BookConfig.savers)
+    for (var saver in config.savers)
     {
-        if (!Html2BookConfig.savers[saver].klass)
+        if (!config.savers[saver].klass)
         {
             alert("Saver '" + saver + "' doesn't contain mandatory field 'klass'");
             return null;
@@ -177,23 +182,44 @@ function checkConfigSavers()
     }
 }
 
-function checkCofigPages(converters)
+function checkCofigPages(config, global_converters)
 {
-    // check pages config
-    for (var page in Html2BookConfig.pages)
+    if (!config.pages)
     {
-        if (!Html2BookConfig.pages[page].addr)
+        // test data
+        config.pages = {
+            habr_article: {
+                addr: ['http://habrahabr.ru/post/\\d+'], // pages url template
+                converters: {
+                    fb2: {
+                        type: 'xslt',
+                        params: '\"https://github.com/HaronK/Html2Book/raw/master/Html2Book/habr/habr2fb2.xsl\"',
+                    },
+                },
+                embed: function(element){ // embedding element into the page
+                    var element2 = element.cloneNode(true);
+                    embedAfter('title', element);
+                    embedAfter('content', element2);
+                },
+            },
+        };
+    }
+
+    // check pages config
+    for (var page in config.pages)
+    {
+        if (!config.pages[page].addr)
         {
             alert("Page '" + page + "' doesn't contain mandatory field 'addr'");
             return;
         }
-        if (!Html2BookConfig.pages[page].embed)
+        if (!config.pages[page].embed)
         {
             alert("Page '" + page + "' doesn't contain mandatory field 'embed'");
             return;
         }
 
-        var converters = Html2BookConfig.pages[page].converters;
+        var converters = config.pages[page].converters;
         if (!converters || len(converters) == 0)
         {
             alert("Page '" + page + "' should contain at leas one converter"); // ?
@@ -206,7 +232,7 @@ function checkCofigPages(converters)
                 alert("Page '" + page + "' converter '" + converter + "' doesn't contain mandatory field 'type'");
                 return;
             }
-            if (converters.indexOf(converters[converter].type) == -1)
+            if (global_converters.indexOf(converters[converter].type) == -1)
             {
                 alert("Page '" + page + "' converter '" + converter + "' has unknown type '"
                         + converters[converter].type + "'");
@@ -216,27 +242,27 @@ function checkCofigPages(converters)
     }
 }
 
-function checkConfig()
+function checkConfig(config)
 {
-    if (!Html2BookConfig)
-    {
-        alert("Html2BookConfig is not defined");
-        return;
-    }
+    if (!config)
+        config = {};
 
-    var converters = checkConfigConverters();
-    checkConfigSavers();
-    checkCofigPages(converters);
+    var converters = checkConfigConverters(config);
+    checkConfigSavers(config);
+    checkCofigPages(config, converters);
+
+    return config;
 }
 
-function getPageConfig(addr)
+function getPageConfig(config, location)
 {
-    for (var page in Html2BookConfig.pages)
+    for (var page in config.pages)
     {
-        for (var a in Html2BookConfig.pages[page].addr)
+        var addr = config.pages[page].addr;
+        for (var i = 0; i < addr.length; i++)
         {
-            var patt = new RegExp(a);
-            if (patt.test(addr))
+            var patt = new RegExp(addr[i]);
+            if (patt.test(location))
             {
                 return page;
             }
