@@ -1,21 +1,44 @@
 <html>
-<head><title>My Test Extension Options</title></head>
+<head>
+  <link href="tabs.css" rel="stylesheet" type="text/css">
+  <title>My Test Extension Options</title>
+</head>
 
 <body>
-
-Favorite Color:
-<select id="color">
- <option value="red">red</option>
- <option value="green">green</option>
- <option value="blue">blue</option>
- <option value="yellow">yellow</option>
-</select>
-
-<br>
-<div id="status"></div>
-<button id="save">Save</button>
-</body>
-
-<script src="chrome/options.js"></script>
+<div class="tabs">
+        
+   <div class="tab">
+       <input type="radio" id="tab-1" name="tab-group-1" checked>
+       <label for="tab-1">Sites/Pages</label>
+       
+       <div class="content">
+           <p>Содержание закладки №1</p>
+       </div> 
+   </div>
+        
+   <div class="tab">
+       <input type="radio" id="tab-2" name="tab-group-1">
+       <label for="tab-2">Converters</label>
+       
+       <div class="content">
+           <p>Содержание закладки №2</p>
+           
+           <img src="http://placekitten.com/200/100">
+       </div> 
+   </div>
+        
+    <div class="tab">
+       <input type="radio" id="tab-3" name="tab-group-1">
+       <label for="tab-3">Savers</label>
+     
+       <div class="content">
+           <p>Содержание закладки №3</p>
+           
+           <img src="http://placedog.com/200/100">
+       </div> 
+   </div>
+        
+</div>
+<!-- <script src="chrome/options.js"></script> -->
 
 </html>
