@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Getting Started Extension's Popup</title>
+    <title>Converting HTML page to book</title>
     <style>
       body {
         min-width: 357px;
@@ -17,15 +17,16 @@
       }
     </style>
 
-    <!--
-      - JavaScript and HTML must be in separate files: see our Content Security
-      - Policy documentation[1] for details and explanation.
-      -
-      - [1]: http://developer.chrome.com/extensions/contentSecurityPolicy.html
-     -->
-    <script src="chrome/page_action.js"></script>
+    <script src="../extern/Blob.js"></script>
+    <script src="../extern/FileSaver.js"></script>
+    <script src="../fs_saver.js"></script>
+    <script src="../extern/htmlparser.js"></script>
+    <script src="../xslt_converter.js"></script>
+    <script src="../html2book_utils.js"></script>
+    <script src="page_action.js"></script>
   </head>
   <body>
+  <div id='message'>Injecting Script...</div>
   </body>
 </html>
 

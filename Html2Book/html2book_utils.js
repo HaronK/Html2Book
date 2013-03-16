@@ -69,19 +69,28 @@ function requestFile(file_name)
 {
     if (window.XMLHttpRequest)
     {
-        xhttp = new XMLHttpRequest();
+        xhr = new XMLHttpRequest();
     }
     else
     {
         xhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
-    xhttp.open("GET", xml_file, false);
-    xhttp.send("");
+
+    var ready = false;
+    xhr.open("GET", file_name, true);
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState == 4)
+            ready = true;
+    };
+    xhr.send(null);
+
+    while (!ready);
 
 //    if (xmlhttp.readyState != 4 || xmlhttp.status != 200)
 //        alert("ERROR");
 
-    return xhttp;
+    return xhr;
 }
 
 function loadFileAsText(text_file)
@@ -129,9 +138,8 @@ function checkConfigConverters(config)
         !config.converters.xslt.mime)
     {
         config.converters.xslt = {
-            imports : [ 'http://ejohn.org/files/htmlparser.js',
-                        'https://github.com/HaronK/Html2Book/raw/master/Html2Book/xslt_converter.js'],
-            klass : 'XsltConverter',
+            imports : [ '../extern/htmlparser.js', '../xslt_converter.js'],
+            klass : XsltConverter,
             mime : 'text/xml;charset=' + document.characterSet,
         };
     }
@@ -165,10 +173,8 @@ function checkConfigSavers(config)
         !config.savers.fs.klass)
     {
         config.savers.fs = {
-            imports : [ 'https://raw.github.com/eligrey/FileSaver.js/master/FileSaver.js',
-                        'https://raw.github.com/eligrey/Blob.js/master/Blob.js',
-                        'https://github.com/HaronK/Html2Book/raw/master/Html2Book/fs_saver.js'],
-            klass : 'FsSaver',
+            imports : [ '../extern/FileSaver.js', '../extern/Blob.js', '../fs_saver.js'],
+            klass : FsSaver,
         };
     }
 
@@ -193,7 +199,7 @@ function checkCofigPages(config, global_converters)
                 converters: {
                     fb2: {
                         type: 'xslt',
-                        params: '\"https://github.com/HaronK/Html2Book/raw/master/Html2Book/habr/habr2fb2.xsl\"',
+                        params: 'https://github.com/HaronK/Html2Book/raw/master/Html2Book/habr/habr2fb2.xsl',
                     },
                 },
                 embed: function(element){ // embedding element into the page
@@ -256,15 +262,18 @@ function checkConfig(config)
 
 function getPageConfig(config, location)
 {
-    for (var page in config.pages)
+    if (config.pages)
     {
-        var addr = config.pages[page].addr;
-        for (var i = 0; i < addr.length; i++)
+        for (var page in config.pages)
         {
-            var patt = new RegExp(addr[i]);
-            if (patt.test(location))
+            var addr = config.pages[page].addr;
+            for (var i = 0; i < addr.length; i++)
             {
-                return page;
+                var patt = new RegExp(addr[i]);
+                if (patt.test(location))
+                {
+                    return page;
+                }
             }
         }
     }
