@@ -19,6 +19,8 @@ function appendScriptText(text)
     document.head.appendChild(elem);
 }
 
+var pageSource = null;
+
 function generateButton(name, converter_klass, converter_params, saver_klass, mime)
 {
     var h2b_button = document.createElement("button");
@@ -31,11 +33,11 @@ function generateButton(name, converter_klass, converter_params, saver_klass, mi
     });
     var save_handler = new saver_klass('book.' + name, mime);
     var listener = {
-            handleEvent : function(evt)
-            {
-                var book_data = convert_handler.convert(document.documentElement.outerHTML);
-                save_handler.save(book_data);
-            }
+        handleEvent : function(evt)
+        {
+            var book_data = convert_handler.convert(pageSource);
+            save_handler.save(book_data);
+        }
     };
 
     h2b_button.addEventListener("click", listener, false);
@@ -51,8 +53,10 @@ var Html2BookConfig = null;
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
 {
-    chrome.tabs.sendMessage(tabs[0].id, {id: "location"}, function(response)
+    chrome.tabs.sendMessage(tabs[0].id, {id: "data"}, function(response)
     {
+        pageSource = response.page;
+
         var message = document.querySelector('#message');
         message.innerText += 'done ' + "(" + response.location.href + ")";
 
