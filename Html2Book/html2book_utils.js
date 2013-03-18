@@ -65,7 +65,7 @@ function generateButton(name, converter_klass, converter_params, saver_klass, mi
 
 // Source: http://www.w3schools.com/xsl/xsl_client.asp
 
-function requestFile(file_name)
+function requestFile(file_name, onload)
 {
     if (window.XMLHttpRequest)
     {
@@ -76,31 +76,18 @@ function requestFile(file_name)
         xhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
 
-    var ready = false;
     xhr.open("GET", file_name, true);
     xhr.onreadystatechange = function()
     {
         if (xhr.readyState == 4)
-            ready = true;
+            onload(xhr);
     };
     xhr.send(null);
-
-    while (!ready);
 
 //    if (xmlhttp.readyState != 4 || xmlhttp.status != 200)
 //        alert("ERROR");
 
     return xhr;
-}
-
-function loadFileAsText(text_file)
-{
-    return requestFile(text_file).responseText;
-}
-
-function loadXMLDoc(xml_file)
-{
-    return requestFile(xml_file).responseXML;
 }
 
 function applyXSLT(xsl_data, xml_data)

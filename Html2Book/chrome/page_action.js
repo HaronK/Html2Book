@@ -21,20 +21,23 @@ function appendScriptText(text)
 
 function generateButton(name, converter_klass, converter_params, saver_klass, mime)
 {
-    var listener = {
-        handleEvent : function(evt)
-        {
-//            var convert_handler = eval("new " + converter_klass + "(" + (converter_params ? converter_params : "") + ");");
-//            var save_handler = eval("new " + saver_klass + "('book.'" + name + ", " + mime + ");");
-            var convert_handler = new converter_klass(converter_params);
-            var save_handler = new saver_klass('book.' + name, mime);
-            var book_data = convert_handler.convert(document.documentElement.outerHTML);
-            save_handler.save(book_data);
-        }
-    };
-
     var h2b_button = document.createElement("button");
     h2b_button.type = "button";
+    h2b_button.disabled = true;
+
+    var convert_handler = new converter_klass(converter_params, function(data) {
+        convert_handler.xsl_data = data;
+        h2b_button.disabled = false;
+    });
+    var save_handler = new saver_klass('book.' + name, mime);
+    var listener = {
+            handleEvent : function(evt)
+            {
+                var book_data = convert_handler.convert(document.documentElement.outerHTML);
+                save_handler.save(book_data);
+            }
+    };
+
     h2b_button.addEventListener("click", listener, false);
 
     var h2b_button_text = document.createTextNode(name);
