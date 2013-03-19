@@ -14,6 +14,5 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
     if (page)
     {
         chrome.pageAction.show(tabId);
-//        chrome.tabs.executeScript(tabId, {file: "chrome/content.js", run_at: "document_end"});
     }
 });

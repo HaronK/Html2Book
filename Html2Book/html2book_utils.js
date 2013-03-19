@@ -102,7 +102,7 @@ function applyXSLT(xsl_data, xml_data)
     {
         xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(xsl_data);
-        return xsltProcessor.transformToFragment(xml_data, document);
+        return xsltProcessor.transformToDocument(xml_data);
     }
 }
 

@@ -28,7 +28,7 @@
 	// Regular Expressions for parsing tags and attributes
 	var startTag = /^<([-A-Za-z0-9_]+)((?:\s+[-\w]+(?:\:[-\w]+)?(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
 		endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/,
-		attr = /([-A-Za-z0-9_]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+		attr = /([-A-Za-z0-9_]+(?:\:[-A-Za-z0-9_]+)?)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
 
 	// Empty Elements - HTML 4.01
 	var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed");
@@ -89,12 +89,6 @@
 					if ( match ) {
 						html = html.substring( match[0].length );
 						match[0].replace( startTag, parseStartTag );
-						// skip script tag
-						if (match[1] == "script")
-						{
-						    pos = html.indexOf("</script>") + "</script>".length;
-						    html = html.substring(pos);
-						}
 						chars = false;
 					}
 				}
@@ -103,6 +97,7 @@
 					index = html.indexOf("<");
 
 					var text = index < 0 ? html : html.substring( 0, index );
+					text = text.replace("&nbsp;", "&#xA0;", "g");
 					html = index < 0 ? "" : html.substring( index );
 
 					if ( handler.chars )
@@ -110,12 +105,15 @@
 				}
 
 			} else {
-				html = html.replace(new RegExp("(.*)<\/" + stack.last() + "[^>]*>"), function(all, text){
-					text = text.replace(/<!--(.*?)-->/g, "$1")
-						.replace(/<!\[CDATA\[(.*?)]]>/g, "$1");
+				html = html.replace(new RegExp("([\\s\\S]*?)<\/" + stack.last() + ">", "m"), function(all, text){
+					text = text.replace(/<!--([\s\S]*?)-->/m, "$1")
+						.replace(/<!\[CDATA\[([\s\S]*?)]]>/m, "$1");
+
+					if (text.trim() != "")
+					    text = "<![CDATA[" + text + "]]>";
 
 					if ( handler.chars )
-						handler.chars( text );
+						handler.chars(text);
 
 					return "";
 				});
