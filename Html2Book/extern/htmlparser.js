@@ -110,7 +110,7 @@
 						.replace(/<!\[CDATA\[([\s\S]*?)]]>/m, "$1");
 
 					if (text.trim() != "")
-					    text = "<![CDATA[" + text + "]]>";
+					    text = "<!--" + text + "-->";
 
 					if ( handler.chars )
 						handler.chars(text);

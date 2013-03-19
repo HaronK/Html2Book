@@ -21,7 +21,7 @@ function appendScriptText(text)
 
 var pageSource = null;
 
-function generateButton(name, converter_klass, converter_params, saver_klass, mime)
+function generateButton(tabId, name, converter_klass, converter_params, saver_klass, mime)
 {
     var h2b_button = document.createElement("button");
     h2b_button.type = "button";
@@ -35,7 +35,10 @@ function generateButton(name, converter_klass, converter_params, saver_klass, mi
     var listener = {
         handleEvent : function(evt)
         {
-            var book_data = convert_handler.convert(pageSource);
+            window.close();
+            var book_xml = convert_handler.convert(pageSource);
+            var serializer = new XMLSerializer();
+            var book_data = serializer.serializeToString(book_xml);
             save_handler.save(book_data);
         }
     };
@@ -53,7 +56,8 @@ var Html2BookConfig = null;
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
 {
-    chrome.tabs.sendMessage(tabs[0].id, {id: "data"}, function(response)
+    var tabId = tabs[0].id;
+    chrome.tabs.sendMessage(tabId, {id: "data"}, function(response)
     {
         pageSource = response.page;
 
@@ -79,7 +83,7 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
 //                appendImports(imports);
 
                 // generate button and button script
-                generateButton(converter_name, converter.klass, page_converters[converter_name].params,
+                generateButton(tabId, converter_name, converter.klass, page_converters[converter_name].params,
                         Html2BookConfig.savers.fs.klass, converter.mime);
             }
         });
