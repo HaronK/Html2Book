@@ -15,7 +15,6 @@
 	<xsl:variable name="title-info_keywords">
 		<xsl:for-each select="//div[@class='hubs']/a">
 			<xsl:if test="position() > 1">, </xsl:if>
-			<!-- <xsl:text> </xsl:text> -->
 			<xsl:value-of select="."/>
 		</xsl:for-each>
 	</xsl:variable>
@@ -45,6 +44,23 @@
 	
 	<xsl:variable name="body_title" select="//span[@class='post_title']"/>
 	<xsl:variable name="body_epigraph"/>
+	
+	<xsl:template name="body_sections_data">
+		<!-- Mandatory -->
+		<section>
+		</section>
+	</xsl:template>
+
+	<!-- ****************** Utilities ****************** -->
+	<xsl:template name="mandatory-variable">
+		<xsl:param name="name" />
+		<xsl:param name="value" />
+		<xsl:if test="string($value) = ''">
+			<xsl:message terminate="yes">
+				Mandatory variable '<xsl:value-of select="$name" />'is not defined!
+			</xsl:message>
+		</xsl:if>
+	</xsl:template>
 	
 	<!-- ****************** FB2 tag data templates ****************** -->
 	<xsl:template name="stylesheets">
@@ -114,7 +130,11 @@
 	
 	<xsl:template name="title-info_book-title">
 		<!-- Mandatory -->
-		<!-- TODO: check mandatory tag -->
+		<xsl:call-template name="mandatory-variable">
+			<xsl:with-param name="name">title-info_book-title</xsl:with-param>
+			<xsl:with-param name="value" select="$title-info_book-title"/>
+		</xsl:call-template>
+
 		<book-title><xsl:value-of select="$title-info_book-title"/></book-title>
 	</xsl:template>
 	
@@ -139,7 +159,11 @@
 	
 	<xsl:template name="title-info_coverpage_images">
 		<!-- Mandatory -->
-		<!-- TODO: check mandatory tag -->
+		<xsl:call-template name="mandatory-variable">
+			<xsl:with-param name="name">title-info_coverpage_image</xsl:with-param>
+			<xsl:with-param name="value" select="$title-info_coverpage_image"/>
+		</xsl:call-template>
+
 		<image><xsl:value-of select="$title-info_coverpage_image"/></image>
 	</xsl:template>
 	
@@ -151,7 +175,11 @@
 	
 	<xsl:template name="title-info_lang">
 		<!-- Mandatory -->
-		<!-- TODO: check mandatory tag -->
+		<xsl:call-template name="mandatory-variable">
+			<xsl:with-param name="name">title-info_lang</xsl:with-param>
+			<xsl:with-param name="value" select="$title-info_lang"/>
+		</xsl:call-template>
+
 		<lang><xsl:value-of select="$title-info_lang"/></lang>
 	</xsl:template>
 	
@@ -270,7 +298,11 @@
 	
 	<xsl:template name="document-info_date">
 		<!-- Mandatory -->
-		<!-- TODO: check mandatory tags -->
+		<xsl:call-template name="mandatory-variable">
+			<xsl:with-param name="name">document-info_date</xsl:with-param>
+			<xsl:with-param name="value" select="$document-info_date"/>
+		</xsl:call-template>
+
 		<!-- TODO: set value attribute properly -->
 		<date value="2002-10-19"><xsl:value-of select="$document-info_date"/></date>
 	</xsl:template>
@@ -290,13 +322,21 @@
 	
 	<xsl:template name="document-info_id">
 		<!-- Mandatory -->
-		<!-- TODO: check mandatory tags -->
+		<xsl:call-template name="mandatory-variable">
+			<xsl:with-param name="name">document-info_id</xsl:with-param>
+			<xsl:with-param name="value" select="$document-info_id"/>
+		</xsl:call-template>
+
 		<id><xsl:value-of select="$document-info_id"/></id>
 	</xsl:template>
 	
 	<xsl:template name="document-info_version">
 		<!-- Mandatory -->
-		<!-- TODO: check mandatory tags -->
+		<xsl:call-template name="mandatory-variable">
+			<xsl:with-param name="name">document-info_version</xsl:with-param>
+			<xsl:with-param name="value" select="$document-info_version"/>
+		</xsl:call-template>
+
 		<version><xsl:value-of select="$document-info_version"/></version>
 	</xsl:template>
 	
@@ -380,8 +420,7 @@
 	
 	<xsl:template name="body_sections">
 		<!-- Mandatory -->
-		<section>
-		</section>
+		<xsl:call-template name="body_sections_data"/>
 	</xsl:template>
 	
 	<xsl:template name="body">
