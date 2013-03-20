@@ -52,7 +52,7 @@
 	</xsl:template>
 
 	<!-- ****************** Utilities ****************** -->
-	<xsl:template name="mandatory-variable">
+	<xsl:template name="mandatory-tag">
 		<xsl:param name="name" />
 		<xsl:param name="value" />
 		<xsl:if test="string($value) = ''">
@@ -130,7 +130,7 @@
 	
 	<xsl:template name="title-info_book-title">
 		<!-- Mandatory -->
-		<xsl:call-template name="mandatory-variable">
+		<xsl:call-template name="mandatory-tag">
 			<xsl:with-param name="name">title-info_book-title</xsl:with-param>
 			<xsl:with-param name="value" select="$title-info_book-title"/>
 		</xsl:call-template>
@@ -159,7 +159,7 @@
 	
 	<xsl:template name="title-info_coverpage_images">
 		<!-- Mandatory -->
-		<xsl:call-template name="mandatory-variable">
+		<xsl:call-template name="mandatory-tag">
 			<xsl:with-param name="name">title-info_coverpage_image</xsl:with-param>
 			<xsl:with-param name="value" select="$title-info_coverpage_image"/>
 		</xsl:call-template>
@@ -175,7 +175,7 @@
 	
 	<xsl:template name="title-info_lang">
 		<!-- Mandatory -->
-		<xsl:call-template name="mandatory-variable">
+		<xsl:call-template name="mandatory-tag">
 			<xsl:with-param name="name">title-info_lang</xsl:with-param>
 			<xsl:with-param name="value" select="$title-info_lang"/>
 		</xsl:call-template>
@@ -298,7 +298,7 @@
 	
 	<xsl:template name="document-info_date">
 		<!-- Mandatory -->
-		<xsl:call-template name="mandatory-variable">
+		<xsl:call-template name="mandatory-tag">
 			<xsl:with-param name="name">document-info_date</xsl:with-param>
 			<xsl:with-param name="value" select="$document-info_date"/>
 		</xsl:call-template>
@@ -322,7 +322,7 @@
 	
 	<xsl:template name="document-info_id">
 		<!-- Mandatory -->
-		<xsl:call-template name="mandatory-variable">
+		<xsl:call-template name="mandatory-tag">
 			<xsl:with-param name="name">document-info_id</xsl:with-param>
 			<xsl:with-param name="value" select="$document-info_id"/>
 		</xsl:call-template>
@@ -332,7 +332,7 @@
 	
 	<xsl:template name="document-info_version">
 		<!-- Mandatory -->
-		<xsl:call-template name="mandatory-variable">
+		<xsl:call-template name="mandatory-tag">
 			<xsl:with-param name="name">document-info_version</xsl:with-param>
 			<xsl:with-param name="value" select="$document-info_version"/>
 		</xsl:call-template>
