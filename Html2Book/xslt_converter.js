@@ -26,6 +26,7 @@ XsltConverter.prototype = {
     convert : function(page_data)
     {
         var xml_data = HTMLtoXML(page_data);
+        xml_data = xml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
         return applyXSLT(str2XML(this.xsl_data), str2XML(xml_data));
     },
 };
