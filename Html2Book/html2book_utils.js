@@ -102,7 +102,8 @@ function applyXSLT(xsl_data, xml_data)
     {
         xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(xsl_data);
-        return xsltProcessor.transformToDocument(xml_data);
+        var result = xsltProcessor.transformToDocument(xml_data);
+        return result;
     }
 }
 
@@ -182,11 +183,12 @@ function checkCofigPages(config, global_converters)
         // test data
         config.pages = {
             habr_article: {
-                addr: ['http://habrahabr.ru/post/\\d+'], // pages url template
+                addr: ['http://habrahabr.ru/post/\\d+',
+                       'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
                 converters: {
                     fb2: {
                         type: 'xslt',
-                        params: 'https://github.com/HaronK/Html2Book/raw/master/Html2Book/habr/habr2fb2.xsl',
+                        params: 'local|../habr/habr2fb2.xsl',
                     },
                 },
                 embed: function(element){ // embedding element into the page

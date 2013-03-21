@@ -3,7 +3,7 @@
 
   "name": "Html2Book",
   "description": "Convertion of HTML pages to book format (fb2, epub, etc.)",
-  "version": "0.1.9",
+  "version": "0.2.0",
 
   "options_page": "chrome/options.html",
   

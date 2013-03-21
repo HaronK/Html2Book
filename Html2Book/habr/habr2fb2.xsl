@@ -4,8 +4,18 @@
 	
 	<!-- ****************** Content parsers ****************** -->
 	<xsl:key name="bits"
-		match="node()[not(self::br|self::ul|self::h4)]"
-		use="generate-id((..|preceding-sibling::br[1]|preceding-sibling::ul[1]|preceding-sibling::h4[1])[last()])"/>
+		match="node()[not(self::br|self::ul|self::h4|self::table)]"
+		use="generate-id((..|preceding-sibling::br[1]|preceding-sibling::ul[1]|preceding-sibling::h4[1]|preceding-sibling::table[1])[last()])"/>
+	
+	<xsl:template match="text()" mode="content-code">
+		<xsl:value-of select="."/>
+	</xsl:template>
+
+	<xsl:template match="code" mode="content-p">
+		<code>
+			<xsl:apply-templates mode="content-code"/>
+		</code>
+	</xsl:template>
 	
 	<xsl:template match="a" mode="content-p">
 		<xsl:if test="@href">
@@ -35,9 +45,27 @@
 		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
 	</xsl:template>
 	
+	<xsl:template match="table" mode="content">
+		<table>
+			<xsl:for-each select="tr">
+				<tr>
+					<xsl:for-each select="th|td">
+						<xsl:element name="name()">
+							<xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/>
+						</xsl:element>
+						<!-- <th><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></th> -->
+					</xsl:for-each>
+<!-- 					<xsl:for-each select="td">
+						<td><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></td>
+					</xsl:for-each>
+ -->				</tr>
+			</xsl:for-each>
+		</table>
+	</xsl:template>
+	
 	<xsl:template match="@*|node()" mode="content">
 		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
-		<xsl:apply-templates select="(br|ul|h4)" mode="content"/>
+		<xsl:apply-templates select="(br|ul|h4|table)" mode="content"/>
 	</xsl:template>
 	
 	<!-- ****************** FB2 tag values ****************** -->
@@ -493,7 +521,7 @@
 	
 	<!-- FB2 generator -->
 	<xsl:template match="/">
-		<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+		<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.1" xmlns:l="http://www.w3.org/1999/xlink">
 			<xsl:call-template name="stylesheets"/>
 			<xsl:call-template name="description"/>
 			<xsl:call-template name="body"/>

@@ -1,7 +1,11 @@
 
 function XsltConverter(xsl_file, onload)
 {
-    requestFile(xsl_file, function(xhr) {
+    var localFile = xsl_file.split("|");
+    var file2load = (localFile.length == 2 && localFile[0] == 'local')
+                    ? chrome.extension.getURL(localFile[1])
+                    : xsl_file;
+    requestFile(file2load, function(xhr) {
         onload(xhr.responseText);
     });
 }
