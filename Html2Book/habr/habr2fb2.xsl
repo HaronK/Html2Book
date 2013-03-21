@@ -2,6 +2,44 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="xml" indent="yes"/>
 	
+	<!-- ****************** Content parsers ****************** -->
+	<xsl:key name="bits"
+		match="node()[not(self::br|self::ul|self::h4)]"
+		use="generate-id((..|preceding-sibling::br[1]|preceding-sibling::ul[1]|preceding-sibling::h4[1])[last()])"/>
+	
+	<xsl:template match="a" mode="content-p">
+		<xsl:if test="@href">
+			<a href="{@href}"><xsl:apply-templates mode="content-p"/></a>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template match="text()" mode="content-p">
+		<xsl:variable name="content-text" select="."/>
+		<xsl:if test="normalize-space($content-text) != ''">
+			<xsl:value-of select="normalize-space($content-text)"/>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="br" mode="content">
+		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
+	</xsl:template>
+
+	<xsl:template match="ul" mode="content">
+		<xsl:for-each select="li">
+			<p><xsl:value-of select="position()"/><xsl:text>. </xsl:text>
+			<xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
+		</xsl:for-each>
+	</xsl:template>
+	
+	<xsl:template match="h4" mode="content">
+		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
+	</xsl:template>
+	
+	<xsl:template match="@*|node()" mode="content">
+		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
+		<xsl:apply-templates select="(br|ul|h4)" mode="content"/>
+	</xsl:template>
+	
 	<!-- ****************** FB2 tag values ****************** -->
 	<xsl:variable name="title-info_author_first-name"/>
 	<xsl:variable name="title-info_author_middle-name"/>
@@ -11,9 +49,14 @@
 	<xsl:variable name="title-info_author_email"/>
 	<xsl:variable name="title-info_author_id"/>
 	<xsl:variable name="title-info_book-title" select="//title"/>
-	<xsl:variable name="title-info_annotation"/>
-	<xsl:variable name="title-info_keywords">
+	<xsl:variable name="title-info_annotation">
 		<xsl:for-each select="//div[@class='hubs']/a">
+			<xsl:if test="position() > 1">, </xsl:if>
+			<xsl:value-of select="."/>
+		</xsl:for-each>
+	</xsl:variable>
+	<xsl:variable name="title-info_keywords">
+		<xsl:for-each select="//ul[@class='tags']//a">
 			<xsl:if test="position() > 1">, </xsl:if>
 			<xsl:value-of select="."/>
 		</xsl:for-each>
@@ -48,6 +91,7 @@
 	<xsl:template name="body_sections_data">
 		<!-- Mandatory -->
 		<section>
+			<xsl:apply-templates select="//div[@class='content html_format']" mode="content"/>
 		</section>
 	</xsl:template>
 
@@ -140,7 +184,7 @@
 	
 	<xsl:template name="title-info_annotation">
 		<xsl:if test="string($title-info_annotation) != ''">
-			<annotation><xsl:value-of select="$title-info_annotation"/></annotation>
+			<annotation><p><xsl:value-of select="$title-info_annotation"/></p></annotation>
 		</xsl:if>
 	</xsl:template>
 	
