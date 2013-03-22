@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+	<!-- BEGIN -->
 	<!-- ****************** FB2 tags ****************** -->
 	<xsl:template name="title-info_genres_data"/>
 
@@ -42,5 +43,6 @@
 	<xsl:variable name="body_epigraph"/>
 	
 	<xsl:template name="body_sections_data"/>
+	<!-- END -->
 
 </xsl:stylesheet>
