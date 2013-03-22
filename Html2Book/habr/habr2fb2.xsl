@@ -23,6 +23,13 @@
 		</xsl:if>
 	</xsl:template>
 	
+	<xsl:template match="img" mode="content-p">
+		<!-- TODO: implement binary images -->
+		<xsl:if test="@src">
+			<image href="{@src}"><xsl:apply-templates mode="content-p"/></image>
+		</xsl:if>
+	</xsl:template>
+	
 	<xsl:template match="text()" mode="content-p">
 		<xsl:variable name="content-text" select="."/>
 		<xsl:if test="normalize-space($content-text) != ''">
@@ -45,21 +52,15 @@
 		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
 	</xsl:template>
 	
+	<xsl:template match="tr|th|td" mode="content-p">
+		<xsl:element name="{name()}">
+			<xsl:apply-templates mode="content-p"/>
+		</xsl:element>
+	</xsl:template>
+	
 	<xsl:template match="table" mode="content">
 		<table>
-			<xsl:for-each select="tr">
-				<tr>
-					<xsl:for-each select="th|td">
-						<xsl:element name="name()">
-							<xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/>
-						</xsl:element>
-						<!-- <th><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></th> -->
-					</xsl:for-each>
-<!-- 					<xsl:for-each select="td">
-						<td><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></td>
-					</xsl:for-each>
- -->				</tr>
-			</xsl:for-each>
+			<xsl:apply-templates mode="content-p"/>
 		</table>
 	</xsl:template>
 	
