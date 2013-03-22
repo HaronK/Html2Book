@@ -16,14 +16,7 @@
                     ],
   
   "background": {
-      "scripts": [
-                  "extern/FileSaver.js",
-                  "savers/fs.js",
-                  "extern/htmlparser.js",
-                  "converters/xslt.js",
-                  "html2book_utils.js",
-                  "chrome/background.js"
-                 ]
+      "scripts": ["html2book_utils.js", "chrome/background.js"]
   },
 
   "page_action": {

@@ -71,7 +71,7 @@ function resolvePath(path)
 
 // Source: http://www.w3schools.com/xsl/xsl_client.asp
 
-function requestFile(file_name, onload)
+function requestFile(file_name, obj, onload)
 {
     if (window.XMLHttpRequest)
     {
@@ -86,7 +86,7 @@ function requestFile(file_name, onload)
     xhr.onreadystatechange = function()
     {
         if (xhr.readyState == 4)
-            onload(xhr);
+            onload(xhr, obj);
     };
     xhr.send(null);
 
@@ -146,17 +146,10 @@ function initDefaultConfig(config)
     {
         config.converters.xslt = {
             imports : [ '../extern/htmlparser.js', '../converters/xslt.js'],
-            klass : XsltConverter,
+            klass : "XsltConverter",
             mime : 'text/xml;charset=' + document.characterSet,
-            checkFormatter: function(formatter)
-            {
-                if (!formatter.hasOwnProperty("xsl"))
-                {
-                    alert("Formatter '" + formatter + "' doesn't contain mandatory field 'xsl'");
-                    return false;
-                }
-                return true;
-            }
+            formatterFields: ["xsl", "embedPath"],
+            pageFormatterFields: ["xsl"],
         };
     }
 
@@ -168,9 +161,9 @@ function initDefaultConfig(config)
     {
         config.formatters.fb2 = {
             converter: "xslt",
-            initialize: function() {},
-            finalize: function() {},
+            postTransform: function(xsl_doc) {},
             xsl: "local|../formatters/fb2.xsl",
+            embedPath: "",
         };
     }
 
@@ -182,7 +175,7 @@ function initDefaultConfig(config)
     {
         config.savers.fs = {
             imports : [ '../extern/FileSaver.js', '../savers/fs.js'],
-            klass : FsSaver,
+            klass : "FsSaver",
         };
     }
 
@@ -190,17 +183,14 @@ function initDefaultConfig(config)
         config.pages = {};
 
     // habr_article is a default page
-    if (!checkObjectFields(config.pages.habr_article, ["addr", "converters", "embed"]))
+    if (!checkObjectFields(config.pages.habr_article, ["addr", "formatters", "embed"]))
     {
         // test data
         config.pages.habr_article = {
             addr: ['http://habrahabr.ru/post/\\d+',
                    'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
-            converters: {
-                fb2: {
-                    type: 'xslt',
-                    params: 'local|../habr/habr2fb2.xsl',
-                },
+            formatters: {
+                fb2: { xsl: 'local|../habr/habr2fb2.xsl' },
             },
             embed: function(element){ // embedding element into the page
                 var element2 = element.cloneNode(true);
@@ -209,15 +199,18 @@ function initDefaultConfig(config)
             },
         };
     }
+
+    return config;
 }
 
-function checkMandatoryFields(fields, obj, objName)
+function validateMandatoryFields(fields, obj, objName)
 {
-    for (var field in fields)
+    for (var i = 0; i < fields.length; ++i)
     {
-        if (!obj.hasOwnProperty(field))
+        if (!obj.hasOwnProperty(fields[i]))
         {
-            alert(objName + " doesn't contain mandatory field '" + field + "'");
+            alert(objName + " doesn't contain mandatory field '" + field[i] +
+                    "'. Mandatory fields: [" + fields + "]");
             return false;
         }
     }
@@ -226,77 +219,65 @@ function checkMandatoryFields(fields, obj, objName)
 
 function checkConfigConverters(config)
 {
-    var converters = [];
-    for (var converter in config.converters)
+    for (var converterId in config.converters)
     {
-        if (!checkMandatoryFields(["klass", "mime"], config.converters[converter], "Converter '" + converter + "'"))
+        if (!validateMandatoryFields(["klass", "mime"], config.converters[converterId], "Converter '" + converterId + "'"))
             return null;
-        converters.push(converter);
     }
-    return converters;
-
 }
 
 function checkConfigFormatters(config)
 {
-    var formatters = [];
-    for (var formatter in config.formatters)
+    for (var formatterId in config.formatters)
     {
-        if (!checkMandatoryFields(["converter", "mime"], config.formatters[formatter], "Converter '" + formatter + "'"))
+        var formatter = config.formatters[formatterId];
+        if (!validateMandatoryFields(["converter"], formatter, "Formatter '" + formatterId + "'"))
             return null;
 
-        if (!config.converters.hasOwnProperty(config.formatters[formatter].converter))
+        if (!config.converters.hasOwnProperty(formatter.converter))
         {
-            alert("Formatter '" + formatter + "' uses unknown converter '" + config.formatters[formatter].converter + "'");
+            alert("Formatter '" + formatterId + "' uses unknown converter '" + formatter.converter + "'");
             return null;
         }
 
-        // converter should check formatter if needed. usually it's fields existence check
-        var converter = config.converters[config.formatters[formatter].converter];
-        if (converter.checkFormatter && !converter.checkFormatter(config.formatters[formatter]))
+        // check formatter fields required by converter
+        var converter = config.converters[formatter.converter];
+        if (converter.formatterFields &&
+            !validateMandatoryFields(converter.formatterFields, formatter, "Formatter '" + formatterId + "'"))
             return null;
-
-        formatters.push(converter);
     }
-    return formatters;
-
 }
 
 function checkConfigSavers(config)
 {
-    for (var saver in config.savers)
+    for (var saverId in config.savers)
     {
-        if (!checkMandatoryFields(["klass"], config.savers[saver], "Saver '" + saver + "'"))
+        if (!validateMandatoryFields(["klass"], config.savers[saverId], "Saver '" + saverId + "'"))
             return null;
     }
 }
 
-function checkCofigPages(config, global_converters)
+function checkCofigPages(config)
 {
-    for (var page in config.pages)
+    for (var pageId in config.pages)
     {
-        if (!checkMandatoryFields(["addr", "embed"], config.pages[page], "Page '" + page + "'"))
+        var page = config.pages[pageId];
+        if (!validateMandatoryFields(["addr", "formatters", "embed"], page, "Page '" + pageId + "'"))
             return null;
 
-        var converters = config.pages[page].converters;
-        if (!converters || len(converters) == 0)
+        for (var formatterId in page.formatters)
         {
-            alert("Page '" + page + "' should contain at leas one converter"); // ?
-            return;
-        }
-        for (var converter in converters)
-        {
-            if (!converters[converter].type)
+            if (!config.formatters.hasOwnProperty(formatterId))
             {
-                alert("Page '" + page + "' converter '" + converter + "' doesn't contain mandatory field 'type'");
-                return;
+                alert("Page '" + pageId + "' uses unknown formatter '" + formatterId + "'");
+                return null;
             }
-            if (global_converters.indexOf(converters[converter].type) == -1)
-            {
-                alert("Page '" + page + "' converter '" + converter + "' has unknown type '"
-                        + converters[converter].type + "'");
-                return;
-            }
+
+            var converter = config.converters[config.formatters[formatterId].converter];
+            if (converter.pageFormatterFields &&
+                !validateMandatoryFields(converter.pageFormatterFields, page.formatters[formatterId],
+                    "Page '" + pageId + "' formatter '" + formatterId + "'"))
+                return null;
         }
     }
 }
@@ -305,9 +286,9 @@ function checkConfig(config)
 {
     config = initDefaultConfig(config);
 
-    var converters = checkConfigConverters(config);
+    checkConfigConverters(config);
     checkConfigSavers(config);
-    checkCofigPages(config, converters);
+    checkCofigPages(config);
 
     return config;
 }

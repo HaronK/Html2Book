@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
+	<!-- BEGIN -->
 	<!-- ****************** Content parsers ****************** -->
 	<xsl:key name="bits"
 		match="node()[not(self::br|self::ul|self::h4|self::table)]"
@@ -138,5 +139,6 @@
 			<xsl:apply-templates select="//div[@class='content html_format']" mode="content"/>
 		</section>
 	</xsl:template>
+	<!-- END -->
 
 </xsl:stylesheet>

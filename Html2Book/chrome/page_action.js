@@ -5,7 +5,7 @@ function appendImports(imports)
     {
         var script = document.createElement('script');
         script.type = "text/javascript";
-        script.src = imports[i];
+        script.src = resolvePath(imports[i]);
         document.head.appendChild(script);
     }
 }
@@ -21,17 +21,23 @@ function appendScriptText(text)
 
 var pageSource = null;
 
-function generateButton(tabId, name, converter_klass, converter_params, saver_klass, mime)
+function generateButton(tabId, pageId, formatterId, saver) //, name, converter_klass, converter_params, saver_klass, mime)
 {
+    var page      = Html2BookConfig.pages[pageId];                   // TODO: check if not null if needed
+    var formatter = Html2BookConfig.formatters[formatterId];         // TODO: check if not null if needed
+    var converter = Html2BookConfig.converters[formatter.converter]; // TODO: check if not null if needed
+
     var h2b_button = document.createElement("button");
     h2b_button.type = "button";
     h2b_button.disabled = true;
 
-    var convert_handler = new converter_klass(converter_params, function(data) {
-        convert_handler.xsl_data = data;
-        h2b_button.disabled = false;
-    });
-    var save_handler = new saver_klass('book.' + name, mime);
+    var convert_handler = new window[converter.klass](formatter, page.formatters[formatterId],
+        function()
+        {
+            h2b_button.disabled = false;
+        });
+
+    var save_handler = new window[saver.klass]('book.' + formatterId, converter.mime);
     var listener = {
         handleEvent : function(evt)
         {
@@ -45,7 +51,7 @@ function generateButton(tabId, name, converter_klass, converter_params, saver_kl
 
     h2b_button.addEventListener("click", listener, false);
 
-    var h2b_button_text = document.createTextNode(name);
+    var h2b_button_text = document.createTextNode(formatterId);
     h2b_button.appendChild(h2b_button_text);
 
     document.body.appendChild(h2b_button);
@@ -68,23 +74,34 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
         {
             Html2BookConfig = checkConfig(config);
 
-            var page = getPageConfig(Html2BookConfig, response.location.href);
+            var pageId = getPageConfig(Html2BookConfig, response.location.href);
 
             // add default saver imports
-//            appendImports(Html2BookConfig.savers.fs.imports);
+            appendImports(Html2BookConfig.savers.fs.imports);
 
-            // add page converters imports and embed buttons
-            var page_converters = Html2BookConfig.pages[page].converters;
-            for (var converter_name in page_converters)
+            // add page converters imports
+            var page_converters = {};
+            for (var formatterId in Html2BookConfig.pages[pageId].formatters)
             {
-                var type = page_converters[converter_name].type;
-                var converter = Html2BookConfig.converters[type];
-//                var imports = converter.imports;
-//                appendImports(imports);
+                var formatter = Html2BookConfig.formatters[formatterId]; // TODO: check if not null if needed
+                page_converters[formatter.converter] = true;
+            }
+            for (var converter in page_converters)
+            {
+                if (Html2BookConfig.converters[converter].imports)
+                    appendImports(Html2BookConfig.converters[converter].imports);
+            }
+
+            // embed buttons
+            for (var formatterId in Html2BookConfig.pages[pageId].formatters)
+            {
+                var formatter = Html2BookConfig.formatters[formatterId]; // TODO: check if not null if needed
+
+                if (formatter.imports)
+                    appendImports(formatter.imports);
 
                 // generate button and button script
-                generateButton(tabId, converter_name, converter.klass, page_converters[converter_name].params,
-                        Html2BookConfig.savers.fs.klass, converter.mime);
+                generateButton(tabId, pageId, formatterId, Html2BookConfig.savers.fs);
             }
         });
     });

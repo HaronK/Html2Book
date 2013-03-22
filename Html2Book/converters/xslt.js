@@ -1,34 +1,59 @@
 
-// XSLT converter
-
-function XsltConverter(xsl_file, onload)
-{
-    requestFile(resolvePath(xsl_file), function(xhr) {
-        onload(xhr.responseText);
-    });
-}
-
 function str2XML(text)
 {
+    var doc;
     if (window.ActiveXObject)
     {
-        var doc = new ActiveXObject('Microsoft.XMLDOM');
+        doc = new ActiveXObject('Microsoft.XMLDOM');
         doc.async = 'false';
         doc.loadXML(text);
     }
     else
     {
         var parser = new DOMParser();
-        var doc = parser.parseFromString(text, 'text/xml');
+        doc = parser.parseFromString(text, 'text/xml');
     }
     return doc;
 }
 
+// XSLT converter
+
+function XsltConverter(formatter, pageFormatter, onload)
+{
+    this.formatter = formatter;
+
+    requestFile(resolvePath(formatter.xsl), this, function(xhr, obj)
+    {
+        obj.formatterXsl = xhr.responseText;
+
+        requestFile(resolvePath(pageFormatter.xsl), obj, function(xhr, obj)
+        {
+            obj.pageXsl = xhr.responseText;
+
+            obj._embed();
+            onload();
+        });
+    });
+}
+
 XsltConverter.prototype = {
-    convert : function(page_data)
+    _embed: function() // embed pageXsl into formatterXsl
+    {
+        var pageData = this.pageXsl.match(/<!--\s*BEGIN\s*-->\s*([\s\S]*)\s*<!--\s*END\s*-->/m);
+        this.xsl_data = this.formatterXsl.replace(/<!--\s*PAGE_INCLUDE\s*-->/, pageData[1]);
+    },
+
+    convert: function(page_data)
     {
         var xml_data = HTMLtoXML(page_data);
         xml_data = xml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
-        return applyXSLT(str2XML(this.xsl_data), str2XML(xml_data));
+
+        var result = applyXSLT(str2XML(this.xsl_data), str2XML(xml_data));
+
+        // do page post transformation work if needed
+        if (this.formatter.postTransform)
+            this.formatter.postTransform(result);
+
+        return result;
     },
 };
