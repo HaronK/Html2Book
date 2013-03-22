@@ -61,6 +61,12 @@ function generateButton(name, converter_klass, converter_params, saver_klass, mi
     return h2b_button;
 }
 
+function resolvePath(path)
+{
+    var localFile = path.split("|");
+    return (localFile.length == 2 && localFile[0] == 'local') ? chrome.extension.getURL(localFile[1]) : path;
+}
+
 // ---------------------------------------------------------------------------
 
 // Source: http://www.w3schools.com/xsl/xsl_client.asp
@@ -115,50 +121,64 @@ function loadConfig(config_text)
     eval(config_str);
 }
 
-function checkConfigConverters(config)
+function checkObjectFields(obj, fields)
 {
-    // xslt is a default converter
+    if (!obj)
+        return false;
+    for (var field in fields)
+    {
+        if (!obj.hasOwnProperty(field))
+            return false;
+    }
+    return true;
+}
+
+function initDefaultConfig(config)
+{
+    if (!config)
+        config = {};
+
     if (!config.converters)
         config.converters = {};
 
-    if (!config.converters.xslt ||
-        !config.converters.xslt.klass ||
-        !config.converters.xslt.mime)
+    // xslt is a default converter
+    if (!checkObjectFields(config.converters.xslt, ["klass", "mime"]))
     {
         config.converters.xslt = {
             imports : [ '../extern/htmlparser.js', '../converters/xslt.js'],
             klass : XsltConverter,
             mime : 'text/xml;charset=' + document.characterSet,
+            checkFormatter: function(formatter)
+            {
+                if (!formatter.hasOwnProperty("xsl"))
+                {
+                    alert("Formatter '" + formatter + "' doesn't contain mandatory field 'xsl'");
+                    return false;
+                }
+                return true;
+            }
         };
     }
 
-    var converters = [];
-    for (var converter in config.converters)
+    if (!config.formatters)
+        config.formatters = {};
+
+    // fb2 is a default formatter
+    if (!checkObjectFields(config.formatters.fb2, ["converter", "initialize", "finalize", "xsl"]))
     {
-        if (!config.converters[converter].klass)
-        {
-            alert("Converter '" + converter + "' doesn't contain mandatory field 'klass'");
-            return null;
-        }
-        if (!config.converters[converter].mime)
-        {
-            alert("Converter '" + converter + "' doesn't contain mandatory field 'mime'");
-            return null;
-        }
-        converters.push(converter);
+        config.formatters.fb2 = {
+            converter: "xslt",
+            initialize: function() {},
+            finalize: function() {},
+            xsl: "local|../formatters/fb2.xsl",
+        };
     }
-    return converters;
 
-}
-
-function checkConfigSavers(config)
-{
-    // fs is a default saver
     if (!config.savers)
         config.savers = {};
 
-    if (!config.savers.fs ||
-        !config.savers.fs.klass)
+    // fs is a default saver
+    if (!checkObjectFields(config.savers.fs, ["klass"]))
     {
         config.savers.fs = {
             imports : [ '../extern/FileSaver.js', '../savers/fs.js'],
@@ -166,53 +186,97 @@ function checkConfigSavers(config)
         };
     }
 
-    for (var saver in config.savers)
+    if (!config.pages)
+        config.pages = {};
+
+    // habr_article is a default page
+    if (!checkObjectFields(config.pages.habr_article, ["addr", "converters", "embed"]))
     {
-        if (!config.savers[saver].klass)
+        // test data
+        config.pages.habr_article = {
+            addr: ['http://habrahabr.ru/post/\\d+',
+                   'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
+            converters: {
+                fb2: {
+                    type: 'xslt',
+                    params: 'local|../habr/habr2fb2.xsl',
+                },
+            },
+            embed: function(element){ // embedding element into the page
+                var element2 = element.cloneNode(true);
+                embedAfter('title', element);
+                embedAfter('content', element2);
+            },
+        };
+    }
+}
+
+function checkMandatoryFields(fields, obj, objName)
+{
+    for (var field in fields)
+    {
+        if (!obj.hasOwnProperty(field))
         {
-            alert("Saver '" + saver + "' doesn't contain mandatory field 'klass'");
+            alert(objName + " doesn't contain mandatory field '" + field + "'");
+            return false;
+        }
+    }
+    return true;
+}
+
+function checkConfigConverters(config)
+{
+    var converters = [];
+    for (var converter in config.converters)
+    {
+        if (!checkMandatoryFields(["klass", "mime"], config.converters[converter], "Converter '" + converter + "'"))
+            return null;
+        converters.push(converter);
+    }
+    return converters;
+
+}
+
+function checkConfigFormatters(config)
+{
+    var formatters = [];
+    for (var formatter in config.formatters)
+    {
+        if (!checkMandatoryFields(["converter", "mime"], config.formatters[formatter], "Converter '" + formatter + "'"))
+            return null;
+
+        if (!config.converters.hasOwnProperty(config.formatters[formatter].converter))
+        {
+            alert("Formatter '" + formatter + "' uses unknown converter '" + config.formatters[formatter].converter + "'");
             return null;
         }
+
+        // converter should check formatter if needed. usually it's fields existence check
+        var converter = config.converters[config.formatters[formatter].converter];
+        if (converter.checkFormatter && !converter.checkFormatter(config.formatters[formatter]))
+            return null;
+
+        formatters.push(converter);
+    }
+    return formatters;
+
+}
+
+function checkConfigSavers(config)
+{
+    for (var saver in config.savers)
+    {
+        if (!checkMandatoryFields(["klass"], config.savers[saver], "Saver '" + saver + "'"))
+            return null;
     }
 }
 
 function checkCofigPages(config, global_converters)
 {
-    if (!config.pages)
-    {
-        // test data
-        config.pages = {
-            habr_article: {
-                addr: ['http://habrahabr.ru/post/\\d+',
-                       'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
-                converters: {
-                    fb2: {
-                        type: 'xslt',
-                        params: 'local|../habr/habr2fb2.xsl',
-                    },
-                },
-                embed: function(element){ // embedding element into the page
-                    var element2 = element.cloneNode(true);
-                    embedAfter('title', element);
-                    embedAfter('content', element2);
-                },
-            },
-        };
-    }
-
-    // check pages config
     for (var page in config.pages)
     {
-        if (!config.pages[page].addr)
-        {
-            alert("Page '" + page + "' doesn't contain mandatory field 'addr'");
-            return;
-        }
-        if (!config.pages[page].embed)
-        {
-            alert("Page '" + page + "' doesn't contain mandatory field 'embed'");
-            return;
-        }
+        if (!checkMandatoryFields(["addr", "embed"], config.pages[page], "Page '" + page + "'"))
+            return null;
 
         var converters = config.pages[page].converters;
         if (!converters || len(converters) == 0)
@@ -239,8 +303,7 @@ function checkCofigPages(config, global_converters)
 
 function checkConfig(config)
 {
-    if (!config)
-        config = {};
+    config = initDefaultConfig(config);
 
     var converters = checkConfigConverters(config);
     checkConfigSavers(config);

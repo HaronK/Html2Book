@@ -1,11 +1,9 @@
 
+// XSLT converter
+
 function XsltConverter(xsl_file, onload)
 {
-    var localFile = xsl_file.split("|");
-    var file2load = (localFile.length == 2 && localFile[0] == 'local')
-                    ? chrome.extension.getURL(localFile[1])
-                    : xsl_file;
-    requestFile(file2load, function(xhr) {
+    requestFile(resolvePath(xsl_file), function(xhr) {
         onload(xhr.responseText);
     });
 }

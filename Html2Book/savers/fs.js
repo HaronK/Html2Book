@@ -1,4 +1,6 @@
 
+// Saver to filesystem
+
 function FsSaver(file_name)
 {
     this.file_name = file_name;
