@@ -126,7 +126,7 @@ function checkConfigConverters(config)
         !config.converters.xslt.mime)
     {
         config.converters.xslt = {
-            imports : [ '../extern/htmlparser.js', '../xslt_converter.js'],
+            imports : [ '../extern/htmlparser.js', '../converters/xslt_converter.js'],
             klass : XsltConverter,
             mime : 'text/xml;charset=' + document.characterSet,
         };
@@ -161,7 +161,7 @@ function checkConfigSavers(config)
         !config.savers.fs.klass)
     {
         config.savers.fs = {
-            imports : [ '../extern/FileSaver.js', '../extern/Blob.js', '../fs_saver.js'],
+            imports : [ '../extern/FileSaver.js', '../extern/Blob.js', '../savers/fs_saver.js'],
             klass : FsSaver,
         };
     }

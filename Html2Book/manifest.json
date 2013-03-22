@@ -18,9 +18,9 @@
   "background": {
       "scripts": [
                   "extern/FileSaver.js",
-                  "fs_saver.js",
+                  "savers/fs_saver.js",
                   "extern/htmlparser.js",
-                  "xslt_converter.js",
+                  "converters/xslt_converter.js",
                   "html2book_utils.js",
                   "chrome/background.js"
                  ]
