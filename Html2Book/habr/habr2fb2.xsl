@@ -26,7 +26,9 @@
 	<xsl:template match="img" mode="content-p">
 		<!-- TODO: implement binary images -->
 		<xsl:if test="@src">
-			<image href="{@src}"><xsl:apply-templates mode="content-p"/></image>
+			<strong>IMAGE:</strong> <xsl:value-of select="@src"/>
+			<xsl:apply-templates mode="content-p"/>
+			<!-- <image href="{@src}"><xsl:apply-templates mode="content-p"/></image> -->
 		</xsl:if>
 	</xsl:template>
 	
@@ -52,16 +54,19 @@
 		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
 	</xsl:template>
 	
-	<xsl:template match="tr|th|td" mode="content-p">
-		<xsl:element name="{name()}">
-			<xsl:apply-templates mode="content-p"/>
-		</xsl:element>
+	<xsl:template match="tr" mode="content-p">
+		<p>[ 
+			<xsl:for-each select="th|td">
+				<xsl:if test="position() > 1"> | </xsl:if>
+				<xsl:apply-templates mode="content-p"/>
+			</xsl:for-each>
+		 ]</p>
 	</xsl:template>
 	
 	<xsl:template match="table" mode="content">
-		<table>
-			<xsl:apply-templates mode="content-p"/>
-		</table>
+		<p><strong>TABLE:</strong></p>
+		<xsl:apply-templates mode="content-p"/>
+		<p><strong>:TABLE</strong></p>
 	</xsl:template>
 	
 	<xsl:template match="@*|node()" mode="content">

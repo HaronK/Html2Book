@@ -17,7 +17,6 @@
   
   "background": {
       "scripts": [
-                  "extern/Blob.js",
                   "extern/FileSaver.js",
                   "fs_saver.js",
                   "extern/htmlparser.js",
