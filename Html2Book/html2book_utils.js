@@ -4,6 +4,16 @@ function len(obj)
     return Object.keys(obj).length;
 }
 
+String.prototype.endsWith = function(str)
+{
+    return (this.match(str + "$") == str);
+};
+
+String.prototype.startsWith = function(str)
+{
+    return (this.match("^" + str) == str);
+};
+
 function appendScriptFile(file)
 {
     var script = document.createElement('script');
@@ -71,7 +81,7 @@ function resolvePath(path)
 
 // Source: http://www.w3schools.com/xsl/xsl_client.asp
 
-function requestFile(file_name, obj, onload)
+function requestFileAsync(file_name, obj, onload)
 {
     if (window.XMLHttpRequest)
     {
@@ -89,9 +99,20 @@ function requestFile(file_name, obj, onload)
             onload(xhr, obj);
     };
     xhr.send(null);
+}
 
-//    if (xmlhttp.readyState != 4 || xmlhttp.status != 200)
-//        alert("ERROR");
+function requestFileSync(file_name)
+{
+    if (window.XMLHttpRequest)
+    {
+        xhr = new XMLHttpRequest();
+    }
+    else
+    {
+        xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xhr.open("GET", file_name, false);
 
     return xhr;
 }
@@ -145,7 +166,7 @@ function initDefaultConfig(config)
     if (!checkObjectFields(config.converters.xslt, ["klass", "mime"]))
     {
         config.converters.xslt = {
-            imports : [ '../extern/htmlparser.js', '../converters/xslt.js'],
+            imports : ['../extern/htmlparser.js', '../converters/xslt.js'],
             klass : "XsltConverter",
             mime : 'text/xml;charset=' + document.characterSet,
             formatterFields: ["xsl", "embedPath"],
@@ -157,11 +178,12 @@ function initDefaultConfig(config)
         config.formatters = {};
 
     // fb2 is a default formatter
-    if (!checkObjectFields(config.formatters.fb2, ["converter", "initialize", "finalize", "xsl"]))
+    if (!checkObjectFields(config.formatters.fb2, ["converter", "xsl"]))
     {
         config.formatters.fb2 = {
+            imports : ['../formatters/fb2.js'],
+            klass : "Fb2Formatter",
             converter: "xslt",
-            postTransform: function(xsl_doc) {},
             xsl: "local|../formatters/fb2.xsl",
             embedPath: "",
         };

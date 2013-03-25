@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+	<!-- <xsl:import href="../habr/habr2fb2.xsl"/> --> <!-- For local testing -->
 
 	<xsl:output method="xml" indent="yes"/>
 
@@ -10,6 +11,7 @@
 		<xsl:param name="name" />
 		<xsl:param name="value" />
 		<xsl:if test="string($value) = ''">
+			<xsl:comment>Mandatory variable '<xsl:value-of select="$name" />'is not defined!</xsl:comment>
 			<xsl:message terminate="yes">
 				Mandatory variable '<xsl:value-of select="$name" />'is not defined!
 			</xsl:message>

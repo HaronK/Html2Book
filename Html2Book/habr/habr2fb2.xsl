@@ -24,11 +24,8 @@
 	</xsl:template>
 	
 	<xsl:template match="img" mode="content-p">
-		<!-- TODO: implement binary images -->
 		<xsl:if test="@src">
-			<strong>IMAGE:</strong> <xsl:value-of select="@src"/>
-			<xsl:apply-templates mode="content-p"/>
-			<!-- <image href="{@src}"><xsl:apply-templates mode="content-p"/></image> -->
+			<image alt="{@src}"><xsl:apply-templates mode="content-p"/></image>
 		</xsl:if>
 	</xsl:template>
 	
@@ -75,7 +72,7 @@
 	</xsl:template>
 	
 	<!-- ****************** FB2 tag values ****************** -->
-	<xsl:template name="title-info_genres_data">
+	<xsl:template name="title-info_genres_data"> <!-- Mandatory -->
 		<!-- Mandatory -->
 		<genre>comp_www</genre>
 		<genre>comp_programming</genre>
@@ -93,7 +90,7 @@
 	<xsl:variable name="title-info_author_home-page" select="//div[@class='author']/a[1]/@href"/>
 	<xsl:variable name="title-info_author_email"/>
 	<xsl:variable name="title-info_author_id"/>
-	<xsl:variable name="title-info_book-title" select="//title"/>
+	<xsl:variable name="title-info_book-title" select="//title"/> <!-- Mandatory -->
 	<xsl:variable name="title-info_annotation">
 		<xsl:for-each select="//div[@class='hubs']/a">
 			<xsl:if test="position() > 1">, </xsl:if>
@@ -119,7 +116,7 @@
 	<xsl:variable name="document-info_author_home-page"/>
 	<xsl:variable name="document-info_author_email"/>
 	<xsl:variable name="document-info_author_id"/>
-	<xsl:variable name="document-info_program-used"/>
+	<xsl:variable name="document-info_program-used">Html2Book Chrome extension (https://github.com/HaronK/Html2Book)</xsl:variable>
 	<xsl:variable name="document-info_date" select="//div[@class='published']"/>
 	<xsl:variable name="document-info_src-url" select="//meta[@property='og:url']/@content"/>
 	<xsl:variable name="document-info_src-ocr"/>

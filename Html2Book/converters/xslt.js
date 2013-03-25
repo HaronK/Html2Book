@@ -22,11 +22,11 @@ function XsltConverter(formatter, pageFormatter, onload)
 {
     this.formatter = formatter;
 
-    requestFile(resolvePath(formatter.xsl), this, function(xhr, obj)
+    requestFileAsync(resolvePath(formatter.xsl), this, function(xhr, obj)
     {
         obj.formatterXsl = xhr.responseText;
 
-        requestFile(resolvePath(pageFormatter.xsl), obj, function(xhr, obj)
+        requestFileAsync(resolvePath(pageFormatter.xsl), obj, function(xhr, obj)
         {
             obj.pageXsl = xhr.responseText;
 
@@ -50,10 +50,12 @@ XsltConverter.prototype = {
 
         var result = applyXSLT(str2XML(this.xsl_data), str2XML(xml_data));
 
-        // do page post transformation work if needed
-        if (this.formatter.postTransform)
-            this.formatter.postTransform(result);
-
         return result;
+    },
+
+    serialize: function(xmlData)
+    {
+        var serializer = new XMLSerializer();
+        return serializer.serializeToString(xmlData);
     },
 };

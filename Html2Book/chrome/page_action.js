@@ -43,9 +43,30 @@ function generateButton(tabId, pageId, formatterId, saver) //, name, converter_k
         {
             window.close();
             var book_xml = convert_handler.convert(pageSource);
-            var serializer = new XMLSerializer();
-            var book_data = serializer.serializeToString(book_xml);
-            save_handler.save(book_data);
+
+            // do page post transformation work if needed
+            if (formatter.klass)
+            {
+                var formatter_handler = new window[formatter.klass];
+                if (formatter_handler.postTransform)
+                {
+                    formatter_handler.postTransform(book_xml, function()
+                    {
+                        var book_data = convert_handler.serialize(book_xml);
+                        save_handler.save(book_data);
+                    });
+                }
+                else
+                {
+                    var book_data = convert_handler.serialize(book_xml);
+                    save_handler.save(book_data);
+                }
+            }
+            else
+            {
+                var book_data = convert_handler.serialize(book_xml);
+                save_handler.save(book_data);
+            }
         }
     };
 
