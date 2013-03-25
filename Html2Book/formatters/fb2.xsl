@@ -11,7 +11,6 @@
 		<xsl:param name="name" />
 		<xsl:param name="value" />
 		<xsl:if test="string($value) = ''">
-			<xsl:comment>Mandatory variable '<xsl:value-of select="$name" />'is not defined!</xsl:comment>
 			<xsl:message terminate="yes">
 				Mandatory variable '<xsl:value-of select="$name" />'is not defined!
 			</xsl:message>

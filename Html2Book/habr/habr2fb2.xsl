@@ -4,19 +4,33 @@
 	<!-- BEGIN -->
 	<!-- ****************** Content parsers ****************** -->
 	<xsl:key name="bits"
-		match="node()[not(self::br|self::ul|self::h4|self::table)]"
-		use="generate-id((..|preceding-sibling::br[1]|preceding-sibling::ul[1]|preceding-sibling::h4[1]|preceding-sibling::table[1])[last()])"/>
+		match="node()[not(self::br|self::ul|self::h4|self::table|self::code|self::pre)]"
+		use="generate-id((..|preceding-sibling::br[1]
+							|preceding-sibling::ul[1]
+							|preceding-sibling::h4[1]
+							|preceding-sibling::table[1]
+							|preceding-sibling::code[1]
+							|preceding-sibling::pre[1]
+							)[last()])"/>
 	
-	<xsl:template match="text()" mode="content-code">
-		<xsl:value-of select="."/>
+	<xsl:template match="text()" name="content-code">
+		<xsl:param name="pText" select="."/>
+		<xsl:if test="string-length($pText)">
+			<xsl:variable name="vLine" select="substring-before(concat($pText,'&#10;'), '&#10;')"/>
+			<xsl:choose>
+				<xsl:when test="normalize-space($vLine) != ''">
+					<p><code><xsl:value-of select="$vLine"/></code></p>
+				</xsl:when>
+				<xsl:otherwise>
+					<empty-line/>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:call-template name="content-code">
+				<xsl:with-param name="pText" select="substring-after($pText, '&#10;')"/>
+			</xsl:call-template>
+		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="code" mode="content-p">
-		<code>
-			<xsl:apply-templates mode="content-code"/>
-		</code>
-	</xsl:template>
-	
 	<xsl:template match="a" mode="content-p">
 		<xsl:if test="@href">
 			<a href="{@href}"><xsl:apply-templates mode="content-p"/></a>
@@ -66,9 +80,17 @@
 		<p><strong>:TABLE</strong></p>
 	</xsl:template>
 	
+	<xsl:template match="code" mode="content">
+		<xsl:call-template name="content-code"/>
+	</xsl:template>
+	
+	<xsl:template match="pre" mode="content">
+		<xsl:apply-templates select="(br|ul|h4|table|code|pre)" mode="content"/>
+	</xsl:template>
+	
 	<xsl:template match="@*|node()" mode="content">
 		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
-		<xsl:apply-templates select="(br|ul|h4|table)" mode="content"/>
+		<xsl:apply-templates select="(br|ul|h4|table|code|pre)" mode="content"/>
 	</xsl:template>
 	
 	<!-- ****************** FB2 tag values ****************** -->
