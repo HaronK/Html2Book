@@ -13,21 +13,45 @@
 							|preceding-sibling::pre[1]
 							)[last()])"/>
 	
-	<xsl:template match="text()" name="content-code">
+	<xsl:template name="content-code-print">
 		<xsl:param name="pText" select="."/>
+		<xsl:choose>
+			<xsl:when test="normalize-space($pText) != ''">
+				<p><code><xsl:value-of select="$pText"/></code></p>
+			</xsl:when>
+			<xsl:otherwise>
+				<empty-line/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:variable name="_crlf"><xsl:text>
+</xsl:text></xsl:variable>
+
+	<xsl:template name="content-code">
+		<xsl:param name="pText" select="."/>
+		<!--
+			This is hack! It should be:
+			<xsl:variable name="crlf" select="&#xA;"/>
+			but it doesn't work for me.
+		-->
+		<xsl:variable name="crlf" select="string($_crlf)"/>
 		<xsl:if test="string-length($pText)">
-			<xsl:variable name="vLine" select="substring-before(concat($pText,'&#10;'), '&#10;')"/>
 			<xsl:choose>
-				<xsl:when test="normalize-space($vLine) != ''">
-					<p><code><xsl:value-of select="$vLine"/></code></p>
+				<xsl:when test="contains($pText, $crlf)">
+					<xsl:call-template name="content-code-print">
+						<xsl:with-param name="pText" select="substring-before($pText, $crlf)"/>
+					</xsl:call-template>
+ 					<xsl:call-template name="content-code">
+						<xsl:with-param name="pText" select="substring-after($pText, $crlf)"/>
+					</xsl:call-template>
 				</xsl:when>
 				<xsl:otherwise>
-					<empty-line/>
+					<xsl:call-template name="content-code-print">
+						<xsl:with-param name="pText" select="$pText"/>
+					</xsl:call-template>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:call-template name="content-code">
-				<xsl:with-param name="pText" select="substring-after($pText, '&#10;')"/>
-			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
 
@@ -81,7 +105,7 @@
 	</xsl:template>
 	
 	<xsl:template match="code" mode="content">
-		<xsl:call-template name="content-code"/>
+		<xsl:call-template select="child::text()" name="content-code"/>
 	</xsl:template>
 	
 	<xsl:template match="pre" mode="content">
