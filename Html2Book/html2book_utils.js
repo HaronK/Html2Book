@@ -75,14 +75,7 @@ function resolvePath(path)
 
 function requestFileAsync(file_name, obj, onload)
 {
-    if (window.XMLHttpRequest)
-    {
-        xhr = new XMLHttpRequest();
-    }
-    else
-    {
-        xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    var xhr = new XMLHttpRequest();
 
     xhr.open("GET", file_name, true);
     xhr.onreadystatechange = function()
@@ -95,14 +88,7 @@ function requestFileAsync(file_name, obj, onload)
 
 function requestFileSync(file_name)
 {
-    if (window.XMLHttpRequest)
-    {
-        xhr = new XMLHttpRequest();
-    }
-    else
-    {
-        xhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    var xhr = new XMLHttpRequest();
 
     xhr.open("GET", file_name, false);
 
@@ -111,19 +97,10 @@ function requestFileSync(file_name)
 
 function applyXSLT(xsl_data, xml_data)
 {
-    // code for IE
-    if (window.ActiveXObject)
-    {
-        return xml_data.transformNode(xsl_data);
-    }
-    // code for Mozilla, Firefox, Opera, etc.
-    else if (document.implementation && document.implementation.createDocument)
-    {
-        xsltProcessor = new XSLTProcessor();
-        xsltProcessor.importStylesheet(xsl_data);
-        var result = xsltProcessor.transformToDocument(xml_data);
-        return result;
-    }
+    var xsltProcessor = new XSLTProcessor();
+    xsltProcessor.importStylesheet(xsl_data);
+    var result = xsltProcessor.transformToDocument(xml_data);
+    return result;
 }
 
 // Config functions
@@ -176,7 +153,7 @@ function initDefaultConfig(config)
             imports : ['formatters/fb2.js'],
             klass : "Fb2Formatter",
             converter: "xslt",
-            xsl: "chrome|../formatters/fb2.xsl",
+            xsl: "https://raw.github.com/HaronK/Html2Book/master/Html2Book/formatters/fb2.xsl",
             embedPath: "",
         };
     }
@@ -204,7 +181,7 @@ function initDefaultConfig(config)
             addr: ['http://habrahabr.ru/post/\\d+',
                    'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
             formatters: {
-                fb2: { xsl: 'chrome|../habr/habr2fb2.xsl' },
+                fb2: { xsl: 'https://raw.github.com/HaronK/Html2Book/master/Html2Book/habr/habr2fb2.xsl' },
             },
             embed: function(element){ // embedding element into the page
                 var element2 = element.cloneNode(true);

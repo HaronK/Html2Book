@@ -1,80 +1,32 @@
 
-function appendImports(imports)
+function setMessage(msg)
 {
-    for (var i = 0; i < imports.length; i++)
-    {
-        var script = document.createElement('script');
-        script.type = "text/javascript";
-        script.src = resolvePath(imports[i]);
-        document.head.appendChild(script);
-    }
+    document.querySelector('#message').innerText = msg;
 }
 
-function appendScriptText(text)
+function addMessage(msg)
 {
-    var script = document.createElement('script');
-    script.type = "text/javascript";
-    var script_text = document.createTextNode(text);
-    script.appendChild(script_text);
-    document.head.appendChild(elem);
+    document.querySelector('#message').innerText += msg;
 }
-
-var pageSource = null;
 
 function generateButton(tabId, pageId, formatterId, saverId) //, name, converter_klass, converter_params, saver_klass, mime)
 {
-//    var page      = Html2BookConfig.pages[pageId];                   // TODO: check if not null if needed
-//    var formatter = Html2BookConfig.formatters[formatterId];         // TODO: check if not null if needed
-//    var converter = Html2BookConfig.converters[formatter.converter]; // TODO: check if not null if needed
-//
     var h2b_button = document.createElement("button");
     h2b_button.type = "button";
-//    h2b_button.disabled = true;
-//
-//    var convert_handler = new window[converter.klass](formatter, page.formatters[formatterId],
-//        function()
-//        {
-//            h2b_button.disabled = false;
-//        });
-//
-//    var save_handler = new window[saver.klass]('book.' + formatterId, converter.mime);
+
     var listener = {
         handleEvent : function(evt)
         {
-            chrome.tabs.sendMessage(tabId, {id: "generate", pageId: pageId, formatterId: formatterId, saverId: "", config: Html2BookConfig},
+            h2b_button.disabled = true;
+            chrome.tabs.sendMessage(tabId, {id: "generate", pageId: pageId, formatterId: formatterId, saverId: "fs", config: Html2BookConfig},
                 function(response)
                 {
                     if (response.succeed)
                         window.close();
-//                    else
-
+                    else
+                        setMessage("Cannot generate document: '" + response.errorMessage + "'");
+                    h2b_button.disabled = false;
                 });
-//            window.close();
-//            var book_xml = convert_handler.convert(pageSource);
-//
-//            // do page post transformation work if needed
-//            if (formatter.klass)
-//            {
-//                var formatter_handler = new window[formatter.klass];
-//                if (formatter_handler.postTransform)
-//                {
-//                    formatter_handler.postTransform(book_xml, function()
-//                    {
-//                        var book_data = convert_handler.serialize(book_xml);
-//                        save_handler.save(book_data);
-//                    });
-//                }
-//                else
-//                {
-//                    var book_data = convert_handler.serialize(book_xml);
-//                    save_handler.save(book_data);
-//                }
-//            }
-//            else
-//            {
-//                var book_data = convert_handler.serialize(book_xml);
-//                save_handler.save(book_data);
-//            }
         }
     };
 
@@ -91,26 +43,17 @@ var Html2BookConfig = null;
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
 {
-    var tabId = tabs[0].id;
-//    chrome.tabs.sendMessage(tabId, {id: "data"}, function(response)
+    storage.get('html2book_config', function(config)
     {
-//        pageSource = response.page;
+        Html2BookConfig = checkConfig(config);
 
-        var message = document.querySelector('#message');
-        message.innerText += 'done';
+        var pageId = getPageConfig(Html2BookConfig, tabs[0].url);
+        var tabId = tabs[0].id;
 
-        storage.get('html2book_config', function(config)
+        // generate buttons and button's scripts
+        for (var formatterId in Html2BookConfig.pages[pageId].formatters)
         {
-            Html2BookConfig = checkConfig(config);
-
-            var pageId = getPageConfig(Html2BookConfig, tabs[0].url);
-
-            // generate buttons and button's scripts
-            for (var formatterId in Html2BookConfig.pages[pageId].formatters)
-            {
-                generateButton(tabId, pageId, formatterId, "fs");
-            }
-        });
-    }
-//    );
+            generateButton(tabId, pageId, formatterId, "fs");
+        }
+    });
 });

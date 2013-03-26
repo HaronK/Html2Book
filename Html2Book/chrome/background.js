@@ -46,7 +46,6 @@ function preparePages(tabId, tab)
     {
         // inject content script
         injectPageScripts(tabId, pageId);
-        chrome.tabs.executeScript(tabId, {file: "chrome/content.js"});
 
         chrome.pageAction.show(tabId);
     }
@@ -55,16 +54,19 @@ function preparePages(tabId, tab)
 // Listen for any changes to the URL of any tab.
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 {
-    if (Html2BookConfig)
+    if (changeInfo.status == "complete")
     {
-        preparePages(tabId, tab);
-    }
-    else
-    {
-        storage.get('html2book_config', function(config)
+        if (Html2BookConfig)
         {
-            Html2BookConfig = checkConfig(config);
             preparePages(tabId, tab);
-        });
+        }
+        else
+        {
+            storage.get('html2book_config', function(config)
+            {
+                Html2BookConfig = checkConfig(config);
+                preparePages(tabId, tab);
+            });
+        }
     }
 });

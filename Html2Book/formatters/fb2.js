@@ -23,30 +23,24 @@ function processImage(data)
         var imgHref = data.images[data.index].getAttribute("alt");
         if (imgHref.endsWith(".jpeg") || imgHref.endsWith(".jpg") || imgHref.endsWith(".png"))
         {
-            var imageObj = new Image();
-            imageObj.onload = function()
+            var ext = imgHref.endsWith(".png") ? "png" : "jpg";
+
+            requestFileAsync(imgHref, null, function(xhr, obj)
             {
-                data.canvas.width = this.width;
-                data.canvas.height = this.height;
+                var imageData = window.btoa(unescape(encodeURIComponent(xhr.responseText)));
 
-                data.context.drawImage(imageObj, 0, 0);
-                var dataURL = data.canvas.toDataURL("image/png");
-                // escape data:image prefix
-                var imageData = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-
-                data.images[data.index].setAttribute("xlink:href", "#img" + data.index + ".png");
+                data.images[data.index].setAttribute("xlink:href", "#img" + data.index + "." + ext);
 
                 var binary = data.doc.createElement("binary");
-                binary.setAttribute("id", "img" + data.index + ".png");
-                binary.setAttribute("content-type", "image/png");
-                var binary_text = data.doc.createTextNode(splitData(imageData.trim(), 72));
+                binary.setAttribute("id", "img" + data.index + "." + ext);
+                binary.setAttribute("content-type", "image/" + ext);
+                var binary_text = data.doc.createTextNode(splitData(imageData, 72));
                 binary.appendChild(binary_text);
                 data.doc.documentElement.appendChild(binary);
 
                 data.index++;
                 processImage(data);
-            };
-            imageObj.src = imgHref;
+            });
         }
         else
         {

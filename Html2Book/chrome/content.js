@@ -51,7 +51,14 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse)
         sendResponse({location: document.location, page: document.documentElement.outerHTML});
         break;
     case "generate":
-        generate(message.pageId, message.formatterId, message.saverId, message.config);
+        try
+        {
+            generate(message.pageId, message.formatterId, message.saverId, message.config);
+        }
+        catch (e)
+        {
+            sendResponse({succeed: false, errorMessage: e});
+        }
         break;
     }
 });
