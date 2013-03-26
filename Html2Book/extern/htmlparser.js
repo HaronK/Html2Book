@@ -97,7 +97,7 @@
 					index = html.indexOf("<");
 
 					var text = index < 0 ? html : html.substring( 0, index );
-					text = text.replace("&nbsp;", "&#xA0;", "g");
+					text = text.replace(/&nbsp;/g, "&#xA0;");
 					html = index < 0 ? "" : html.substring( index );
 
 					if ( handler.chars )

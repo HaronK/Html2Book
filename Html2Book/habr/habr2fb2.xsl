@@ -4,10 +4,12 @@
 	<!-- BEGIN -->
 	<!-- ****************** Content parsers ****************** -->
 	<xsl:key name="bits"
-		match="node()[not(self::br|self::ul|self::h4|self::table|self::code|self::pre)]"
+		match="node()[not(self::br|self::ul|self::h4|self::h5|self::h6|self::table|self::code|self::pre)]"
 		use="generate-id((..|preceding-sibling::br[1]
 							|preceding-sibling::ul[1]
 							|preceding-sibling::h4[1]
+							|preceding-sibling::h5[1]
+							|preceding-sibling::h6[1]
 							|preceding-sibling::table[1]
 							|preceding-sibling::code[1]
 							|preceding-sibling::pre[1]
@@ -61,6 +63,18 @@
 		</xsl:if>
 	</xsl:template>
 	
+	<xsl:template match="b" mode="content-p">
+		<strong><xsl:apply-templates mode="content-p"/></strong>
+	</xsl:template>
+	
+	<xsl:template match="i" mode="content-p">
+		<emphasis><xsl:apply-templates mode="content-p"/></emphasis>
+	</xsl:template>
+	
+	<xsl:template match="s|strike|del" mode="content-p">
+		<strikethrough><xsl:apply-templates mode="content-p"/></strikethrough>
+	</xsl:template>
+	
 	<xsl:template match="img" mode="content-p">
 		<xsl:if test="@src">
 			<image alt="{@src}"><xsl:apply-templates mode="content-p"/></image>
@@ -89,6 +103,14 @@
 		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
 	</xsl:template>
 	
+	<xsl:template match="h5" mode="content">
+		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
+	</xsl:template>
+	
+	<xsl:template match="h6" mode="content">
+		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
+	</xsl:template>
+	
 	<xsl:template match="tr" mode="content-p">
 		<p>[ 
 			<xsl:for-each select="th|td">
@@ -105,11 +127,11 @@
 	</xsl:template>
 	
 	<xsl:template match="code" mode="content">
-		<xsl:call-template select="child::text()" name="content-code"/>
+		<xsl:call-template name="content-code"/>
 	</xsl:template>
 	
 	<xsl:template match="pre" mode="content">
-		<xsl:apply-templates select="(br|ul|h4|table|code|pre)" mode="content"/>
+		<xsl:apply-templates select="(br|ul|h4|h5|h6|table|code|pre)" mode="content"/>
 	</xsl:template>
 	
 	<xsl:template match="@*|node()" mode="content">

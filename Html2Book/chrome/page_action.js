@@ -89,7 +89,7 @@ chrome.tabs.query({active: true, currentWindow: true}, function(tabs)
         pageSource = response.page;
 
         var message = document.querySelector('#message');
-        message.innerText += 'done ' + "(" + response.location.href + ")";
+        message.innerText += 'done';
 
         storage.get('html2book_config', function(config)
         {
