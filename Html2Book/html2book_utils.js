@@ -43,14 +43,6 @@ function embedAfter(blockClass, element)
         elem[0].appendChild(element);
 }
 
-function appendImports(imports)
-{
-    for (var import_ in imports)
-    {
-        appendScriptFile(import_);
-    }
-}
-
 function generateButton(name, converter_klass, converter_params, saver_klass, mime)
 {
     // generate button script
@@ -74,7 +66,7 @@ function generateButton(name, converter_klass, converter_params, saver_klass, mi
 function resolvePath(path)
 {
     var localFile = path.split("|");
-    return (localFile.length == 2 && localFile[0] == 'local') ? chrome.extension.getURL(localFile[1]) : path;
+    return (localFile.length == 2 && localFile[0] == 'chrome') ? chrome.extension.getURL(localFile[1]) : path;
 }
 
 // ---------------------------------------------------------------------------
@@ -166,7 +158,7 @@ function initDefaultConfig(config)
     if (!checkObjectFields(config.converters.xslt, ["klass", "mime"]))
     {
         config.converters.xslt = {
-            imports : ['../extern/htmlparser.js', '../converters/xslt.js'],
+            imports : ['extern/htmlparser.js', 'converters/xslt.js'],
             klass : "XsltConverter",
             mime : 'text/xml;charset=' + document.characterSet,
             formatterFields: ["xsl", "embedPath"],
@@ -181,10 +173,10 @@ function initDefaultConfig(config)
     if (!checkObjectFields(config.formatters.fb2, ["converter", "xsl"]))
     {
         config.formatters.fb2 = {
-            imports : ['../formatters/fb2.js'],
+            imports : ['formatters/fb2.js'],
             klass : "Fb2Formatter",
             converter: "xslt",
-            xsl: "local|../formatters/fb2.xsl",
+            xsl: "chrome|../formatters/fb2.xsl",
             embedPath: "",
         };
     }
@@ -196,7 +188,7 @@ function initDefaultConfig(config)
     if (!checkObjectFields(config.savers.fs, ["klass"]))
     {
         config.savers.fs = {
-            imports : [ '../extern/FileSaver.js', '../savers/fs.js'],
+            imports : [ 'extern/FileSaver.js', 'savers/fs.js'],
             klass : "FsSaver",
         };
     }
@@ -212,7 +204,7 @@ function initDefaultConfig(config)
             addr: ['http://habrahabr.ru/post/\\d+',
                    'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
             formatters: {
-                fb2: { xsl: 'local|../habr/habr2fb2.xsl' },
+                fb2: { xsl: 'chrome|../habr/habr2fb2.xsl' },
             },
             embed: function(element){ // embedding element into the page
                 var element2 = element.cloneNode(true);
@@ -319,15 +311,15 @@ function getPageConfig(config, location)
 {
     if (config.pages)
     {
-        for (var page in config.pages)
+        for (var pageId in config.pages)
         {
-            var addr = config.pages[page].addr;
+            var addr = config.pages[pageId].addr;
             for (var i = 0; i < addr.length; i++)
             {
                 var patt = new RegExp(addr[i]);
                 if (patt.test(location))
                 {
-                    return page;
+                    return pageId;
                 }
             }
         }

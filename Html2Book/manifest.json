@@ -3,17 +3,9 @@
 
   "name": "Html2Book",
   "description": "Convertion of HTML pages to book format (fb2, epub, etc.)",
-  "version": "0.2.0",
+  "version": "0.2.1",
 
   "options_page": "chrome/options.html",
-  
-  "content_scripts": [
-                      {
-                        "matches": ["http://*/*", "https://*/*"],
-                        "js": ["chrome/content.js"],
-                        "run_at": "document_end"
-                      }
-                    ],
   
   "background": {
       "scripts": ["html2book_utils.js", "chrome/background.js"]
