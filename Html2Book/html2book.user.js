@@ -28,7 +28,7 @@ function initConfig()
                 "        converters: {" +
                 "            fb2: {" +
                 "                type: 'xslt'," +
-                "                params: '\"https://github.com/HaronK/Html2Book/raw/master/Html2Book/habr/habr2fb2.xsl\"'," +
+                "                params: '\"https://github.com/HaronK/Html2Book/raw/master/Html2Book/pages/habr2fb2.xsl\"'," +
                 "            }," +
                 "        }," +
                 "        embed: function(element){" + // embedding element into the page
