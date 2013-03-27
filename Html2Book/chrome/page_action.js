@@ -1,7 +1,7 @@
 
 function setMessage(msg)
 {
-    document.querySelector('#message').innerText = msg;
+    document.querySelector('#message').innerText += "<br/>" + msg;
 }
 
 function addMessage(msg)

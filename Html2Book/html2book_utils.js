@@ -181,7 +181,7 @@ function initDefaultConfig(config)
             addr: ['http://habrahabr.ru/post/\\d+',
                    'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
             formatters: {
-                fb2: { xsl: 'https://raw.github.com/HaronK/Html2Book/master/Html2Book/habr/habr2fb2.xsl' },
+                fb2: { xsl: 'https://raw.github.com/HaronK/Html2Book/master/Html2Book/pages/habr2fb2.xsl' },
             },
             embed: function(element){ // embedding element into the page
                 var element2 = element.cloneNode(true);
