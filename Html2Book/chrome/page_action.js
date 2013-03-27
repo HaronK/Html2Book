@@ -22,10 +22,10 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
             chrome.tabs.sendMessage(tabId, {id: "generate", pageId: pageId, formatterId: formatterId, saverId: "fs", config: Html2BookConfig},
                 function(response)
                 {
-                    if (response.succeed)
-                        window.close();
-                    else
+                    if (!response.succeed)
                         setMessage("Cannot generate document: '" + response.errorMessage + "'");
+                    else
+                        window.close();
                     h2b_button.disabled = false;
                 });
         }
