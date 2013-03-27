@@ -84,7 +84,7 @@
 	<xsl:template match="text()" mode="content-p">
 		<xsl:variable name="content-text" select="."/>
 		<xsl:if test="normalize-space($content-text) != ''">
-			<xsl:text><xsl:value-of select="$content-text"/></xsl:text>
+			<xsl:value-of select="$content-text"/>
 		</xsl:if>
 	</xsl:template>
 
