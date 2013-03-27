@@ -16,6 +16,19 @@ function splitData(data, rowLen)
     return result;
 }
 
+var onUtilityRespond = null;
+
+var utilityPort = chrome.runtime.connect({name: "utility"});
+utilityPort.onMessage.addListener(function(message)
+{
+    switch (message.id)
+    {
+    case "image2base64":
+        onUtilityRespond(message.imageData);
+        break;
+    }
+});
+
 function processImage(data)
 {
     if (data.index < data.images.length)
@@ -23,24 +36,21 @@ function processImage(data)
         var imgHref = data.images[data.index].getAttribute("alt");
         if (imgHref.endsWith(".jpeg") || imgHref.endsWith(".jpg") || imgHref.endsWith(".png"))
         {
-            var ext = imgHref.endsWith(".png") ? "png" : "jpg";
-
-            requestFileAsync(imgHref, null, function(xhr, obj)
+            onUtilityRespond = function(imageData)
             {
-                var imageData = window.btoa(unescape(encodeURIComponent(xhr.responseText)));
-
-                data.images[data.index].setAttribute("xlink:href", "#img" + data.index + "." + ext);
+                data.images[data.index].setAttribute("xlink:href", "#img" + data.index + ".png");
 
                 var binary = data.doc.createElement("binary");
-                binary.setAttribute("id", "img" + data.index + "." + ext);
-                binary.setAttribute("content-type", "image/" + ext);
+                binary.setAttribute("id", "img" + data.index + ".png");
+                binary.setAttribute("content-type", "image/png");
                 var binary_text = data.doc.createTextNode(splitData(imageData, 72));
                 binary.appendChild(binary_text);
                 data.doc.documentElement.appendChild(binary);
 
                 data.index++;
                 processImage(data);
-            });
+            };
+            utilityPort.postMessage({id: "image2base64", imageHref: imgHref});
         }
         else
         {
@@ -56,15 +66,9 @@ Fb2Formatter.prototype = {
     postTransform: function(xsl_doc, onfinish)
     {
         var images = xsl_doc.getElementsByTagName("image");
-        var canvas = document.createElement("canvas");
-        canvas.width = 2048;
-        canvas.height = 2048;
-        var context = canvas.getContext('2d');
         processImage({
             index:    0,
             images:   images,
-            canvas:   canvas,
-            context:  context,
             doc:      xsl_doc,
             onfinish: onfinish
         });

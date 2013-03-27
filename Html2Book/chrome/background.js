@@ -70,3 +70,44 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
         }
     }
 });
+
+var canvas = document.createElement("canvas");
+var context = canvas.getContext('2d');
+
+function image2base64(href, onfinish)
+{
+    var imageObj = new Image();
+    imageObj.onload = function()
+    {
+        canvas.width = this.width;
+        canvas.height = this.height;
+
+        context.drawImage(imageObj, 0, 0);
+        var dataURL = canvas.toDataURL("image/png");
+        // escape data:image prefix
+        var imageData = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+
+        onfinish(imageData);
+    };
+    imageObj.src = href;
+}
+
+chrome.runtime.onConnect.addListener(function(port)
+{
+    console.assert(port.name == "utility");
+//    if (port.name != "utility")
+//        return;
+
+    port.onMessage.addListener(function(message)
+    {
+        switch (message.id)
+        {
+        case "image2base64":
+            image2base64(message.imageHref, function(data)
+            {
+                port.postMessage({id: "image2base64", imageData: data});
+            });
+            break;
+        }
+    });
+ });
