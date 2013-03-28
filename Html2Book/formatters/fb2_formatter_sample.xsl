@@ -18,8 +18,8 @@
 	<xsl:variable name="title-info_date"/>
 	<xsl:variable name="title-info_coverpage"/> <!-- on|off(empty) -->
 	<xsl:variable name="title-info_coverpage_image"/> <!-- Mandatory if title-info_coverpage is on -->
-	<xsl:variable name="title-info_lang"/>
-	<xsl:variable name="title-info_src-lang"/> <!-- Mandatory -->
+	<xsl:variable name="title-info_lang"/> <!-- Mandatory -->
+	<xsl:variable name="title-info_src-lang"/>
 	
 	<xsl:variable name="document-info_author_first-name"/> <!-- Mandatory if title-info_author_nickname doesn't exist -->
 	<xsl:variable name="document-info_author_middle-name"/>

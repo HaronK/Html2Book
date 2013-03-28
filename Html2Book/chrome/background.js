@@ -54,20 +54,17 @@ function preparePages(tabId, tab)
 // Listen for any changes to the URL of any tab.
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 {
-    if (changeInfo.status == "complete")
+    if (Html2BookConfig)
     {
-        if (Html2BookConfig)
+        preparePages(tabId, tab);
+    }
+    else
+    {
+        storage.get('html2book_config', function(config)
         {
+            Html2BookConfig = checkConfig(config);
             preparePages(tabId, tab);
-        }
-        else
-        {
-            storage.get('html2book_config', function(config)
-            {
-                Html2BookConfig = checkConfig(config);
-                preparePages(tabId, tab);
-            });
-        }
+        });
     }
 });
 

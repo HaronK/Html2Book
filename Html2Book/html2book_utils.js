@@ -174,19 +174,26 @@ function initDefaultConfig(config)
         config.pages = {};
 
     // habr_article is a default page
-    if (!checkObjectFields(config.pages.habr_article, ["addr", "formatters", "embed"]))
+    if (!checkObjectFields(config.pages.habr_article, ["addr", "formatters"]))
     {
         // test data
         config.pages.habr_article = {
-            addr: ['http://habrahabr.ru/post/\\d+',
-                   'http://habrahabr.ru/company/\\w+/blog/\\d+'], // pages url template
+            addr: ['http://habrahabr\\.ru/post/\\d+',
+                   'http://habrahabr\\.ru/company/\\w+/blog/\\d+'], // pages url template
             formatters: {
                 fb2: { xsl: 'chrome|../pages/habr2fb2.xsl' },
             },
-            embed: function(element){ // embedding element into the page
-                var element2 = element.cloneNode(true);
-                embedAfter('title', element);
-                embedAfter('content', element2);
+        };
+    }
+
+    // samlib_page is a default page
+    if (!checkObjectFields(config.pages.samlib_page, ["addr", "formatters"]))
+    {
+        // test data
+        config.pages.samlib_page = {
+            addr: ['http://samlib\\.ru/\\w/\\w+/.+?\\.s?html'], // pages url template
+            formatters: {
+                fb2: { xsl: 'chrome|../pages/samlib2fb2.xsl' },
             },
         };
     }
@@ -253,7 +260,7 @@ function checkCofigPages(config)
     for (var pageId in config.pages)
     {
         var page = config.pages[pageId];
-        if (!validateMandatoryFields(["addr", "formatters", "embed"], page, "Page '" + pageId + "'"))
+        if (!validateMandatoryFields(["addr", "formatters"], page, "Page '" + pageId + "'"))
             return null;
 
         for (var formatterId in page.formatters)

@@ -210,6 +210,7 @@
 				results += text;
 			},
 			comment: function( text ) {
+			    text = text.replace(/--+/gm, ' * ');
 				results += "<!--" + text + "-->";
 			}
 		});

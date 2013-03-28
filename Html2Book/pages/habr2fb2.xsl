@@ -146,7 +146,6 @@
 	
 	<!-- ****************** FB2 tag values ****************** -->
 	<xsl:template name="title-info_genres_data"> <!-- Mandatory -->
-		<!-- Mandatory -->
 		<genre>comp_www</genre>
 		<genre>comp_programming</genre>
 		<genre>comp_hard</genre>
@@ -179,7 +178,7 @@
 	<xsl:variable name="title-info_date"/>
 	<xsl:variable name="title-info_coverpage">off</xsl:variable>
 	<xsl:variable name="title-info_coverpage_image"/>
-	<xsl:variable name="title-info_lang" select="html/@xml:lang"/>
+	<xsl:variable name="title-info_lang" select="html/@xml:lang"/> <!-- Mandatory -->
 	<xsl:variable name="title-info_src-lang"/>
 	
 	<xsl:variable name="document-info_author_first-name"/>
@@ -203,8 +202,7 @@
 	<xsl:variable name="body_title" select="//span[@class='post_title']"/>
 	<xsl:variable name="body_epigraph"/>
 	
-	<xsl:template name="body_sections_data">
-		<!-- Mandatory -->
+	<xsl:template name="body_sections_data"> <!-- Mandatory -->
 		<section>
 			<xsl:apply-templates select="//div[@class='content html_format']" mode="content"/>
 		</section>
