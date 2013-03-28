@@ -16,19 +16,28 @@ function str2XML(text)
     return doc;
 }
 
+function requestFileAsync(filePath, obj, onload)
+{
+    onUtilityRespond = function(fileData)
+    {
+        onload(fileData, obj);
+    };
+    utilityPort.postMessage({id: "loadFile", filePath: filePath});
+}
+
 // XSLT converter
 
 function XsltConverter(formatter, pageFormatter, onload)
 {
     this.formatter = formatter;
 
-    requestFileAsync(resolvePath(formatter.xsl), this, function(xhr, obj)
+    requestFileAsync(resolvePath(formatter.xsl), this, function(fileData, obj)
     {
-        obj.formatterXsl = xhr.responseText;
+        obj.formatterXsl = fileData;
 
-        requestFileAsync(resolvePath(pageFormatter.xsl), obj, function(xhr, obj)
+        requestFileAsync(resolvePath(pageFormatter.xsl), obj, function(fileData, obj)
         {
-            obj.pageXsl = xhr.responseText;
+            obj.pageXsl = fileData;
 
             obj._embed();
             onload();

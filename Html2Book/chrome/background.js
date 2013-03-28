@@ -94,9 +94,8 @@ function image2base64(href, onfinish)
 
 chrome.runtime.onConnect.addListener(function(port)
 {
-    console.assert(port.name == "utility");
-//    if (port.name != "utility")
-//        return;
+    if (port.name != "h2b_utility")
+        return;
 
     port.onMessage.addListener(function(message)
     {
@@ -105,9 +104,15 @@ chrome.runtime.onConnect.addListener(function(port)
         case "image2base64":
             image2base64(message.imageHref, function(data)
             {
-                port.postMessage({id: "image2base64", imageData: data});
+                port.postMessage({id: "image2base64", data: data});
+            });
+            break;
+        case "loadFile":
+            requestFileAsync(message.filePath, null, function(xhr, obj)
+            {
+                port.postMessage({id: "loadFile", data: xhr.responseText});
             });
             break;
         }
     });
- });
+});

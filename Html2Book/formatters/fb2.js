@@ -16,19 +16,6 @@ function splitData(data, rowLen)
     return result;
 }
 
-var onUtilityRespond = null;
-
-var utilityPort = chrome.runtime.connect({name: "utility"});
-utilityPort.onMessage.addListener(function(message)
-{
-    switch (message.id)
-    {
-    case "image2base64":
-        onUtilityRespond(message.imageData);
-        break;
-    }
-});
-
 function processImage(data)
 {
     if (data.index < data.images.length)
