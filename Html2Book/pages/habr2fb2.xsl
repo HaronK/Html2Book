@@ -112,22 +112,24 @@
 	</xsl:template>
 	
 	<xsl:template match="tr" mode="content-p">
-		<p>[ 
+		<p><strong>[<strong> 
 			<xsl:for-each select="th|td">
-				<xsl:if test="position() > 1"> | </xsl:if>
+				<xsl:if test="position() > 1"> <strong>|<strong> </xsl:if>
 				<xsl:apply-templates mode="content-p"/>
 			</xsl:for-each>
-		 ]</p>
+		 <strong>]<strong></p>
 	</xsl:template>
 	
 	<xsl:template match="table" mode="content">
-		<p><strong>TABLE:</strong></p>
+		<p><strong>[+++++++TABLE+++++++]</strong></p>
 		<xsl:apply-templates mode="content-p"/>
-		<p><strong>:TABLE</strong></p>
+		<p><strong>[-------TABLE-------]</strong></p>
 	</xsl:template>
 	
 	<xsl:template match="code" mode="content">
+		<empty-line/>
 		<xsl:call-template name="content-code"/>
+		<empty-line/>
 	</xsl:template>
 	
 	<xsl:template match="pre" mode="content">
