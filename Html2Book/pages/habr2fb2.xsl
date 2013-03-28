@@ -127,9 +127,7 @@
 	</xsl:template>
 	
 	<xsl:template match="code" mode="content">
-		<empty-line/>
 		<xsl:call-template name="content-code"/>
-		<empty-line/>
 	</xsl:template>
 	
 	<xsl:template match="pre" mode="content">
