@@ -17,7 +17,7 @@ var onPageCommandRespond = null;
 var pageCommandPort = null;
 chrome.windows.getCurrent(function(w)
 {
-    chrome.tabs.getSelected(w.id,function(t)
+    chrome.tabs.getSelected(w.id, function(t)
     {
         storage.get('html2book_config', function(config)
         {
@@ -50,10 +50,17 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
     var h2b_button = document.createElement("button");
     h2b_button.type = "button";
 
+    if (Html2BookConfig.pages[pageId].formatters[formatterId].commentsSupported)
+    {
+        document.querySelector('#comments').disabled = false;
+    }
+
     var listener = {
         handleEvent : function(evt)
         {
             h2b_button.disabled = true;
+            var addComments = document.querySelector('#comments').checked;
+
             setMessage("Converting to '" + formatterId + "'... ");
             onPageCommandRespond = function(response)
             {
@@ -77,7 +84,9 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
                 }
             };
             pageCommandPort.postMessage({id: "generate",
-                                         data: {pageId: pageId, formatterId: formatterId, saverId: "fs", config: Html2BookConfig}});
+                                         data: {pageId: pageId, formatterId: formatterId,
+                                                saverId: "fs", config: Html2BookConfig,
+                                                formatterParams: {addComments: addComments}}});
         }
     };
 

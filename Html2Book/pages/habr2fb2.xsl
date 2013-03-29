@@ -217,14 +217,20 @@
 	
 	<xsl:variable name="custom-info"/>
 	
+	<xsl:variable name="body.image"/>
 	<xsl:variable name="body.title" select="//span[@class='post_title']"/>
 	<xsl:variable name="body.epigraph"/>
-	
 	<xsl:template name="body.sections.data"> <!-- Mandatory -->
 		<section>
 			<xsl:apply-templates select="//div[@class='content html_format']" mode="content"/>
 		</section>
 	</xsl:template>
+
+	<xsl:param name="body-comments"/> <!-- on|off(empty) -->
+	<xsl:variable name="body-comments.image"/>
+	<xsl:variable name="body-comments.title"/>
+	<xsl:variable name="body-comments.epigraph"/>
+	<xsl:template name="body-comments.sections.data"/> <!-- Mandatory if body-comments is on -->
 	<!-- END -->
 
 </xsl:stylesheet>

@@ -39,10 +39,16 @@
 	
 	<xsl:variable name="custom-info"/>
 	
+	<xsl:variable name="body.image"/>
 	<xsl:variable name="body.title"/>
 	<xsl:variable name="body.epigraph"/>
-	
 	<xsl:template name="body.sections.data"/> <!-- Mandatory -->
+
+	<xsl:variable name="body-comments"/> <!-- on|off(empty) -->
+	<xsl:variable name="body-comments.image"/>
+	<xsl:variable name="body-comments.title"/>
+	<xsl:variable name="body-comments.epigraph"/>
+	<xsl:template name="body-comments.sections.data"/> <!-- Mandatory if body-comments is on -->
 	<!-- END -->
 
 </xsl:stylesheet>

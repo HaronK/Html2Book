@@ -349,7 +349,9 @@
 	</xsl:template>
 	
 	<xsl:template name="body.image">
-		<!-- <image xlink:href=""/> -->
+		<xsl:if test="string($body.image) != ''">
+			<image alt="$body.image"/>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template name="body.title">
@@ -386,9 +388,40 @@
 		</body> -->
 	</xsl:template>
 	
+	<xsl:template name="body-comments.image">
+		<xsl:if test="string($body-comments.image) != ''">
+			<image alt="$body-comments.image"/>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="body-comments.title">
+		<xsl:if test="string($body-comments.title) != ''">
+			<!-- TODO: set xml:lang attribute properly -->
+			<title xml:lang="ru"><xsl:value-of select="$body-comments.title"/></title>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="body-comments.epigraphs">
+		<xsl:if test="string($body-comments.epigraph) != ''">
+			<!-- TODO: set id attribute properly -->
+			<epigraph id="id1"><xsl:value-of select="$body-comments.epigraph"/></epigraph>
+		</xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="body-comments.sections">
+		<!-- Mandatory -->
+		<xsl:call-template name="body-comments.sections.data"/>
+	</xsl:template>
+	
 	<xsl:template name="body-comments">
-		<!-- <body type="comments">
-		</body> -->
+		<xsl:if test="string($body-comments) = 'on'">
+			<body type="comments">
+				<xsl:call-template name="body-comments.image"/>
+				<xsl:call-template name="body-comments.title"/>
+				<xsl:call-template name="body-comments.epigraphs"/>
+				<xsl:call-template name="body-comments.sections"/>
+			</body>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template name="binaries">

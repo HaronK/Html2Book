@@ -50,6 +50,16 @@ function processImage(data)
 }
 
 Fb2Formatter.prototype = {
+    getTransformParams: function(data)
+    {
+        var result = {};
+        if (data.addComments)
+        {
+            result['body-comments'] = "on";
+        }
+        return result;
+    },
+
     postTransform: function(xml_doc, onfinish)
     {
         var images = xml_doc.getElementsByTagName("image");

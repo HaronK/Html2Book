@@ -29,6 +29,7 @@ function requestFileAsync(filePath, obj, onload)
 
 function XsltConverter(formatter, pageFormatter, onload)
 {
+    this.formatter = formatter;
     this.fileNameRegEx = pageFormatter.fileNameRegEx;
 
     requestFileAsync(resolvePath(formatter.xsl), this, function(fileData, obj)
@@ -52,18 +53,42 @@ XsltConverter.prototype = {
         this.xsl_data = this.formatterXsl.replace(/<!--\s*PAGE_INCLUDE\s*-->/, pageData[1]);
     },
 
-    convert: function(page_data)
+    convert: function(page_data, formatter_params, onfinish)
     {
         var xml_data = HTMLtoXML(page_data);
         xml_data = xml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
 
         var xsl_doc = str2XML(this.xsl_data);
         var xml_doc = str2XML(xml_data);
-        var result = applyXSLT(xsl_doc, xml_doc);
+
+        var formatter_handler = null;
+        var transform_params = {};
+        if (this.formatter.klass)
+        {
+            formatter_handler = new window[this.formatter.klass];
+            if (formatter_handler.getTransformParams)
+                transform_params = formatter_handler.getTransformParams(formatter_params);
+        }
+
+        var result = applyXSLT(xsl_doc, xml_doc, transform_params);
 
         var title = xml_doc.evaluate(this.fileNameRegEx, xml_doc, null, XPathResult.ANY_TYPE, null)
                         .iterateNext().textContent;
-        return {xml: result, title: title};
+
+        // do page post transformation work if needed
+        if (formatter_handler && formatter_handler.postTransform)
+        {
+//            sendResponse({status: "message", message: "Applying post transform step..."});
+            formatter_handler.postTransform(result, function()
+            {
+//                sendResponse({status: "message", message: " done", type: "add"});
+                onfinish({xml: result, title: title});
+            });
+        }
+        else
+        {
+            onfinish({xml: result, title: title});
+        }
     },
 
     serialize: function(xmlData)

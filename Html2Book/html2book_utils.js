@@ -95,10 +95,20 @@ function requestFileSync(file_name)
     return xhr;
 }
 
-function applyXSLT(xsl_data, xml_data)
+function applyXSLT(xsl_data, xml_data, transform_params)
 {
     var xsltProcessor = new XSLTProcessor();
     xsltProcessor.importStylesheet(xsl_data);
+
+    // set parameters
+    if (transform_params)
+    {
+        for (var param in transform_params)
+        {
+            xsltProcessor.setParameter(null, param, transform_params[param]);
+        }
+    }
+
     var result = xsltProcessor.transformToDocument(xml_data);
     return result;
 }
@@ -183,6 +193,7 @@ function initDefaultConfig(config)
                 fb2: {
                     xsl: 'chrome|../pages/habr2fb2.xsl',
                     fileNameRegEx: "//span[@class='post_title']",
+                    commentsSupported: true,
                 },
             },
         };
