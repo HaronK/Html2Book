@@ -21,311 +21,311 @@
 		<!-- <stylesheet type="text/css"/> -->
 	</xsl:template>
 	
-	<xsl:template name="title-info_genres">
+	<xsl:template name="title-info.genres">
 		<!-- Mandatory -->
-		<xsl:call-template name="title-info_genres_data"/>
+		<xsl:call-template name="title-info.genres.data"/>
 	</xsl:template>
 
-	<xsl:template name="title-info_author_first-name">
-		<xsl:if test="string($title-info_author_first-name) != ''">
-			<first-name><xsl:value-of select="$title-info_author_first-name"/></first-name>
+	<xsl:template name="title-info.author.first-name">
+		<xsl:if test="string($title-info.author.first-name) != ''">
+			<first-name><xsl:value-of select="$title-info.author.first-name"/></first-name>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="title-info_author_middle-name">
-		<xsl:if test="string($title-info_author_middle-name) != ''">
-			<middle-name><xsl:value-of select="$title-info_author_middle-name"/></middle-name>
+	<xsl:template name="title-info.author.middle-name">
+		<xsl:if test="string($title-info.author.middle-name) != ''">
+			<middle-name><xsl:value-of select="$title-info.author.middle-name"/></middle-name>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="title-info_author_last-name">
-		<xsl:if test="string($title-info_author_last-name) != ''">
-			<last-name><xsl:value-of select="$title-info_author_last-name"/></last-name>
+	<xsl:template name="title-info.author.last-name">
+		<xsl:if test="string($title-info.author.last-name) != ''">
+			<last-name><xsl:value-of select="$title-info.author.last-name"/></last-name>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="title-info_author_nickname">
-		<xsl:if test="string($title-info_author_nickname) != ''">
-			<nickname><xsl:value-of select="$title-info_author_nickname"/></nickname>
+	<xsl:template name="title-info.author.nickname">
+		<xsl:if test="string($title-info.author.nickname) != ''">
+			<nickname><xsl:value-of select="$title-info.author.nickname"/></nickname>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="title-info_author_home-pages">
-		<xsl:if test="string($title-info_author_home-page) != ''">
-			<home-page><xsl:value-of select="$title-info_author_home-page"/></home-page>
+	<xsl:template name="title-info.author.home-pages">
+		<xsl:if test="string($title-info.author.home-page) != ''">
+			<home-page><xsl:value-of select="$title-info.author.home-page"/></home-page>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="title-info_author_emails">
-		<xsl:if test="string($title-info_author_email) != ''">
-			<email><xsl:value-of select="$title-info_author_email"/></email>
+	<xsl:template name="title-info.author.emails">
+		<xsl:if test="string($title-info.author.email) != ''">
+			<email><xsl:value-of select="$title-info.author.email"/></email>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="title-info_author_id">
-		<xsl:if test="string($title-info_author_id) != ''">
-			<id><xsl:value-of select="$title-info_author_id"/></id>
+	<xsl:template name="title-info.author.id">
+		<xsl:if test="string($title-info.author.id) != ''">
+			<id><xsl:value-of select="$title-info.author.id"/></id>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="title-info_authors">
+	<xsl:template name="title-info.authors">
 		<!-- Mandatory -->
 		<!-- TODO: check mandatory tags -->
 		<author>
-			<xsl:call-template name="title-info_author_first-name"/>
-			<xsl:call-template name="title-info_author_middle-name"/>
-			<xsl:call-template name="title-info_author_last-name"/>
-			<xsl:call-template name="title-info_author_nickname"/>
-			<xsl:call-template name="title-info_author_home-pages"/>
-			<xsl:call-template name="title-info_author_emails"/>
-			<xsl:call-template name="title-info_author_id"/>
+			<xsl:call-template name="title-info.author.first-name"/>
+			<xsl:call-template name="title-info.author.middle-name"/>
+			<xsl:call-template name="title-info.author.last-name"/>
+			<xsl:call-template name="title-info.author.nickname"/>
+			<xsl:call-template name="title-info.author.home-pages"/>
+			<xsl:call-template name="title-info.author.emails"/>
+			<xsl:call-template name="title-info.author.id"/>
 		</author>
 	</xsl:template>
 	
-	<xsl:template name="title-info_book-title">
+	<xsl:template name="title-info.book-title">
 		<!-- Mandatory -->
 		<xsl:call-template name="mandatory-tag">
-			<xsl:with-param name="name">title-info_book-title</xsl:with-param>
-			<xsl:with-param name="value" select="$title-info_book-title"/>
+			<xsl:with-param name="name">title-info.book-title</xsl:with-param>
+			<xsl:with-param name="value" select="$title-info.book-title"/>
 		</xsl:call-template>
 
-		<book-title><xsl:value-of select="$title-info_book-title"/></book-title>
+		<book-title><xsl:value-of select="$title-info.book-title"/></book-title>
 	</xsl:template>
 	
-	<xsl:template name="title-info_annotation">
-		<xsl:if test="string($title-info_annotation) != ''">
-			<annotation><p><xsl:value-of select="$title-info_annotation"/></p></annotation>
+	<xsl:template name="title-info.annotation">
+		<xsl:if test="string($title-info.annotation) != ''">
+			<annotation><p><xsl:value-of select="$title-info.annotation"/></p></annotation>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="title-info_keywords">
-		<xsl:if test="string($title-info_keywords) != ''">
-			<keywords><xsl:value-of select="$title-info_keywords"/></keywords>
+	<xsl:template name="title-info.keywords">
+		<xsl:if test="string($title-info.keywords) != ''">
+			<keywords><xsl:value-of select="$title-info.keywords"/></keywords>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="title-info_date">
-		<xsl:if test="string($title-info_date) != ''">
+	<xsl:template name="title-info.date">
+		<xsl:if test="string($title-info.date) != ''">
 			<!-- TODO: set value attribute properly -->
-			<date value="2002-10-19"><xsl:value-of select="$title-info_date"/></date>
+			<date value="2002-10-19"><xsl:value-of select="$title-info.date"/></date>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="title-info_coverpage_images">
+	<xsl:template name="title-info.coverpage.images">
 		<!-- Mandatory -->
 		<xsl:call-template name="mandatory-tag">
-			<xsl:with-param name="name">title-info_coverpage_image</xsl:with-param>
-			<xsl:with-param name="value" select="$title-info_coverpage_image"/>
+			<xsl:with-param name="name">title-info.coverpage.image</xsl:with-param>
+			<xsl:with-param name="value" select="$title-info.coverpage.image"/>
 		</xsl:call-template>
 
-		<image><xsl:value-of select="$title-info_coverpage_image"/></image>
+		<image><xsl:value-of select="$title-info.coverpage.image"/></image>
 	</xsl:template>
 	
-	<xsl:template name="title-info_coverpage">
-		<xsl:if test="string($title-info_coverpage) = 'on'">
-			<coverpage><xsl:call-template name="title-info_coverpage_images"/></coverpage>
+	<xsl:template name="title-info.coverpage">
+		<xsl:if test="string($title-info.coverpage) = 'on'">
+			<coverpage><xsl:call-template name="title-info.coverpage.images"/></coverpage>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="title-info_lang">
+	<xsl:template name="title-info.lang">
 		<!-- Mandatory -->
 		<xsl:call-template name="mandatory-tag">
-			<xsl:with-param name="name">title-info_lang</xsl:with-param>
-			<xsl:with-param name="value" select="$title-info_lang"/>
+			<xsl:with-param name="name">title-info.lang</xsl:with-param>
+			<xsl:with-param name="value" select="$title-info.lang"/>
 		</xsl:call-template>
 
-		<lang><xsl:value-of select="$title-info_lang"/></lang>
+		<lang><xsl:value-of select="$title-info.lang"/></lang>
 	</xsl:template>
 	
-	<xsl:template name="title-info_src-lang">
-		<xsl:if test="string($title-info_src-lang) != ''">
-			<src-lang><xsl:value-of select="$title-info_src-lang"/></src-lang>
+	<xsl:template name="title-info.src-lang">
+		<xsl:if test="string($title-info.src-lang) != ''">
+			<src-lang><xsl:value-of select="$title-info.src-lang"/></src-lang>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="title-info_translators">
+	<xsl:template name="title-info.translators">
 		<!-- <translator>
-			<xsl:call-template name="title-info_translator_first-name"/>
-			<xsl:call-template name="title-info_translator_middle-name"/>
-			<xsl:call-template name="title-info_translator_last-name"/>
-			<xsl:call-template name="title-info_translator_nickname"/>
-			<xsl:call-template name="title-info_translator_home-page"/>
-			<xsl:call-template name="title-info_translator_email"/>
-			<xsl:call-template name="title-info_translator_id"/>
+			<xsl:call-template name="title-info.translator.first-name"/>
+			<xsl:call-template name="title-info.translator.middle-name"/>
+			<xsl:call-template name="title-info.translator.last-name"/>
+			<xsl:call-template name="title-info.translator.nickname"/>
+			<xsl:call-template name="title-info.translator.home-page"/>
+			<xsl:call-template name="title-info.translator.email"/>
+			<xsl:call-template name="title-info.translator.id"/>
 		</translator> -->
 	</xsl:template>
 	
-	<xsl:template name="title-info_sequences">
-		<!-- <sequence name="sequence_name" number="1" xml:lang="ru"/> -->
+	<xsl:template name="title-info.sequences">
+		<!-- <sequence name="sequence.name" number="1" xml:lang="ru"/> -->
 	</xsl:template>
 	
 	<xsl:template name="title-info">
 		<!-- Mandatory -->
 		<title-info>
-			<xsl:call-template name="title-info_genres"/>
-			<xsl:call-template name="title-info_authors"/>
-			<xsl:call-template name="title-info_book-title"/>
-			<xsl:call-template name="title-info_annotation"/>
-			<xsl:call-template name="title-info_keywords"/>
-			<xsl:call-template name="title-info_date"/>
-			<xsl:call-template name="title-info_coverpage"/>
-			<xsl:call-template name="title-info_lang"/>
-			<xsl:call-template name="title-info_src-lang"/>
-			<xsl:call-template name="title-info_translators"/>
-			<xsl:call-template name="title-info_sequences"/>
+			<xsl:call-template name="title-info.genres"/>
+			<xsl:call-template name="title-info.authors"/>
+			<xsl:call-template name="title-info.book-title"/>
+			<xsl:call-template name="title-info.annotation"/>
+			<xsl:call-template name="title-info.keywords"/>
+			<xsl:call-template name="title-info.date"/>
+			<xsl:call-template name="title-info.coverpage"/>
+			<xsl:call-template name="title-info.lang"/>
+			<xsl:call-template name="title-info.src-lang"/>
+			<xsl:call-template name="title-info.translators"/>
+			<xsl:call-template name="title-info.sequences"/>
 		</title-info>
 	</xsl:template>
 	
 	<xsl:template name="src-title-info">
 		<!-- <src-title-info>
-			<xsl:call-template name="src-title-info_genres"/>
-			<xsl:call-template name="src-title-info_author"/>
-			<xsl:call-template name="src-title-info_book-title"/>
-			<xsl:call-template name="src-title-info_annotation"/>
-			<xsl:call-template name="src-title-info_keywords"/>
-			<xsl:call-template name="src-title-info_date"/>
-			<xsl:call-template name="src-title-info_coverpage"/>
-			<xsl:call-template name="src-title-info_lang"/>
-			<xsl:call-template name="src-title-info_src-lang"/>
-			<xsl:call-template name="src-title-info_translator"/>
-			<xsl:call-template name="src-title-info_sequence"/>
+			<xsl:call-template name="src-title-info.genres"/>
+			<xsl:call-template name="src-title-info.author"/>
+			<xsl:call-template name="src-title-info.book-title"/>
+			<xsl:call-template name="src-title-info.annotation"/>
+			<xsl:call-template name="src-title-info.keywords"/>
+			<xsl:call-template name="src-title-info.date"/>
+			<xsl:call-template name="src-title-info.coverpage"/>
+			<xsl:call-template name="src-title-info.lang"/>
+			<xsl:call-template name="src-title-info.src-lang"/>
+			<xsl:call-template name="src-title-info.translator"/>
+			<xsl:call-template name="src-title-info.sequence"/>
 		</src-title-info> -->
 	</xsl:template>
 	
 	
-	<xsl:template name="document-info_author_first-name">
-		<xsl:if test="string($document-info_author_first-name) != ''">
-			<first-name><xsl:value-of select="$document-info_author_first-name"/></first-name>
+	<xsl:template name="document-info.author.first-name">
+		<xsl:if test="string($document-info.author.first-name) != ''">
+			<first-name><xsl:value-of select="$document-info.author.first-name"/></first-name>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="document-info_author_middle-name">
-		<xsl:if test="string($document-info_author_middle-name) != ''">
-			<middle-name><xsl:value-of select="$document-info_author_middle-name"/></middle-name>
+	<xsl:template name="document-info.author.middle-name">
+		<xsl:if test="string($document-info.author.middle-name) != ''">
+			<middle-name><xsl:value-of select="$document-info.author.middle-name"/></middle-name>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="document-info_author_last-name">
-		<xsl:if test="string($document-info_author_last-name) != ''">
-			<last-name><xsl:value-of select="$document-info_author_last-name"/></last-name>
+	<xsl:template name="document-info.author.last-name">
+		<xsl:if test="string($document-info.author.last-name) != ''">
+			<last-name><xsl:value-of select="$document-info.author.last-name"/></last-name>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="document-info_author_nickname">
-		<xsl:if test="string($document-info_author_nickname) != ''">
-			<nickname><xsl:value-of select="$document-info_author_nickname"/></nickname>
+	<xsl:template name="document-info.author.nickname">
+		<xsl:if test="string($document-info.author.nickname) != ''">
+			<nickname><xsl:value-of select="$document-info.author.nickname"/></nickname>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="document-info_author_home-pages">
-		<xsl:if test="string($document-info_author_home-page) != ''">
-			<home-page><xsl:value-of select="$document-info_author_home-page"/></home-page>
+	<xsl:template name="document-info.author.home-pages">
+		<xsl:if test="string($document-info.author.home-page) != ''">
+			<home-page><xsl:value-of select="$document-info.author.home-page"/></home-page>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="document-info_author_emails">
-		<xsl:if test="string($document-info_author_email) != ''">
-			<email><xsl:value-of select="$document-info_author_email"/></email>
+	<xsl:template name="document-info.author.emails">
+		<xsl:if test="string($document-info.author.email) != ''">
+			<email><xsl:value-of select="$document-info.author.email"/></email>
 		</xsl:if>
 	</xsl:template>
-	<xsl:template name="document-info_author_id">
-		<xsl:if test="string($document-info_author_id) != ''">
-			<id><xsl:value-of select="$document-info_author_id"/></id>
+	<xsl:template name="document-info.author.id">
+		<xsl:if test="string($document-info.author.id) != ''">
+			<id><xsl:value-of select="$document-info.author.id"/></id>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="document-info_authors">
+	<xsl:template name="document-info.authors">
 		<!-- Mandatory -->
 		<author>
-			<xsl:call-template name="document-info_author_first-name"/>
-			<xsl:call-template name="document-info_author_middle-name"/>
-			<xsl:call-template name="document-info_author_last-name"/>
-			<xsl:call-template name="document-info_author_nickname"/>
-			<xsl:call-template name="document-info_author_home-pages"/>
-			<xsl:call-template name="document-info_author_emails"/>
-			<xsl:call-template name="document-info_author_id"/>
+			<xsl:call-template name="document-info.author.first-name"/>
+			<xsl:call-template name="document-info.author.middle-name"/>
+			<xsl:call-template name="document-info.author.last-name"/>
+			<xsl:call-template name="document-info.author.nickname"/>
+			<xsl:call-template name="document-info.author.home-pages"/>
+			<xsl:call-template name="document-info.author.emails"/>
+			<xsl:call-template name="document-info.author.id"/>
 		</author>
 	</xsl:template>
 	
 	
-	<xsl:template name="document-info_program-used">
-		<xsl:if test="string($document-info_program-used) != ''">
+	<xsl:template name="document-info.program-used">
+		<xsl:if test="string($document-info.program-used) != ''">
 			<!-- TODO: set xml:lang attribute properly -->
-			<program-used xml:lang="ru"><xsl:value-of select="$document-info_program-used"/></program-used>
+			<program-used xml:lang="ru"><xsl:value-of select="$document-info.program-used"/></program-used>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="document-info_date">
+	<xsl:template name="document-info.date">
 		<!-- Mandatory -->
 		<xsl:call-template name="mandatory-tag">
-			<xsl:with-param name="name">document-info_date</xsl:with-param>
-			<xsl:with-param name="value" select="$document-info_date"/>
+			<xsl:with-param name="name">document-info.date</xsl:with-param>
+			<xsl:with-param name="value" select="$document-info.date"/>
 		</xsl:call-template>
 
 		<!-- TODO: set value attribute properly -->
-		<date value="2002-10-19"><xsl:value-of select="$document-info_date"/></date>
+		<date value="2002-10-19"><xsl:value-of select="$document-info.date"/></date>
 	</xsl:template>
 	
-	<xsl:template name="document-info_src-urls">
-		<xsl:if test="string($document-info_src-url) != ''">
-			<src-url><xsl:value-of select="$document-info_src-url"/></src-url>
+	<xsl:template name="document-info.src-urls">
+		<xsl:if test="string($document-info.src-url) != ''">
+			<src-url><xsl:value-of select="$document-info.src-url"/></src-url>
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template name="document-info_src-ocr">
-		<xsl:if test="string($document-info_src-ocr) != ''">
+	<xsl:template name="document-info.src-ocr">
+		<xsl:if test="string($document-info.src-ocr) != ''">
 			<!-- TODO: set xml:lang attribute properly -->
-			<src-ocr xml:lang="ru"><xsl:value-of select="$document-info_src-ocr"/></src-ocr>
+			<src-ocr xml:lang="ru"><xsl:value-of select="$document-info.src-ocr"/></src-ocr>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="document-info_id">
+	<xsl:template name="document-info.id">
 		<!-- Mandatory -->
 		<xsl:call-template name="mandatory-tag">
-			<xsl:with-param name="name">document-info_id</xsl:with-param>
-			<xsl:with-param name="value" select="$document-info_id"/>
+			<xsl:with-param name="name">document-info.id</xsl:with-param>
+			<xsl:with-param name="value" select="$document-info.id"/>
 		</xsl:call-template>
 
-		<id><xsl:value-of select="$document-info_id"/></id>
+		<id><xsl:value-of select="$document-info.id"/></id>
 	</xsl:template>
 	
-	<xsl:template name="document-info_version">
+	<xsl:template name="document-info.version">
 		<!-- Mandatory -->
 		<xsl:call-template name="mandatory-tag">
-			<xsl:with-param name="name">document-info_version</xsl:with-param>
-			<xsl:with-param name="value" select="$document-info_version"/>
+			<xsl:with-param name="name">document-info.version</xsl:with-param>
+			<xsl:with-param name="value" select="$document-info.version"/>
 		</xsl:call-template>
 
-		<version><xsl:value-of select="$document-info_version"/></version>
+		<version><xsl:value-of select="$document-info.version"/></version>
 	</xsl:template>
 	
-	<xsl:template name="document-info_history">
-		<xsl:if test="string($document-info_history) != ''">
+	<xsl:template name="document-info.history">
+		<xsl:if test="string($document-info.history) != ''">
 			<!-- TODO: set id and xml:lang attributes properly -->
-			<history id="history" xml:lang="ru"><xsl:value-of select="$document-info_history"/></history>
+			<history id="history" xml:lang="ru"><xsl:value-of select="$document-info.history"/></history>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="document-info_publishers">
-		<xsl:if test="string($document-info_publisher) != ''">
+	<xsl:template name="document-info.publishers">
+		<xsl:if test="string($document-info.publisher) != ''">
 			<!-- TODO: set xml:lang attribute properly -->
-			<publisher xml:lang="ru"><xsl:value-of select="$document-info_publisher"/></publisher>
+			<publisher xml:lang="ru"><xsl:value-of select="$document-info.publisher"/></publisher>
 		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template name="document-info">
 		<!-- Mandatory -->
 		<document-info>
-			<xsl:call-template name="document-info_authors"/>
-			<xsl:call-template name="document-info_program-used"/>
-			<xsl:call-template name="document-info_date"/>
-			<xsl:call-template name="document-info_src-urls"/>
-			<xsl:call-template name="document-info_src-ocr"/>
-			<xsl:call-template name="document-info_id"/>
-			<xsl:call-template name="document-info_version"/>
-			<xsl:call-template name="document-info_history"/>
-			<xsl:call-template name="document-info_publishers"/>
+			<xsl:call-template name="document-info.authors"/>
+			<xsl:call-template name="document-info.program-used"/>
+			<xsl:call-template name="document-info.date"/>
+			<xsl:call-template name="document-info.src-urls"/>
+			<xsl:call-template name="document-info.src-ocr"/>
+			<xsl:call-template name="document-info.id"/>
+			<xsl:call-template name="document-info.version"/>
+			<xsl:call-template name="document-info.history"/>
+			<xsl:call-template name="document-info.publishers"/>
 		</document-info>
 	</xsl:template>
 	
 	<xsl:template name="publish-info">
 		<!-- TODO: add implementation -->
 		<!-- <publish-info>
-			<xsl:call-template name="publish-info_book-name"/>
-			<xsl:call-template name="publish-info_publisher"/>
-			<xsl:call-template name="publish-info_city"/>
-			<xsl:call-template name="publish-info_year"/>
-			<xsl:call-template name="publish-info_isbn"/>
-			<xsl:call-template name="publish-info_sequences"/>
+			<xsl:call-template name="publish-info.book-name"/>
+			<xsl:call-template name="publish-info.publisher"/>
+			<xsl:call-template name="publish-info.city"/>
+			<xsl:call-template name="publish-info.year"/>
+			<xsl:call-template name="publish-info.isbn"/>
+			<xsl:call-template name="publish-info.sequences"/>
 		</publish-info> -->
 	</xsl:template>
 	
@@ -348,36 +348,36 @@
 		</description>
 	</xsl:template>
 	
-	<xsl:template name="body_image">
+	<xsl:template name="body.image">
 		<!-- <image xlink:href=""/> -->
 	</xsl:template>
 	
-	<xsl:template name="body_title">
-		<xsl:if test="string($body_title) != ''">
+	<xsl:template name="body.title">
+		<xsl:if test="string($body.title) != ''">
 			<!-- TODO: set xml:lang attribute properly -->
-			<title xml:lang="ru"><xsl:value-of select="$body_title"/></title>
+			<title xml:lang="ru"><xsl:value-of select="$body.title"/></title>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="body_epigraphs">
-		<xsl:if test="string($body_epigraph) != ''">
+	<xsl:template name="body.epigraphs">
+		<xsl:if test="string($body.epigraph) != ''">
 			<!-- TODO: set id attribute properly -->
-			<epigraph id="id1"><xsl:value-of select="$body_epigraph"/></epigraph>
+			<epigraph id="id1"><xsl:value-of select="$body.epigraph"/></epigraph>
 		</xsl:if>
 	</xsl:template>
 	
-	<xsl:template name="body_sections">
+	<xsl:template name="body.sections">
 		<!-- Mandatory -->
-		<xsl:call-template name="body_sections_data"/>
+		<xsl:call-template name="body.sections.data"/>
 	</xsl:template>
 	
 	<xsl:template name="body">
 		<!-- Mandatory -->
 		<body>
-			<xsl:call-template name="body_image"/>
-			<xsl:call-template name="body_title"/>
-			<xsl:call-template name="body_epigraphs"/>
-			<xsl:call-template name="body_sections"/>
+			<xsl:call-template name="body.image"/>
+			<xsl:call-template name="body.title"/>
+			<xsl:call-template name="body.epigraphs"/>
+			<xsl:call-template name="body.sections"/>
 		</body>
 	</xsl:template>
 	

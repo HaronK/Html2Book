@@ -4,9 +4,10 @@
 	<!-- BEGIN -->
 	<!-- ****************** Content parsers ****************** -->
 	<xsl:key name="bits"
-		match="node()[not(self::br|self::ul|self::h4|self::h5|self::h6|self::table|self::code|self::pre)]"
+		match="node()[not(self::br|self::ul|self::ol|self::h4|self::h5|self::h6|self::table|self::code|self::pre)]"
 		use="generate-id((..|preceding-sibling::br[1]
 							|preceding-sibling::ul[1]
+							|preceding-sibling::ol[1]
 							|preceding-sibling::h4[1]
 							|preceding-sibling::h5[1]
 							|preceding-sibling::h6[1]
@@ -92,7 +93,7 @@
 		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
 	</xsl:template>
 
-	<xsl:template match="ul" mode="content">
+	<xsl:template match="ul|ol" mode="content">
 		<xsl:for-each select="li">
 			<p><xsl:value-of select="position()"/><xsl:text>. </xsl:text>
 			<xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
@@ -136,16 +137,16 @@
 	</xsl:template>
 	
 	<xsl:template match="pre" mode="content">
-		<xsl:apply-templates select="(br|ul|h4|h5|h6|table|code|pre)" mode="content"/>
+		<xsl:apply-templates select="(br|ul|ol|h4|h5|h6|table|code|pre)" mode="content"/>
 	</xsl:template>
 	
 	<xsl:template match="@*|node()" mode="content">
 		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
-		<xsl:apply-templates select="(br|ul|h4|table|code|pre)" mode="content"/>
+		<xsl:apply-templates select="(br|ul|ol|h4|table|code|pre)" mode="content"/>
 	</xsl:template>
 	
 	<!-- ****************** FB2 tag values ****************** -->
-	<xsl:template name="title-info_genres_data"> <!-- Mandatory -->
+	<xsl:template name="title-info.genres.data"> <!-- Mandatory -->
 		<genre>comp_www</genre>
 		<genre>comp_programming</genre>
 		<genre>comp_hard</genre>
@@ -155,54 +156,54 @@
 		<genre>computers</genre>
 	</xsl:template>
 
-	<xsl:variable name="title-info_author_first-name"/>
-	<xsl:variable name="title-info_author_middle-name"/>
-	<xsl:variable name="title-info_author_last-name"/>
-	<xsl:variable name="title-info_author_nickname" select="//div[@class='author']/a[1]"/>
-	<xsl:variable name="title-info_author_home-page" select="//div[@class='author']/a[1]/@href"/>
-	<xsl:variable name="title-info_author_email"/>
-	<xsl:variable name="title-info_author_id"/>
-	<xsl:variable name="title-info_book-title" select="//title"/> <!-- Mandatory -->
-	<xsl:variable name="title-info_annotation">
+	<xsl:variable name="title-info.author.first-name"/>
+	<xsl:variable name="title-info.author.middle-name"/>
+	<xsl:variable name="title-info.author.last-name"/>
+	<xsl:variable name="title-info.author.nickname" select="//div[@class='author']/a[1]"/>
+	<xsl:variable name="title-info.author.home-page" select="//div[@class='author']/a[1]/@href"/>
+	<xsl:variable name="title-info.author.email"/>
+	<xsl:variable name="title-info.author.id"/>
+	<xsl:variable name="title-info.book-title" select="//title"/> <!-- Mandatory -->
+	<xsl:variable name="title-info.annotation">
 		<xsl:for-each select="//div[@class='hubs']/a">
 			<xsl:if test="position() > 1">, </xsl:if>
 			<xsl:value-of select="."/>
 		</xsl:for-each>
 	</xsl:variable>
-	<xsl:variable name="title-info_keywords">
+	<xsl:variable name="title-info.keywords">
 		<xsl:for-each select="//ul[@class='tags']//a">
 			<xsl:if test="position() > 1">, </xsl:if>
 			<xsl:value-of select="."/>
 		</xsl:for-each>
 	</xsl:variable>
-	<xsl:variable name="title-info_date"/>
-	<xsl:variable name="title-info_coverpage">off</xsl:variable>
-	<xsl:variable name="title-info_coverpage_image"/>
-	<xsl:variable name="title-info_lang" select="html/@xml:lang"/> <!-- Mandatory -->
-	<xsl:variable name="title-info_src-lang"/>
+	<xsl:variable name="title-info.date"/>
+	<xsl:variable name="title-info.coverpage">off</xsl:variable>
+	<xsl:variable name="title-info.coverpage.image"/>
+	<xsl:variable name="title-info.lang" select="html/@xml:lang"/> <!-- Mandatory -->
+	<xsl:variable name="title-info.src-lang"/>
 	
-	<xsl:variable name="document-info_author_first-name"/>
-	<xsl:variable name="document-info_author_middle-name"/>
-	<xsl:variable name="document-info_author_last-name"/>
-	<xsl:variable name="document-info_author_nickname" select="//div[@class='author']/a[1]"/>
-	<xsl:variable name="document-info_author_home-page"/>
-	<xsl:variable name="document-info_author_email"/>
-	<xsl:variable name="document-info_author_id"/>
-	<xsl:variable name="document-info_program-used">Html2Book Chrome extension (https://github.com/HaronK/Html2Book)</xsl:variable>
-	<xsl:variable name="document-info_date" select="//div[@class='published']"/>
-	<xsl:variable name="document-info_src-url" select="//meta[@property='og:url']/@content"/>
-	<xsl:variable name="document-info_src-ocr"/>
-	<xsl:variable name="document-info_id" select="//meta[@property='og:url']/@content"/>
-	<xsl:variable name="document-info_version" select="//div[@class='pageviews']"/>
-	<xsl:variable name="document-info_history"/>
-	<xsl:variable name="document-info_publisher"/>
+	<xsl:variable name="document-info.author.first-name"/>
+	<xsl:variable name="document-info.author.middle-name"/>
+	<xsl:variable name="document-info.author.last-name"/>
+	<xsl:variable name="document-info.author.nickname" select="//div[@class='author']/a[1]"/>
+	<xsl:variable name="document-info.author.home-page"/>
+	<xsl:variable name="document-info.author.email"/>
+	<xsl:variable name="document-info.author.id"/>
+	<xsl:variable name="document-info.program-used">Html2Book Chrome extension (https://github.com/HaronK/Html2Book)</xsl:variable>
+	<xsl:variable name="document-info.date" select="//div[@class='published']"/>
+	<xsl:variable name="document-info.src-url" select="//meta[@property='og:url']/@content"/>
+	<xsl:variable name="document-info.src-ocr"/>
+	<xsl:variable name="document-info.id" select="//meta[@property='og:url']/@content"/>
+	<xsl:variable name="document-info.version" select="//div[@class='pageviews']"/>
+	<xsl:variable name="document-info.history"/>
+	<xsl:variable name="document-info.publisher"/>
 	
 	<xsl:variable name="custom-info"/>
 	
-	<xsl:variable name="body_title" select="//span[@class='post_title']"/>
-	<xsl:variable name="body_epigraph"/>
+	<xsl:variable name="body.title" select="//span[@class='post_title']"/>
+	<xsl:variable name="body.epigraph"/>
 	
-	<xsl:template name="body_sections_data"> <!-- Mandatory -->
+	<xsl:template name="body.sections.data"> <!-- Mandatory -->
 		<section>
 			<xsl:apply-templates select="//div[@class='content html_format']" mode="content"/>
 		</section>

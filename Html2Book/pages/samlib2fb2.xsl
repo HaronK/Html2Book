@@ -25,49 +25,49 @@
 	</xsl:template>
 	
 	<!-- ****************** FB2 tags ****************** -->
-	<xsl:template name="title-info_genres_data"> <!-- Mandatory -->
+	<xsl:template name="title-info.genres.data"> <!-- Mandatory -->
 		<genre>sf_fantasy</genre>
 		<genre>sf</genre>
 	</xsl:template>
 
-	<xsl:variable name="title-info_author_first-name"/> <!-- Mandatory if title-info_author_nickname doesn't exist -->
-	<xsl:variable name="title-info_author_middle-name"/>
-	<xsl:variable name="title-info_author_last-name"/> <!-- Mandatory if title-info_author_nickname doesn't exist -->
-	<xsl:variable name="title-info_author_nickname" select="//body/center/table//tr[1]/td[1]//li[2]/a" /> <!-- Mandatory if title-title-info_author_first-name and title-info_author_last-name are not exist -->
-	<xsl:variable name="title-info_author_home-page"/>
-	<xsl:variable name="title-info_author_email"/>
-	<xsl:variable name="title-info_author_id"/>
-	<xsl:variable name="title-info_book-title" select="//body/center/h2" /> <!-- Mandatory -->
-	<xsl:variable name="title-info_annotation" select="//body/center/table//tr[2]/td/ul/li/font/i" />
-	<xsl:variable name="title-info_keywords"/>
-	<xsl:variable name="title-info_date"/>
-	<xsl:variable name="title-info_coverpage"/> <!-- on|off(empty) -->
-	<xsl:variable name="title-info_coverpage_image"/> <!-- Mandatory if title-info_coverpage is on -->
-	<xsl:variable name="title-info_lang">ru</xsl:variable> <!-- Mandatory -->
-	<xsl:variable name="title-info_src-lang"/>
+	<xsl:variable name="title-info.author.first-name"/> <!-- Mandatory if title-info.author.nickname doesn't exist -->
+	<xsl:variable name="title-info.author.middle-name"/>
+	<xsl:variable name="title-info.author.last-name"/> <!-- Mandatory if title-info.author.nickname doesn't exist -->
+	<xsl:variable name="title-info.author.nickname" select="//body/center/table//tr[1]/td[1]//li[2]/a" /> <!-- Mandatory if title-title-info.author.first-name and title-info.author.last-name are not exist -->
+	<xsl:variable name="title-info.author.home-page"/>
+	<xsl:variable name="title-info.author.email"/>
+	<xsl:variable name="title-info.author.id"/>
+	<xsl:variable name="title-info.book-title" select="//body/center/h2" /> <!-- Mandatory -->
+	<xsl:variable name="title-info.annotation" select="//body/center/table//tr[2]/td/ul/li/font/i" />
+	<xsl:variable name="title-info.keywords"/>
+	<xsl:variable name="title-info.date"/>
+	<xsl:variable name="title-info.coverpage"/> <!-- on|off(empty) -->
+	<xsl:variable name="title-info.coverpage.image"/> <!-- Mandatory if title-info.coverpage is on -->
+	<xsl:variable name="title-info.lang">ru</xsl:variable> <!-- Mandatory -->
+	<xsl:variable name="title-info.src-lang"/>
 	
-	<xsl:variable name="document-info_author_first-name"/> <!-- Mandatory if title-info_author_nickname doesn't exist -->
-	<xsl:variable name="document-info_author_middle-name"/>
-	<xsl:variable name="document-info_author_last-name"/> <!-- Mandatory if title-info_author_nickname doesn't exist -->
-	<xsl:variable name="document-info_author_nickname" select="//body/center/table//tr[1]/td[1]//li[2]/a" /> <!-- Mandatory if title-title-info_author_first-name and title-info_author_last-name are not exist -->
-	<xsl:variable name="document-info_author_home-page"/>
-	<xsl:variable name="document-info_author_email"/>
-	<xsl:variable name="document-info_author_id"/>
-	<xsl:variable name="document-info_program-used"/>
-	<xsl:variable name="document-info_date" select="//body/center/table//tr[1]/td[1]//li[3]" /> <!-- Mandatory -->
-	<xsl:variable name="document-info_src-url"/>
-	<xsl:variable name="document-info_src-ocr"/>
-	<xsl:variable name="document-info_id" select="//body/center/table//tr[1]/td[1]//li[1]/a/@href" /> <!-- Mandatory -->
-	<xsl:variable name="document-info_version" select="1" /> <!-- Mandatory -->
-	<xsl:variable name="document-info_history"/>
-	<xsl:variable name="document-info_publisher"/>
+	<xsl:variable name="document-info.author.first-name"/> <!-- Mandatory if title-info.author.nickname doesn't exist -->
+	<xsl:variable name="document-info.author.middle-name"/>
+	<xsl:variable name="document-info.author.last-name"/> <!-- Mandatory if title-info.author.nickname doesn't exist -->
+	<xsl:variable name="document-info.author.nickname" select="//body/center/table//tr[1]/td[1]//li[2]/a" /> <!-- Mandatory if title-title-info.author.first-name and title-info.author.last-name are not exist -->
+	<xsl:variable name="document-info.author.home-page"/>
+	<xsl:variable name="document-info.author.email"/>
+	<xsl:variable name="document-info.author.id"/>
+	<xsl:variable name="document-info.program-used"/>
+	<xsl:variable name="document-info.date" select="//body/center/table//tr[1]/td[1]//li[3]" /> <!-- Mandatory -->
+	<xsl:variable name="document-info.src-url"/>
+	<xsl:variable name="document-info.src-ocr"/>
+	<xsl:variable name="document-info.id" select="//body/center/table//tr[1]/td[1]//li[1]/a/@href" /> <!-- Mandatory -->
+	<xsl:variable name="document-info.version" select="1" /> <!-- Mandatory -->
+	<xsl:variable name="document-info.history"/>
+	<xsl:variable name="document-info.publisher"/>
 	
 	<xsl:variable name="custom-info"/>
 	
-	<xsl:variable name="body_title"/>
-	<xsl:variable name="body_epigraph"/>
+	<xsl:variable name="body.title"/>
+	<xsl:variable name="body.epigraph"/>
 	
-	<xsl:template name="body_sections_data"> <!-- Mandatory -->
+	<xsl:template name="body.sections.data"> <!-- Mandatory -->
 		<section>
 			<xsl:apply-templates select="//body/dd" mode="content"/>
 		</section>
