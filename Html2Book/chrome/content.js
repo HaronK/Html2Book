@@ -19,7 +19,6 @@ function saveBook(book_xml, convert_handler, save_handler, sendResponse)
     var book_data = convert_handler.serialize(book_xml);
     save_handler.save(book_data);
     sendResponse({status: "message", message: " done", type: "add"});
-    sendResponse({status: "succeed"});
 }
 
 function generate(data, sendResponse)
@@ -35,16 +34,19 @@ function generate(data, sendResponse)
         sendResponse({status: "message", message: " done", type: "add"});
 
         sendResponse({status: "message", message: "Converting page..."});
-        convert_handler.convert(document.documentElement.outerHTML, data.formatterParams, function(data)
+        convert_handler.convert(document.documentElement.outerHTML, data.formatterParams, function(converted_data)
         {
-            var book_xml = data.xml;
-            var book_title = data.title;
-             sendResponse({status: "message", message: "Initializing '" + data.saverId + "' saver..."});
+            var book_xml = converted_data.xml;
+            var book_title = converted_data.title;
+
+            sendResponse({status: "message", message: "Initializing '" + data.saverId + "' saver..."});
             var fileName = book_title.replace(/[\s"]/g, '_') + '.' + data.formatterId;
             var save_handler = new window[saver.klass](fileName, converter.mime);
             sendResponse({status: "message", message: " done", type: "add"});
 
             saveBook(book_xml, convert_handler, save_handler, sendResponse);
+
+            sendResponse({status: "succeed"});
         });
         sendResponse({status: "message", message: "Converting page done"});
     });
