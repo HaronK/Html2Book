@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Html2Book",
-  "description": "Convertion of HTML pages to book format (fb2, epub, etc.)",
+  "description": "HTML pages to book format converter (fb2, epub, etc.).",
   "version": "0.2.2",
 
   "options_page": "chrome/options.html",

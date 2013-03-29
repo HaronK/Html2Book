@@ -60,7 +60,7 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
                 switch (response.status)
                 {
                 case "succeed":
-                    addMessage("done.");
+                    setMessage("Converting finished.");
                     h2b_button.disabled = false;
                     window.close();
                     break;
