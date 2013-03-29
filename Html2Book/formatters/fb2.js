@@ -50,13 +50,13 @@ function processImage(data)
 }
 
 Fb2Formatter.prototype = {
-    postTransform: function(xsl_doc, onfinish)
+    postTransform: function(xml_doc, onfinish)
     {
-        var images = xsl_doc.getElementsByTagName("image");
+        var images = xml_doc.getElementsByTagName("image");
         processImage({
             index:    0,
             images:   images,
-            doc:      xsl_doc,
+            doc:      xml_doc,
             onfinish: onfinish
         });
     },
