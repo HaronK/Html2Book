@@ -90,29 +90,38 @@
 	</xsl:template>
 
 	<xsl:template match="br" mode="content">
-		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
+		<p><xsl:call-template name="parse-paragraph"/></p>
 	</xsl:template>
 
-	<xsl:template match="ul|ol" mode="content">
+	<xsl:template match="ol" mode="content">
 		<xsl:for-each select="li">
 			<p><xsl:value-of select="position()"/><xsl:text>. </xsl:text>
-			<xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
+			<xsl:call-template name="parse-paragraph"/></p>
+			<xsl:call-template name="parse-tags"/>
+		</xsl:for-each>
+	</xsl:template>
+	
+	<xsl:template match="ul" mode="content">
+		<xsl:for-each select="li">
+			<p><xsl:text>* </xsl:text>
+			<xsl:call-template name="parse-paragraph"/></p>
+			<xsl:call-template name="parse-tags"/>
 		</xsl:for-each>
 	</xsl:template>
 	
 	<xsl:template match="h4" mode="content">
 		<empty-line/>
-		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
+		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
 	</xsl:template>
 	
 	<xsl:template match="h5" mode="content">
 		<empty-line/>
-		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
+		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
 	</xsl:template>
 	
 	<xsl:template match="h6" mode="content">
 		<empty-line/>
-		<subtitle><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></subtitle>
+		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
 	</xsl:template>
 	
 	<xsl:template match="tr" mode="content-p">
@@ -136,13 +145,21 @@
 		<empty-line/>
 	</xsl:template>
 	
-	<xsl:template match="pre" mode="content">
+	<xsl:template name="parse-tags">
 		<xsl:apply-templates select="(br|ul|ol|h4|h5|h6|table|code|pre)" mode="content"/>
 	</xsl:template>
 	
+	<xsl:template name="parse-paragraph">
+		<xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/>
+	</xsl:template>
+	
+	<xsl:template match="pre" mode="content">
+		<xsl:call-template name="parse-tags"/>
+	</xsl:template>
+	
 	<xsl:template match="@*|node()" mode="content">
-		<p><xsl:apply-templates select="key('bits', generate-id())" mode="content-p"/></p>
-		<xsl:apply-templates select="(br|ul|ol|h4|table|code|pre)" mode="content"/>
+		<p><xsl:call-template name="parse-paragraph"/></p>
+		<xsl:call-template name="parse-tags"/>
 	</xsl:template>
 	
 	<!-- ****************** FB2 tag values ****************** -->
