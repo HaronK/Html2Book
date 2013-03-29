@@ -138,8 +138,8 @@ function initDefaultConfig(config)
             imports : ['extern/htmlparser.js', 'converters/xslt.js'],
             klass : "XsltConverter",
             mime : 'text/xml;charset=' + document.characterSet,
-            formatterFields: ["xsl", "embedPath"],
-            pageFormatterFields: ["xsl"],
+            formatterFields: ["xsl"],
+            pageFormatterFields: ["xsl", "fileNameRegEx"],
         };
     }
 
@@ -154,7 +154,6 @@ function initDefaultConfig(config)
             klass : "Fb2Formatter",
             converter: "xslt",
             xsl: "chrome|../formatters/fb2.xsl",
-            embedPath: "",
         };
     }
 
@@ -181,7 +180,10 @@ function initDefaultConfig(config)
             addr: ['http://habrahabr\\.ru/post/\\d+',
                    'http://habrahabr\\.ru/company/\\w+/blog/\\d+'], // pages url template
             formatters: {
-                fb2: { xsl: 'chrome|../pages/habr2fb2.xsl' },
+                fb2: {
+                    xsl: 'chrome|../pages/habr2fb2.xsl',
+                    fileNameRegEx: "//span[@class='post_title']",
+                },
             },
         };
     }
@@ -193,7 +195,10 @@ function initDefaultConfig(config)
         config.pages.samlib_page = {
             addr: ['http://samlib\\.ru/\\w/\\w+/.+?\\.s?html'], // pages url template
             formatters: {
-                fb2: { xsl: 'chrome|../pages/samlib2fb2.xsl' },
+                fb2: {
+                    xsl: 'chrome|../pages/samlib2fb2.xsl',
+                    fileNameRegEx: "//body/center/h2",
+                },
             },
         };
     }

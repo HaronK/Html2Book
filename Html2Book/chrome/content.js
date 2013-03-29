@@ -34,12 +34,16 @@ function generate(pageId, formatterId, saverId, config, sendResponse)
     {
         sendResponse({status: "message", message: " done", type: "add"});
 
-        sendResponse({status: "message", message: "Initializing '" + saverId + "' saver..."});
-        var save_handler = new window[saver.klass]('book.' + formatterId, converter.mime);
+        sendResponse({status: "message", message: "Converting page..."});
+        var converter_data = convert_handler.convert(document.documentElement.outerHTML);
         sendResponse({status: "message", message: " done", type: "add"});
 
-        sendResponse({status: "message", message: "Converting page..."});
-        var book_xml = convert_handler.convert(document.documentElement.outerHTML);
+        var book_xml = converter_data.xml;
+        var book_title = converter_data.title;
+
+        sendResponse({status: "message", message: "Initializing '" + saverId + "' saver..."});
+        var fileName = book_title.replace(/[\s"]/g, '_') + '.' + formatterId;
+        var save_handler = new window[saver.klass](fileName, converter.mime);
         sendResponse({status: "message", message: " done", type: "add"});
 
         // do page post transformation work if needed

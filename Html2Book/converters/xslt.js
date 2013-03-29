@@ -29,7 +29,7 @@ function requestFileAsync(filePath, obj, onload)
 
 function XsltConverter(formatter, pageFormatter, onload)
 {
-    this.formatter = formatter;
+    this.fileNameRegEx = pageFormatter.fileNameRegEx;
 
     requestFileAsync(resolvePath(formatter.xsl), this, function(fileData, obj)
     {
@@ -57,9 +57,13 @@ XsltConverter.prototype = {
         var xml_data = HTMLtoXML(page_data);
         xml_data = xml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
 
-        var result = applyXSLT(str2XML(this.xsl_data), str2XML(xml_data));
+        var xsl_doc = str2XML(this.xsl_data);
+        var xml_doc = str2XML(xml_data);
+        var result = applyXSLT(xsl_doc, xml_doc);
 
-        return result;
+        var title = xml_doc.evaluate(this.fileNameRegEx, xml_doc, null, XPathResult.ANY_TYPE, null)
+                        .iterateNext().textContent;
+        return {xml: result, title: title};
     },
 
     serialize: function(xmlData)
