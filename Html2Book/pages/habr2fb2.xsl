@@ -162,6 +162,57 @@
 		<xsl:call-template name="parse-tags"/>
 	</xsl:template>
 	
+	<xsl:template match="@*|node()" mode="comment-link">
+		<a href="#{@id}"><xsl:value-of select="div[1]/div[1]/a[@class='username']"/> - <xsl:value-of select="div[1]/div[1]/time"/></a>
+	</xsl:template>
+	
+	<xsl:template match="@*|node()" mode="comment-answers">
+		<empty-line/>
+		<p>Ответы:</p>
+		<xsl:for-each select="div[@class='comment_item']">
+			<p><xsl:value-of select="position()"/>. <xsl:apply-templates select="." mode="comment-link"/></p>
+		</xsl:for-each>
+	</xsl:template>
+	
+	<xsl:template match="@*|node()" mode="comment-navigate">
+		<xsl:param name="title"/>
+		<empty-line/>
+		<p><xsl:value-of select="$title"/><xsl:apply-templates select="." mode="comment-link"/></p>
+	</xsl:template>
+	
+	<xsl:template match="@*|node()" mode="comments">
+		<xsl:param name="parent-link"/>
+		<xsl:param name="parent-title"/>
+		<xsl:for-each select="div[@class='comment_item']">
+			<section id="{@id}">
+				<title>
+					<p><xsl:value-of select="div[1]/div[1]/a[@class='username']"/></p>
+					<p><xsl:value-of select="div[1]/div[1]/time"/></p>
+				</title>
+				<section>
+					<p><xsl:value-of select="div[1]/div[2]"/></p>
+					
+					<xsl:apply-templates select="div[@class='reply_comments']" mode="comment-answers"/>
+					
+					<empty-line/>
+					<p>Наверх: <a href="#{$parent-link}"><xsl:value-of select="$parent-title"/></a></p>
+					
+					<xsl:apply-templates select="preceding-sibling::div[1]" mode="comment-navigate">
+						<xsl:with-param name="title">Предыдущий: </xsl:with-param>
+					</xsl:apply-templates>
+					
+					<xsl:apply-templates select="following-sibling::div[1]" mode="comment-navigate">
+						<xsl:with-param name="title">Следующий: </xsl:with-param>
+					</xsl:apply-templates>
+				</section>
+				<xsl:apply-templates select="div[@class='reply_comments']" mode="comments">
+					<xsl:with-param name="parent-link" select="@id"/>
+					<xsl:with-param name="parent-title"><xsl:value-of select="div[1]/div[1]/a[@class='username']"/> - <xsl:value-of select="div[1]/div[1]/time"/></xsl:with-param>
+				</xsl:apply-templates>
+			</section>
+		</xsl:for-each>
+	</xsl:template>
+	
 	<!-- ****************** FB2 tag values ****************** -->
 	<xsl:template name="title-info.genres.data"> <!-- Mandatory -->
 		<genre>comp_www</genre>
@@ -221,16 +272,22 @@
 	<xsl:variable name="body.title" select="//span[@class='post_title']"/>
 	<xsl:variable name="body.epigraph"/>
 	<xsl:template name="body.sections.data"> <!-- Mandatory -->
-		<section>
+		<section id="main">
+			<title><p><xsl:value-of select="//span[@class='post_title']"/></p></title>
 			<xsl:apply-templates select="//div[@class='content html_format']" mode="content"/>
 		</section>
 	</xsl:template>
 
-	<xsl:param name="body-comments"/> <!-- on|off(empty) -->
+	<xsl:param name="body-comments">off</xsl:param> <!-- on|off(empty) -->
 	<xsl:variable name="body-comments.image"/>
-	<xsl:variable name="body-comments.title"/>
+	<xsl:variable name="body-comments.title">Коментарии (<xsl:value-of select="//span[@id='comments_count']"/>)</xsl:variable>
 	<xsl:variable name="body-comments.epigraph"/>
-	<xsl:template name="body-comments.sections.data"/> <!-- Mandatory if body-comments is on -->
+	<xsl:template name="body-comments.sections.data"> <!-- Mandatory if body-comments is on -->
+		<xsl:apply-templates select="//div[@class='comments_list ']" mode="comments">
+			<xsl:with-param name="parent-link">main</xsl:with-param>
+			<xsl:with-param name="parent-title">Основная статья</xsl:with-param>
+		</xsl:apply-templates>
+	</xsl:template>
 	<!-- END -->
 
 </xsl:stylesheet>
