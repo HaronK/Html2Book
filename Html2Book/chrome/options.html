@@ -13,13 +13,15 @@
       <label for="tab-1">Sites/Pages</label>
 
       <div class="content" id="sites_pages">
-        <select id="pageSelect">
-          <option value="default">--Choose--</option>
-        </select><br/>
-        <textarea rows="12" cols="100">
-        </textarea><br/>
+        <select id="pageSelector">
+          <!-- <option value="default">--Choose--</option> -->
+        </select>
         <button id="addPage">Add</button>
+        <button id="addDelete">Delete</button>
         <button id="restorePages">Restore default</button>
+        <br/>
+        <textarea id="pageJson" rows="12" cols="100"></textarea><br/>
+        <div id="pageMessage"></div>
       </div>
     </div>
 
@@ -29,8 +31,6 @@
 
       <div class="content" id="converters">
         <p>Содержание закладки №2</p>
-
-        <img src="http://placekitten.com/200/100">
       </div>
     </div>
 
@@ -40,8 +40,6 @@
 
       <div class="content" id="savers">
         <p>Содержание закладки №3</p>
-
-        <img src="http://placedog.com/200/100">
       </div>
     </div>
 
@@ -49,5 +47,6 @@
 
   <button id="save">Save</button>
 
+  <script src="../html2book_utils.js"></script>
   <script src="options.js"></script>
 </html>

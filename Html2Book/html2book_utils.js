@@ -125,12 +125,48 @@ function checkObjectFields(obj, fields)
 {
     if (!obj)
         return false;
-    for (var field in fields)
+    for (var i = 0; i < fields.length; ++i)
     {
-        if (!obj.hasOwnProperty(field))
+        if (!obj.hasOwnProperty(fields[i]))
             return false;
     }
     return true;
+}
+
+function initDefaultHabrConfig()
+{
+    return {
+        name: 'Habrahabr',
+        addr: ['http://habrahabr\\.ru/post/\\d+',
+               'http://habrahabr\\.ru/company/\\w+/blog/\\d+'], // pages url template
+        formatters: {
+            fb2: {
+                xsl: 'chrome|../pages/habr2fb2.xsl',
+                fileNameRegEx: "//span[@class='post_title']",
+                commentsSupported: true,
+            },
+        },
+    };
+}
+
+function initDefaultSamlibConfig()
+{
+    return {
+        name: 'Samizdat',
+        addr: ['http://samlib\\.ru/\\w/\\w+/.+?\\.s?html'], // pages url template
+        formatters: {
+            fb2: {
+                xsl: 'chrome|../pages/samlib2fb2.xsl',
+                fileNameRegEx: "//body/center/h2",
+            },
+        },
+    };
+}
+
+function initDefaultPages(config)
+{
+    config.pages.habr_article = initDefaultHabrConfig();
+    config.pages.samlib_page  = initDefaultSamlibConfig();
 }
 
 function initDefaultConfig(config)
@@ -164,6 +200,12 @@ function initDefaultConfig(config)
             klass : "Fb2Formatter",
             converter: "xslt",
             xsl: "chrome|../formatters/fb2.xsl",
+            pageSampleConfig: '{"name": "Habrahabr", "addr": ["http://www\\.example\\.com"],\
+                                "formatters": {"fb2": {\
+                                    "xsl": "http://www.example.com/my_site2fb2.xsl",\
+                                    "fileNameRegEx": "//title",\
+                                    "commentsSupported": false\
+                               }}}',
         };
     }
 
@@ -185,35 +227,13 @@ function initDefaultConfig(config)
     // habr_article is a default page
     if (!checkObjectFields(config.pages.habr_article, ["name", "addr", "formatters"]))
     {
-        // test data
-        config.pages.habr_article = {
-            name: 'Habrahabr',
-            addr: ['http://habrahabr\\.ru/post/\\d+',
-                   'http://habrahabr\\.ru/company/\\w+/blog/\\d+'], // pages url template
-            formatters: {
-                fb2: {
-                    xsl: 'chrome|../pages/habr2fb2.xsl',
-                    fileNameRegEx: "//span[@class='post_title']",
-                    commentsSupported: true,
-                },
-            },
-        };
+        config.pages.habr_article = initDefaultHabrConfig();
     }
 
     // samlib_page is a default page
     if (!checkObjectFields(config.pages.samlib_page, ["name", "addr", "formatters"]))
     {
-        // test data
-        config.pages.samlib_page = {
-            name: 'Samizdat',
-            addr: ['http://samlib\\.ru/\\w/\\w+/.+?\\.s?html'], // pages url template
-            formatters: {
-                fb2: {
-                    xsl: 'chrome|../pages/samlib2fb2.xsl',
-                    fileNameRegEx: "//body/center/h2",
-                },
-            },
-        };
+        config.pages.samlib_page = initDefaultSamlibConfig();
     }
 
     return config;

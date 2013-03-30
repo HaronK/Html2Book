@@ -62,7 +62,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
     {
         storage.get('html2book_config', function(config)
         {
-            Html2BookConfig = checkConfig(config);
+            Html2BookConfig = checkConfig(config.html2book_config);
             preparePages(tabId, tab);
         });
     }
@@ -112,4 +112,20 @@ chrome.runtime.onConnect.addListener(function(port)
             break;
         }
     });
+});
+
+chrome.storage.onChanged.addListener(function(changes, namespace)
+{
+    var config = changes["html2book_config"];
+    if (config)
+    {
+        // TODO: refresh pageActions for all tabs
+    }
+//    for (var key in changes)
+//    {
+//        var storageChange = changes[key];
+//        console.log('Storage key "%s" in namespace "%s" changed. ' +
+//                    'Old value was "%s", new value is "%s".', key,
+//                    namespace, storageChange.oldValue, storageChange.newValue);
+//    }
 });

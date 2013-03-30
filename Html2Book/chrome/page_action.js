@@ -21,7 +21,7 @@ chrome.windows.getCurrent(function(w)
     {
         storage.get('html2book_config', function(config)
         {
-            Html2BookConfig = checkConfig(config);
+            Html2BookConfig = checkConfig(config.html2book_config);
 
             var pageId = getPageConfig(Html2BookConfig, t.url);
 
