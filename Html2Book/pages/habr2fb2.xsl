@@ -162,6 +162,8 @@
 		<xsl:call-template name="parse-tags"/>
 	</xsl:template>
 	
+	<!-- ****************** Comments ****************** -->
+	
 	<xsl:template match="@*|node()" mode="comment-link">
 		<a href="#{@id}"><xsl:value-of select="div[1]/div[1]/a[@class='username']"/> - <xsl:value-of select="div[1]/div[1]/time"/></a>
 	</xsl:template>

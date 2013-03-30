@@ -94,6 +94,12 @@ XsltConverter.prototype = {
     serialize: function(xmlData)
     {
         var serializer = new XMLSerializer();
-        return serializer.serializeToString(xmlData);
+        var result = serializer.serializeToString(xmlData);
+
+        // TODO: HACK!!! This should be done by XSLTProcessor but it doesn't do this
+        if (!result.startsWith('<?xml'))
+            return '<?xml version="1.0" encoding="UTF-8"?>\n' + result;
+
+        return result;
     },
 };
