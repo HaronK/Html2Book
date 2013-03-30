@@ -16,7 +16,6 @@
 	<xsl:variable name="title-info.annotation"/>
 	<xsl:variable name="title-info.keywords"/>
 	<xsl:variable name="title-info.date"/>
-	<xsl:variable name="title-info.coverpage"/> <!-- on|off(empty) -->
 	<xsl:variable name="title-info.coverpage.image"/> <!-- Mandatory if title-info.coverpage is on -->
 	<xsl:variable name="title-info.lang"/> <!-- Mandatory -->
 	<xsl:variable name="title-info.src-lang"/>
@@ -44,7 +43,6 @@
 	<xsl:variable name="body.epigraph"/>
 	<xsl:template name="body.sections.data"/> <!-- Mandatory -->
 
-	<xsl:variable name="body-comments"/> <!-- on|off(empty) -->
 	<xsl:variable name="body-comments.image"/>
 	<xsl:variable name="body-comments.title"/>
 	<xsl:variable name="body-comments.epigraph"/>

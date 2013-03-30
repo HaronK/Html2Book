@@ -40,7 +40,7 @@ function generate(data, sendResponse)
             var book_title = converted_data.title;
 
             sendResponse({status: "message", message: "Initializing '" + data.saverId + "' saver..."});
-            var fileName = book_title.replace(/[\s"]/g, '_') + '.' + data.formatterId;
+            var fileName = page.name + '.' + book_title.replace(/[\s"]/g, '_') + '.' + data.formatterId;
             var save_handler = new window[saver.klass](fileName, converter.mime);
             sendResponse({status: "message", message: " done", type: "add"});
 

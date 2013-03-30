@@ -3,6 +3,9 @@
 
 	<xsl:output method="xml" indent="yes"/>
 
+	<xsl:param name="title-info.coverpage">off</xsl:param> <!-- on|off(empty) -->
+	<xsl:param name="body-comments">off</xsl:param> <!-- on|off(empty) -->
+
 	<!-- PAGE_INCLUDE -->
 
 	<!-- ****************** Utilities ****************** -->
@@ -112,7 +115,7 @@
 			<xsl:with-param name="value" select="$title-info.coverpage.image"/>
 		</xsl:call-template>
 
-		<image><xsl:value-of select="$title-info.coverpage.image"/></image>
+		<image alt="$title-info.coverpage.image"/>
 	</xsl:template>
 	
 	<xsl:template name="title-info.coverpage">

@@ -245,8 +245,7 @@
 		</xsl:for-each>
 	</xsl:variable>
 	<xsl:variable name="title-info.date"/>
-	<xsl:variable name="title-info.coverpage">off</xsl:variable>
-	<xsl:variable name="title-info.coverpage.image"/>
+	<xsl:variable name="title-info.coverpage.image"/> <!-- Mandatory if title-info.coverpage is on -->
 	<xsl:variable name="title-info.lang" select="html/@xml:lang"/> <!-- Mandatory -->
 	<xsl:variable name="title-info.src-lang"/>
 	
@@ -278,7 +277,6 @@
 		</section>
 	</xsl:template>
 
-	<xsl:param name="body-comments">off</xsl:param> <!-- on|off(empty) -->
 	<xsl:variable name="body-comments.image"/>
 	<xsl:variable name="body-comments.title">Коментарии (<xsl:value-of select="//span[@id='comments_count']"/>)</xsl:variable>
 	<xsl:variable name="body-comments.epigraph"/>

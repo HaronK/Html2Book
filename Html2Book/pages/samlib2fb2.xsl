@@ -41,7 +41,6 @@
 	<xsl:variable name="title-info.annotation" select="//body/center/table//tr[2]/td/ul/li/font/i" />
 	<xsl:variable name="title-info.keywords"/>
 	<xsl:variable name="title-info.date"/>
-	<xsl:variable name="title-info.coverpage"/> <!-- on|off(empty) -->
 	<xsl:variable name="title-info.coverpage.image"/> <!-- Mandatory if title-info.coverpage is on -->
 	<xsl:variable name="title-info.lang">ru</xsl:variable> <!-- Mandatory -->
 	<xsl:variable name="title-info.src-lang"/>
@@ -73,7 +72,6 @@
 		</section>
 	</xsl:template>
 
-	<xsl:param name="body-comments"/> <!-- on|off(empty) -->
 	<xsl:variable name="body-comments.image"/>
 	<xsl:variable name="body-comments.title"/>
 	<xsl:variable name="body-comments.epigraph"/>

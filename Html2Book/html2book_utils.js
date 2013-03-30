@@ -183,10 +183,11 @@ function initDefaultConfig(config)
         config.pages = {};
 
     // habr_article is a default page
-    if (!checkObjectFields(config.pages.habr_article, ["addr", "formatters"]))
+    if (!checkObjectFields(config.pages.habr_article, ["name", "addr", "formatters"]))
     {
         // test data
         config.pages.habr_article = {
+            name: 'Хабрахабр',
             addr: ['http://habrahabr\\.ru/post/\\d+',
                    'http://habrahabr\\.ru/company/\\w+/blog/\\d+'], // pages url template
             formatters: {
@@ -200,10 +201,11 @@ function initDefaultConfig(config)
     }
 
     // samlib_page is a default page
-    if (!checkObjectFields(config.pages.samlib_page, ["addr", "formatters"]))
+    if (!checkObjectFields(config.pages.samlib_page, ["name", "addr", "formatters"]))
     {
         // test data
         config.pages.samlib_page = {
+            name: 'Самиздат',
             addr: ['http://samlib\\.ru/\\w/\\w+/.+?\\.s?html'], // pages url template
             formatters: {
                 fb2: {
@@ -276,7 +278,7 @@ function checkCofigPages(config)
     for (var pageId in config.pages)
     {
         var page = config.pages[pageId];
-        if (!validateMandatoryFields(["addr", "formatters"], page, "Page '" + pageId + "'"))
+        if (!validateMandatoryFields(["name", "addr", "formatters"], page, "Page '" + pageId + "'"))
             return null;
 
         for (var formatterId in page.formatters)
