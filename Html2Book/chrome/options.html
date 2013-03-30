@@ -5,45 +5,54 @@
 </head>
 
 <body>
+  <!-- Tab implementation source: http://ruseller.com/lessons.php?rub=2&id=1226 -->
+  <div class="tabs">
 
-<!-- Tab implementation source: http://ruseller.com/lessons.php?rub=2&id=1226 -->
-<div class="tabs">
-        
-   <div class="tab">
-       <input type="radio" id="tab-1" name="tab-group-1" checked>
-       <label for="tab-1">Sites/Pages</label>
-       
-       <div class="content" id="sites_pages">
-           <p>Содержание закладки №1</p>
-       </div> 
-   </div>
-        
-   <div class="tab">
-       <input type="radio" id="tab-2" name="tab-group-1">
-       <label for="tab-2">Converters</label>
-       
-       <div class="content" id="converters">
-           <p>Содержание закладки №2</p>
-           
-           <img src="http://placekitten.com/200/100">
-       </div> 
-   </div>
-        
     <div class="tab">
-       <input type="radio" id="tab-3" name="tab-group-1">
-       <label for="tab-3">Savers</label>
-     
-       <div class="content" id="savers">
-           <p>Содержание закладки №3</p>
-           
-           <img src="http://placedog.com/200/100">
-       </div> 
-   </div>
-        
-</div>
+      <input type="radio" id="tab-1" name="tab-group-1" checked>
+      <label for="tab-1">Sites/Pages</label>
 
-<button id="save">Save</button>
+      <div class="content" id="sites_pages">
+        <select id="pageSelect">
+          <option value="default">--Choose--</option>
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select><br/>
+        <textarea rows="12" cols="100">
+          At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.
+        </textarea><br/>
+        <button id="addPage">Add</button>
+        <button id="restorePages">Restore default</button>
+      </div>
+    </div>
 
-<script src="options.js"></script>
+    <div class="tab">
+      <input type="radio" id="tab-2" name="tab-group-1">
+      <label for="tab-2">Converters</label>
 
+      <div class="content" id="converters">
+        <p>Содержание закладки №2</p>
+
+        <img src="http://placekitten.com/200/100">
+      </div>
+    </div>
+
+    <div class="tab">
+      <input type="radio" id="tab-3" name="tab-group-1">
+      <label for="tab-3">Savers</label>
+
+      <div class="content" id="savers">
+        <p>Содержание закладки №3</p>
+
+        <img src="http://placedog.com/200/100">
+      </div>
+    </div>
+
+  </div>
+
+  <button id="save">Save</button>
+
+  <script src="options.js"></script>
 </html>

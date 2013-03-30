@@ -1,17 +1,10 @@
 
 var storage = chrome.storage.sync;
-var Html2BookConfig;
-
-// Saves options to localStorage.
-function save_options() {
-    storage.set({'html2book_config': Html2BookConfig}, function(){
-        // TODO: check errors
-
-    });
-}
+var Html2BookConfig = null;
 
 // Restores select box state to saved value from localStorage.
-function restore_options() {
+function restoreOptions()
+{
     storage.get('html2book_config', function(config){
         // TODO: check configuration is valid
 
@@ -24,5 +17,24 @@ function restore_options() {
         Html2BookConfig = config;
     });
 }
-document.addEventListener('DOMContentLoaded', restore_options);
-document.querySelector('#save').addEventListener('click', save_options);
+
+// Saves options to localStorage.
+function saveOptions()
+{
+    alert("Save options");
+    storage.set({'html2book_config': Html2BookConfig}, function()
+    {
+        // TODO: check errors
+    });
+}
+
+document.addEventListener('DOMContentLoaded', restoreOptions);
+document.querySelector('#save').addEventListener('click', saveOptions);
+
+// Pages ----------------------------------------------------------------------
+function changePage()
+{
+    alert("Page changed");
+}
+
+document.querySelector('#pageSelect').addEventListener('onchange', changePage);

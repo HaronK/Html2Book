@@ -1,6 +1,6 @@
 .tabs {
   position: relative;
-  min-height: 200px; 
+  min-height: 300px; 
   clear: both;
   margin: 25px 0;
 }
@@ -24,7 +24,7 @@
   left: 0;
   background: white;
   right: 0;
-  bottom: -20;
+  bottom: -20px;
   padding: 20px;
   border: 1px solid #ccc;
 }
