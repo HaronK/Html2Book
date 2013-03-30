@@ -188,9 +188,10 @@
 				<title>
 					<p><xsl:value-of select="div[1]/div[1]/a[@class='username']"/></p>
 					<p><xsl:value-of select="div[1]/div[1]/time"/></p>
+					<empty-line/>
 				</title>
 				<section>
-					<p><xsl:value-of select="div[1]/div[2]"/></p>
+					<p><xsl:apply-templates select="div[1]/div[2]" mode="content"/></p>
 					
 					<xsl:apply-templates select="div[@class='reply_comments']" mode="comment-answers"/>
 					

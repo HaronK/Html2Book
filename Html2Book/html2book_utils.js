@@ -187,7 +187,7 @@ function initDefaultConfig(config)
     {
         // test data
         config.pages.habr_article = {
-            name: 'Хабрахабр',
+            name: 'Habrahabr',
             addr: ['http://habrahabr\\.ru/post/\\d+',
                    'http://habrahabr\\.ru/company/\\w+/blog/\\d+'], // pages url template
             formatters: {
@@ -205,7 +205,7 @@ function initDefaultConfig(config)
     {
         // test data
         config.pages.samlib_page = {
-            name: 'Самиздат',
+            name: 'Samizdat',
             addr: ['http://samlib\\.ru/\\w/\\w+/.+?\\.s?html'], // pages url template
             formatters: {
                 fb2: {
