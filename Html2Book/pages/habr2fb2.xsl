@@ -68,7 +68,7 @@
 		<strong><xsl:apply-templates mode="content-p"/></strong>
 	</xsl:template>
 	
-	<xsl:template match="i" mode="content-p">
+	<xsl:template match="i|em" mode="content-p">
 		<emphasis><xsl:apply-templates mode="content-p"/></emphasis>
 	</xsl:template>
 	

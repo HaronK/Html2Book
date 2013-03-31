@@ -21,7 +21,8 @@ function processImage(data)
     if (data.index < data.images.length)
     {
         var imgHref = data.images[data.index].getAttribute("alt");
-        if (imgHref.endsWith(".jpeg") || imgHref.endsWith(".jpg") || imgHref.endsWith(".png"))
+        var imgPath = imgHref.split('?')[0];
+        if (imgPath.endsWith(".jpeg") || imgPath.endsWith(".jpg") || imgPath.endsWith(".png"))
         {
             onUtilityRespond = function(imageData)
             {

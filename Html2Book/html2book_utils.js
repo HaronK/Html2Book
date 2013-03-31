@@ -163,10 +163,25 @@ function initDefaultSamlibConfig()
     };
 }
 
+function initDefaultKniganewsConfig()
+{
+    return {
+        name: 'KnigaNews',
+        addr: ['http://kniganews\\.org/\\d\\d\\d\\d/\\d\\d/\\d\\d/.+?/'], // pages url template
+        formatters: {
+            fb2: {
+                xsl: 'chrome|../pages/kniganews2fb2.xsl',
+                fileNameRegEx: "//h1[@class='entry-title']",
+            },
+        },
+    };
+}
+
 function initDefaultPages(config)
 {
     config.pages.habr_article = initDefaultHabrConfig();
     config.pages.samlib_page  = initDefaultSamlibConfig();
+    config.pages.kniganews    = initDefaultKniganewsConfig();
 }
 
 function initDefaultConfig(config)
@@ -200,12 +215,6 @@ function initDefaultConfig(config)
             klass : "Fb2Formatter",
             converter: "xslt",
             xsl: "chrome|../formatters/fb2.xsl",
-            pageSampleConfig: '{"name": "Habrahabr", "addr": ["http://www\\.example\\.com"],\
-                                "formatters": {"fb2": {\
-                                    "xsl": "http://www.example.com/my_site2fb2.xsl",\
-                                    "fileNameRegEx": "//title",\
-                                    "commentsSupported": false\
-                               }}}',
         };
     }
 
@@ -234,6 +243,12 @@ function initDefaultConfig(config)
     if (!checkObjectFields(config.pages.samlib_page, ["name", "addr", "formatters"]))
     {
         config.pages.samlib_page = initDefaultSamlibConfig();
+    }
+
+    // kniganews is a default page
+    if (!checkObjectFields(config.pages.kniganews, ["name", "addr", "formatters"]))
+    {
+        config.pages.kniganews = initDefaultKniganewsConfig();
     }
 
     return config;
