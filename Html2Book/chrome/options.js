@@ -60,7 +60,7 @@ function restoreOptions()
 
         for (var pageId in Html2BookConfig.pages)
         {
-            var option = createOption(pageId, Html2BookConfig.pages[pageId].name);
+            var option = createOption(pageId, pageId);
             pageSelector.appendChild(option);
         }
         onChangePageSelector();
@@ -109,15 +109,11 @@ document.querySelector('#addPage').onclick = function()
     if (!pageId)
         return;
 
-    var pageName = prompt("Задайте имя конфигурации для новой страницы.", pageId);
-    if (!pageName)
-        return;
-
     if (Html2BookConfig.pages.hasOwnProperty(pageId))
         alert("Страница с таким именем уже существует.");
     else
     {
-        var pageConfig = '{"name": "' + pageName + '", "addr": ["http://www\\\\.example\\\\.com"], \
+        var pageConfig = '{"name": "' + pageId + '", "addr": ["http://www\\\\.example\\\\.com"], \
                            "formatters": {"fb2": { \
                                "xsl": "http://www\\\\.example\\\\.com/' + pageId + '2fb2.xsl", \
                                "fileNameRegEx": "//title", \
@@ -134,6 +130,10 @@ document.querySelector('#addPage').onclick = function()
 
         onChangePageSelector();
     }
+};
+
+document.querySelector('#deletePage').onclick = function()
+{
 };
 
 document.querySelector('#restorePages').onclick = function()
