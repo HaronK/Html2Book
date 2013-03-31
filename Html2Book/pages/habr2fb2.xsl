@@ -264,7 +264,7 @@
 	<xsl:variable name="document-info.src-url" select="//meta[@property='og:url']/@content"/>
 	<xsl:variable name="document-info.src-ocr"/>
 	<xsl:variable name="document-info.id" select="//meta[@property='og:url']/@content"/>
-	<xsl:variable name="document-info.version" select="//div[@class='pageviews']"/>
+	<xsl:variable name="document-info.version" select="//span[@id='comments_count']"/>
 	<xsl:variable name="document-info.history"/>
 	<xsl:variable name="document-info.publisher"/>
 	
