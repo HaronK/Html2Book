@@ -63,11 +63,16 @@ function initDefaultKniganewsConfig()
     };
 }
 
+var DefaultPages = {
+    habr_article: initDefaultHabrConfig,
+    samlib_page:  initDefaultSamlibConfig,
+    kniganews:    initDefaultKniganewsConfig,
+};
+
 function initDefaultPages(config)
 {
-    config.pages.habr_article = initDefaultHabrConfig();
-    config.pages.samlib_page  = initDefaultSamlibConfig();
-    config.pages.kniganews    = initDefaultKniganewsConfig();
+    for (var pageId in DefaultPages)
+        config.pages[pageId] = DefaultPages[pageId]();
 }
 
 function initDefaultConfig(config)
@@ -119,23 +124,23 @@ function initDefaultConfig(config)
     if (!config.pages)
         config.pages = {};
 
-    // habr_article is a default page
-    if (!checkObjectFields(config.pages.habr_article, ["name", "addr", "formatters"]))
-    {
-        config.pages.habr_article = initDefaultHabrConfig();
-    }
-
-    // samlib_page is a default page
-    if (!checkObjectFields(config.pages.samlib_page, ["name", "addr", "formatters"]))
-    {
-        config.pages.samlib_page = initDefaultSamlibConfig();
-    }
-
-    // kniganews is a default page
-    if (!checkObjectFields(config.pages.kniganews, ["name", "addr", "formatters"]))
-    {
-        config.pages.kniganews = initDefaultKniganewsConfig();
-    }
+//    // habr_article is a default page
+//    if (!checkObjectFields(config.pages.habr_article, ["name", "addr", "formatters"]))
+//    {
+//        config.pages.habr_article = initDefaultHabrConfig();
+//    }
+//
+//    // samlib_page is a default page
+//    if (!checkObjectFields(config.pages.samlib_page, ["name", "addr", "formatters"]))
+//    {
+//        config.pages.samlib_page = initDefaultSamlibConfig();
+//    }
+//
+//    // kniganews is a default page
+//    if (!checkObjectFields(config.pages.kniganews, ["name", "addr", "formatters"]))
+//    {
+//        config.pages.kniganews = initDefaultKniganewsConfig();
+//    }
 
     return config;
 }
@@ -146,20 +151,23 @@ function validateMandatoryFields(fields, obj, objName)
     {
         if (!obj.hasOwnProperty(fields[i]))
         {
-            alert(objName + " doesn't contain mandatory field '" + field[i] +
-                    "'. Mandatory fields: [" + fields + "]");
-            return false;
+            return {errorMessage: objName + " doesn't contain mandatory field '" + field[i] +
+                "'. Mandatory fields: [" + fields + "]"};
         }
     }
-    return true;
+    return {succeed: true};
 }
 
 function checkConfigConverters(config)
 {
     for (var converterId in config.converters)
     {
-        if (!validateMandatoryFields(["klass", "mime"], config.converters[converterId], "Converter '" + converterId + "'"))
+        var result = validateMandatoryFields(["klass", "mime"], config.converters[converterId], "Converter '" + converterId + "'");
+        if (!result.succeed)
+        {
+            alert(result.errorMessage);
             return null;
+        }
     }
 }
 
@@ -168,8 +176,13 @@ function checkConfigFormatters(config)
     for (var formatterId in config.formatters)
     {
         var formatter = config.formatters[formatterId];
-        if (!validateMandatoryFields(["converter"], formatter, "Formatter '" + formatterId + "'"))
+
+        var result = validateMandatoryFields(["converter"], formatter, "Formatter '" + formatterId + "'");
+        if (!result.succeed)
+        {
+            alert(result.errorMessage);
             return null;
+        }
 
         if (!config.converters.hasOwnProperty(formatter.converter))
         {
@@ -179,9 +192,16 @@ function checkConfigFormatters(config)
 
         // check formatter fields required by converter
         var converter = config.converters[formatter.converter];
-        if (converter.formatterFields &&
-            !validateMandatoryFields(converter.formatterFields, formatter, "Formatter '" + formatterId + "'"))
-            return null;
+        if (converter.formatterFields)
+        {
+            result = validateMandatoryFields(converter.formatterFields, formatter,
+                            "Formatter '" + formatterId + "'");
+            if (!result.succeed)
+            {
+                alert(result.errorMessage);
+                return null;
+            }
+        }
     }
 }
 
@@ -189,32 +209,54 @@ function checkConfigSavers(config)
 {
     for (var saverId in config.savers)
     {
-        if (!validateMandatoryFields(["klass"], config.savers[saverId], "Saver '" + saverId + "'"))
+        var result = validateMandatoryFields(["klass"], config.savers[saverId], "Saver '" + saverId + "'");
+        if (!result.succeed)
+        {
+            alert(result.errorMessage);
             return null;
+        }
     }
+}
+
+function validateConfigPage(config, pageId)
+{
+    var page = config.pages[pageId];
+    var result = validateMandatoryFields(["name", "addr", "formatters"], page, "Page '" + pageId + "'");
+    if (!result.succeed)
+    {
+        alert(result.errorMessage);
+        return null;
+    }
+
+    for (var formatterId in page.formatters)
+    {
+        if (!config.formatters.hasOwnProperty(formatterId))
+            return {errorMessage: "Page '" + pageId + "' uses unknown formatter '" + formatterId + "'"};
+
+        var converter = config.converters[config.formatters[formatterId].converter];
+        if (converter.pageFormatterFields)
+        {
+            result = validateMandatoryFields(converter.pageFormatterFields, page.formatters[formatterId],
+                "Page '" + pageId + "' formatter '" + formatterId + "'");
+            if (!result.succeed)
+            {
+                alert(result.errorMessage);
+                return null;
+            }
+        }
+    }
+    return {succeed: true};
 }
 
 function checkCofigPages(config)
 {
     for (var pageId in config.pages)
     {
-        var page = config.pages[pageId];
-        if (!validateMandatoryFields(["name", "addr", "formatters"], page, "Page '" + pageId + "'"))
-            return null;
-
-        for (var formatterId in page.formatters)
+        var result = validateConfigPage(config, pageId);
+        if (!result.succeed)
         {
-            if (!config.formatters.hasOwnProperty(formatterId))
-            {
-                alert("Page '" + pageId + "' uses unknown formatter '" + formatterId + "'");
-                return null;
-            }
-
-            var converter = config.converters[config.formatters[formatterId].converter];
-            if (converter.pageFormatterFields &&
-                !validateMandatoryFields(converter.pageFormatterFields, page.formatters[formatterId],
-                    "Page '" + pageId + "' formatter '" + formatterId + "'"))
-                return null;
+            alert(result.errorMessage);
+            return null;
         }
     }
 }

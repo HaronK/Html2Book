@@ -39,15 +39,19 @@ function injectPageScripts(tabId, pageId)
     }
 }
 
-function preparePages(tabId, tab)
+function preparePages(tab)
 {
     var pageId = getPageConfig(Html2BookConfig, tab.url);
     if (pageId)
     {
         // inject content script
-        injectPageScripts(tabId, pageId);
+        injectPageScripts(tab.id, pageId);
 
-        chrome.pageAction.show(tabId);
+        chrome.pageAction.show(tab.id);
+    }
+    else
+    {
+        chrome.pageAction.hide(tab.id);
     }
 }
 
@@ -56,14 +60,14 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 {
     if (Html2BookConfig)
     {
-        preparePages(tabId, tab);
+        preparePages(tab);
     }
     else
     {
         storage.get('html2book_config', function(config)
         {
             Html2BookConfig = checkConfig(config.html2book_config);
-            preparePages(tabId, tab);
+            preparePages(tab);
         });
     }
 });
@@ -116,16 +120,16 @@ chrome.runtime.onConnect.addListener(function(port)
 
 chrome.storage.onChanged.addListener(function(changes, namespace)
 {
-    var config = changes["html2book_config"];
-    if (config)
+    if (changes.html2book_config)
     {
-        // TODO: refresh pageActions for all tabs
+        Html2BookConfig = changes.html2book_config.newValue;
+        // refresh pageActions for all tabs
+        chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, function(tabs)
+        {
+            for (var i = 0; i < tabs.length; ++i)
+            {
+                preparePages(tabs[i]);
+            }
+        });
     }
-//    for (var key in changes)
-//    {
-//        var storageChange = changes[key];
-//        console.log('Storage key "%s" in namespace "%s" changed. ' +
-//                    'Old value was "%s", new value is "%s".', key,
-//                    namespace, storageChange.oldValue, storageChange.newValue);
-//    }
 });
