@@ -1,0 +1,68 @@
+{
+    "obj_mandatory_field": {
+        "message": "$1 не содержит обязательное поле '$2'. Обязательные поля: [$3]"
+    },
+    "formatter_unknown_converter": {
+        "message": "$1 использует неизвестный конвертер '$2'"
+    },
+    "page_unknown_formatter": {
+        "message": "$1 использует неизвестный форматер '$2'"
+    },
+    "page_action_msg": {
+        "message": "Выберите формат конвертации:"
+    },
+    "page_action_add_comments": {
+        "message": "Добавить комментарии"
+    },
+    "page_action_converting_to": {
+        "message": "Конвертация в '$1'... "
+    },
+    "page_action_converting_fin": {
+        "message": "Конвертация закончена."
+    },
+    "page_action_doc_gen_err": {
+        "message": "Ошибка генерации: '$1'"
+    },
+    "options_ext_change": {
+        "message": "Настройки Html2Book были изменены в другом экземпляре браузера.\nПрименить изменения?"
+    },
+    "options_new_page_id": {
+        "message": "Задайте идентификатор конфигурации для новой страницы."
+    },
+    "options_page_exists_err": {
+        "message": "Страница с именем '$1' уже существует."
+    },
+    "options_del_page": {
+        "message": "Удалить настройки для страницы '$1'?"
+    },
+    "options_page_not_def_err": {
+        "message": "Страница '$1' не является дефолтной."
+    },
+    "options_restore_page": {
+        "message": "Восстановить настройки по умолчанию для текущей страницы?"
+    },
+    "options_restore_all_pages": {
+        "message": "Восстановить настройки для страниц по умолчанию?\nНастройки для других страниц останутся неизменными."
+    },
+    "options_pages_label": {
+        "message": "Сайты/Страницы"
+    },
+    "options_add_text": {
+        "message": "Добавить"
+    },
+    "options_delete_text": {
+        "message": "Удалить"
+    },
+    "options_restore_text": {
+        "message": "Восстановить"
+    },
+    "options_restore_all_text": {
+        "message": "Восстановить всё"
+    },
+    "options_converters_label": {
+        "message": "Конвертеры"
+    },
+    "options_savers_label": {
+        "message": "Сохранение"
+    }
+}

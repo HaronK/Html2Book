@@ -1,4 +1,9 @@
 
+function MSG(id, params)
+{
+    return chrome.i18n.getMessage(id, params);
+}
+
 function len(obj)
 {
     return Object.keys(obj).length;
@@ -12,6 +17,15 @@ String.prototype.endsWith = function(str)
 String.prototype.startsWith = function(str)
 {
     return (this.match("^" + str) == str);
+};
+
+String.prototype.format = function()
+{
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number)
+    {
+        return typeof args[number] != 'undefined' ? args[number] : match;
+    });
 };
 
 function appendScriptFile(file)

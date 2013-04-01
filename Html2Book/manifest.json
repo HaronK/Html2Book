@@ -6,6 +6,8 @@
   "version": "0.3.6",
   "homepage_url": "https://github.com/HaronK/Html2Book",
 
+  "default_locale": "ru",
+
   "options_page": "chrome/options.html",
   
   "content_scripts": [{

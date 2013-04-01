@@ -61,18 +61,18 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
             h2b_button.disabled = true;
             var addComments = document.querySelector('#comments').checked;
 
-            setMessage("Converting to '" + formatterId + "'... ");
+            setMessage(MSG("page_action_converting_to", [formatterId]));
             onPageCommandRespond = function(response)
             {
                 switch (response.status)
                 {
                 case "succeed":
-                    setMessage("Converting finished.");
+                    setMessage(MSG("page_action_converting_fin"));
                     h2b_button.disabled = false;
                     window.close();
                     break;
                 case "failure":
-                    setMessage("Cannot generate document: '" + response.message + "'");
+                    setMessage(MSG("page_action_doc_gen_err", [response.message]));
                     h2b_button.disabled = false;
                     break;
                 case "message":
@@ -97,3 +97,10 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
 
     document.querySelector('#buttons').appendChild(h2b_button);
 }
+
+window.onload = function()
+{
+    document.querySelector('#message').innerText = MSG("page_action_msg");
+    document.querySelector('#commentsLabel').innerText = MSG("page_action_add_comments");
+};
+

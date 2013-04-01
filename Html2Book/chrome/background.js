@@ -118,18 +118,41 @@ chrome.runtime.onConnect.addListener(function(port)
     });
 });
 
+function updateTabsPageActions()
+{
+    chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, function(tabs)
+    {
+        for (var i = 0; i < tabs.length; ++i)
+        {
+            preparePages(tabs[i]);
+        }
+    });
+}
+
 chrome.storage.onChanged.addListener(function(changes, namespace)
 {
     if (changes.html2book_config)
     {
         Html2BookConfig = changes.html2book_config.newValue;
+
         // refresh pageActions for all tabs
-        chrome.tabs.query({windowId: chrome.windows.WINDOW_ID_CURRENT}, function(tabs)
-        {
-            for (var i = 0; i < tabs.length; ++i)
-            {
-                preparePages(tabs[i]);
-            }
-        });
+        updateTabsPageActions();
     }
 });
+
+(function()
+{
+    if (Html2BookConfig)
+    {
+        updateTabsPageActions();
+    }
+    else
+    {
+        storage.get('html2book_config', function(config)
+        {
+            Html2BookConfig = checkConfig(config.html2book_config);
+            updateTabsPageActions();
+        });
+    }
+})();
+

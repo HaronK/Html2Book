@@ -151,8 +151,7 @@ function validateMandatoryFields(fields, obj, objName)
     {
         if (!obj.hasOwnProperty(fields[i]))
         {
-            return {errorMessage: objName + " doesn't contain mandatory field '" + field[i] +
-                "'. Mandatory fields: [" + fields + "]"};
+            return {errorMessage: MSG("obj_mandatory_field", [objName, field[i], fields])};
         }
     }
     return {succeed: true};
@@ -162,7 +161,7 @@ function checkConfigConverters(config)
 {
     for (var converterId in config.converters)
     {
-        var result = validateMandatoryFields(["klass", "mime"], config.converters[converterId], "Converter '" + converterId + "'");
+        var result = validateMandatoryFields(["klass", "mime"], config.converters[converterId], converterId);
         if (!result.succeed)
         {
             alert(result.errorMessage);
@@ -177,7 +176,7 @@ function checkConfigFormatters(config)
     {
         var formatter = config.formatters[formatterId];
 
-        var result = validateMandatoryFields(["converter"], formatter, "Formatter '" + formatterId + "'");
+        var result = validateMandatoryFields(["converter"], formatter, formatterId);
         if (!result.succeed)
         {
             alert(result.errorMessage);
@@ -186,7 +185,7 @@ function checkConfigFormatters(config)
 
         if (!config.converters.hasOwnProperty(formatter.converter))
         {
-            alert("Formatter '" + formatterId + "' uses unknown converter '" + formatter.converter + "'");
+            alert(MSG("formatter_unknown_converter", [formatterId, formatter.converter]));
             return null;
         }
 
@@ -194,8 +193,7 @@ function checkConfigFormatters(config)
         var converter = config.converters[formatter.converter];
         if (converter.formatterFields)
         {
-            result = validateMandatoryFields(converter.formatterFields, formatter,
-                            "Formatter '" + formatterId + "'");
+            result = validateMandatoryFields(converter.formatterFields, formatter, formatterId);
             if (!result.succeed)
             {
                 alert(result.errorMessage);
@@ -209,7 +207,7 @@ function checkConfigSavers(config)
 {
     for (var saverId in config.savers)
     {
-        var result = validateMandatoryFields(["klass"], config.savers[saverId], "Saver '" + saverId + "'");
+        var result = validateMandatoryFields(["klass"], config.savers[saverId], saverId);
         if (!result.succeed)
         {
             alert(result.errorMessage);
@@ -221,7 +219,7 @@ function checkConfigSavers(config)
 function validateConfigPage(config, pageId)
 {
     var page = config.pages[pageId];
-    var result = validateMandatoryFields(["name", "addr", "formatters"], page, "Page '" + pageId + "'");
+    var result = validateMandatoryFields(["name", "addr", "formatters"], page, pageId);
     if (!result.succeed)
     {
         alert(result.errorMessage);
@@ -231,13 +229,13 @@ function validateConfigPage(config, pageId)
     for (var formatterId in page.formatters)
     {
         if (!config.formatters.hasOwnProperty(formatterId))
-            return {errorMessage: "Page '" + pageId + "' uses unknown formatter '" + formatterId + "'"};
+            return {errorMessage: MSG("page_unknown_formatter", [pageId, formatterId])};
 
         var converter = config.converters[config.formatters[formatterId].converter];
         if (converter.pageFormatterFields)
         {
             result = validateMandatoryFields(converter.pageFormatterFields, page.formatters[formatterId],
-                "Page '" + pageId + "' formatter '" + formatterId + "'");
+                    pageId + "." + formatterId);
             if (!result.succeed)
             {
                 alert(result.errorMessage);

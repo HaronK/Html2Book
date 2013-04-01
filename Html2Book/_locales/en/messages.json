@@ -1,0 +1,68 @@
+{
+    "obj_mandatory_field": {
+        "message": "$1 doesn't contain mandatory field '$2'. Mandatory fields: [$3]"
+    },
+    "formatter_unknown_converter": {
+        "message": "$1 uses unknown converter '$2'"
+    },
+    "page_unknown_formatter": {
+        "message": "$1 uses unknown formatter '$2'"
+    },
+    "page_action_msg": {
+        "message": "Choose format to convert to:"
+    },
+    "page_action_add_comments": {
+        "message": "Add comments"
+    },
+    "page_action_converting_to": {
+        "message": "Converting to '$1'... "
+    },
+    "page_action_converting_fin": {
+        "message": "Converting finished."
+    },
+    "page_action_doc_gen_err": {
+        "message": "Cannot generate document: '$1'"
+    },
+    "options_ext_change": {
+        "message": "Html2Book settings were changed in the other browser instance.\nApply changes?"
+    },
+    "options_new_page_id": {
+        "message": "Set new page configuration id."
+    },
+    "options_page_exists_err": {
+        "message": "Page with name '$1' already exists."
+    },
+    "options_del_page": {
+        "message": "Delete page '$1' settings?"
+    },
+    "options_page_not_def_err": {
+        "message": "Page '$1' is not a default page."
+    },
+    "options_restore_page": {
+        "message": "Restore default settings for current page?"
+    },
+    "options_restore_all_pages": {
+        "message": "Restore settings for default pages?\nSettings for other pages will not be changed."
+    },
+    "options_pages_label": {
+        "message": "Sites/Pages"
+    },
+    "options_add_text": {
+        "message": "Add"
+    },
+    "options_delete_text": {
+        "message": "Delete"
+    },
+    "options_restore_text": {
+        "message": "Restore"
+    },
+    "options_restore_all_text": {
+        "message": "Restore all"
+    },
+    "options_converters_label": {
+        "message": "Converters"
+    },
+    "options_savers_label": {
+        "message": "Savers"
+    }
+}

@@ -1,4 +1,14 @@
 
+document.querySelector('#pagesLabel').innerHtml = MSG("options_pages_label");
+document.querySelector('#addPage').innerHtml = MSG("options_add_text");
+document.querySelector('#deletePage').innerHtml = MSG("options_delete_text");
+document.querySelector('#restorePage').innerHtml = MSG("options_restore_text");
+document.querySelector('#restoreAllPages').innerHtml = MSG("options_restore_all_text");
+
+document.querySelector('#convertersLabel').innerHtml = MSG("options_converters_label");
+
+document.querySelector('#saversLabel').innerHtml = MSG("options_savers_label");
+
 var storage = chrome.storage.sync;
 var Html2BookConfig = null;
 var pageSelector = document.querySelector('#pageSelector');
@@ -125,20 +135,20 @@ chrome.storage.onChanged.addListener(function(changes, namespace)
     {
         if (ownSave)
             ownSave = false;
-        else if (confirm("Настройки Html2Book были изменены в другом экземпляре браузера. Применить изменения?"))
+        else if (confirm(MSG("options_ext_change")))
             location.reload();
     }
 });
 
 document.querySelector('#addPage').onclick = function()
 {
-    var pageId = prompt("Задайте идентификатор конфигурации для новой страницы.", "my_cool_page");
+    var pageId = prompt(MSG("options_new_page_id"), "my_cool_page");
     if (!pageId)
         return;
 
     if (Html2BookConfig.pages.hasOwnProperty(pageId))
     {
-        alert("Страница с таким именем уже существует.");
+        alert(MSG("options_page_exists_err", [pageId]));
         return;
     }
 
@@ -176,7 +186,7 @@ document.querySelector('#deletePage').onclick = function()
         return;
 
     var pageId = pageSelector.selectedOptions[0].value;
-    if (confirm("Удалить настройки для страницы '" + pageId +"'"))
+    if (confirm(MSG("options_del_page", [pageId])))
     {
         pageSelector.remove(pageSelector.selectedIndex);
         delete Html2BookConfig.pages[pageId];
@@ -191,12 +201,12 @@ document.querySelector('#restorePage').onclick = function()
     var pageId = pageSelector.selectedOptions[0].value;
     if (!DefaultPages.hasOwnProperty(pageId))
     {
-        alert("Page '" + pageId + "' is not a default page.");
+        alert(MSG("options_page_not_def_err", [pageId]));
         return;
     }
 
     if (pageSelector.selectedIndex != -1 &&
-        confirm("Восстановить настройки по умолчанию для текущей страницы?"))
+        confirm(MSG("options_restore_page")))
     {
         Html2BookConfig.pages[pageId] = DefaultPages[pageId];
         onChangePageSelector(true);
@@ -205,7 +215,7 @@ document.querySelector('#restorePage').onclick = function()
 
 document.querySelector('#restoreAllPages').onclick = function()
 {
-    if (confirm("Восстановить настройки для страниц по умолчанию?\nНастройки для других страниц останутся неизменными."))
+    if (confirm(MSG("options_restore_all_pages")))
     {
         initDefaultPages(Html2BookConfig);
         for (var pageId in DefaultPages)
