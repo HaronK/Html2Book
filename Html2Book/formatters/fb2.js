@@ -20,31 +20,23 @@ function processImage(data)
 {
     if (data.index < data.images.length)
     {
+        var ext = 'png';
         var imgHref = data.images[data.index].getAttribute("alt");
-        var imgPath = imgHref.split('?')[0];
-        if (imgPath.endsWith(".jpeg") || imgPath.endsWith(".jpg") || imgPath.endsWith(".png"))
+        onUtilityRespond = function(imageData)
         {
-            onUtilityRespond = function(imageData)
-            {
-                data.images[data.index].setAttribute("xlink:href", "#img" + data.index + ".png");
+            data.images[data.index].setAttribute("xlink:href", "#img" + data.index + "." + ext);
 
-                var binary = data.doc.createElement("binary");
-                binary.setAttribute("id", "img" + data.index + ".png");
-                binary.setAttribute("content-type", "image/png");
-                var binary_text = data.doc.createTextNode(splitData(imageData, 72));
-                binary.appendChild(binary_text);
-                data.doc.documentElement.appendChild(binary);
+            var binary = data.doc.createElement("binary");
+            binary.setAttribute("id", "img" + data.index + "." + ext);
+            binary.setAttribute("content-type", "image/" + ext);
+            var binary_text = data.doc.createTextNode(splitData(imageData, 72));
+            binary.appendChild(binary_text);
+            data.doc.documentElement.appendChild(binary);
 
-                data.index++;
-                processImage(data);
-            };
-            utilityPort.postMessage({id: "image2base64", imageHref: imgHref});
-        }
-        else
-        {
             data.index++;
             processImage(data);
-        }
+        };
+        utilityPort.postMessage({id: "image2base64", imageHref: imgHref});
     }
     else if (data.onfinish)
         data.onfinish();
