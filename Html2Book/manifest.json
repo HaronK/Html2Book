@@ -10,12 +10,12 @@
   
   "content_scripts": [{
                         "matches": ["http://*/*", "https://*/*"],
-                        "js": ["html2book_utils.js", "chrome/content.js"],
+                        "js": ["utils.js", "config.js", "chrome/content.js"],
                         "run_at": "document_end"
                       }],
   
   "background": {
-      "scripts": ["html2book_utils.js", "chrome/background.js"]
+      "scripts": ["utils.js", "config.js", "chrome/background.js"]
   },
 
   "page_action": {

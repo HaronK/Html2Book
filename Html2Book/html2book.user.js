@@ -7,7 +7,8 @@
 // @include       *
 // @require       http://github.com/sizzlemctwizzle/GM_config/raw/master/gm_config.js
 // @require       https://userscripts.org/scripts/source/50018.user.js
-// @require       https://github.com/HaronK/Html2Book/raw/master/Html2Book/html2book_utils.js
+// @require       https://github.com/HaronK/Html2Book/raw/master/Html2Book/utils.js
+// @require       https://github.com/HaronK/Html2Book/raw/master/Html2Book/config.js
 // @version       0.1.7
 // @icon          http://www.example.net/icon.png
 // @run-at        document-end
