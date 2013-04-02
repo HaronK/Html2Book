@@ -9,9 +9,18 @@ document.querySelector('#convertersLabel').innerHtml = MSG("options_converters_l
 
 document.querySelector('#saversLabel').innerHtml = MSG("options_savers_label");
 
+document.querySelector('#save').innerHtml = MSG("options_save");
+
+document.querySelector('#debugModeLabel').innerHtml = MSG("options_debug_mode");
+
 var storage = chrome.storage.sync;
 var Html2BookConfig = null;
 var pageSelector = document.querySelector('#pageSelector');
+
+document.querySelector('#debugMode').onchange = function()
+{
+    Html2BookConfig.debug.status = document.querySelector('#debugMode').checked;
+};
 
 function setPageMessage(msg)
 {
@@ -99,6 +108,9 @@ function restoreOptions()
             pageSelector.appendChild(option);
         }
         onChangePageSelector();
+
+        // restore debug mode
+        document.querySelector('#debugMode').checked = Html2BookConfig.debug.status;
 
         // TODO: generate converters tab content
 

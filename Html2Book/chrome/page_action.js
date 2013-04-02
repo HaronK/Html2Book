@@ -104,6 +104,23 @@ window.onload = function()
                 {
                     generateButton(t.id, pageId, formatterId, "fs");
                 }
+
+                // check debug mode
+                document.querySelector('#debug').style.display =
+                        Html2BookConfig.debug.status ? "block" : "none";
+
+                document.querySelector('#saveXhtml').checked = Html2BookConfig.debug.save_xhtml;
+                document.querySelector('#saveXsl').checked   = Html2BookConfig.debug.save_xsl;
+
+                document.querySelector('#saveXhtml').onchange = function()
+                {
+                    Html2BookConfig.debug.save_xhtml = document.querySelector('#saveXhtml').checked;
+                };
+
+                document.querySelector('#saveXsl').onchange = function()
+                {
+                    Html2BookConfig.debug.save_xsl = document.querySelector('#saveXsl').checked;
+                };
             });
 
             pageCommandPort = chrome.tabs.connect(t.id, {name: "h2b_pageCommand"});
@@ -118,7 +135,9 @@ window.onload = function()
         });
     });
 
-    document.querySelector('#message').innerText = MSG("page_action_msg");
-    document.querySelector('#commentsLabel').innerText = MSG("page_action_add_comments");
+    document.querySelector('#message').innerText        = MSG("page_action_msg");
+    document.querySelector('#commentsLabel').innerText  = MSG("page_action_add_comments");
+    document.querySelector('#saveXhtmlLabel').innerText = MSG("page_action_save_xhtml");
+    document.querySelector('#saveXslLabel').innerText   = MSG("page_action_save_xsl");
 };
 

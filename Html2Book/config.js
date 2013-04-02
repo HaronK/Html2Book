@@ -75,13 +75,21 @@ function initDefaultPages(config)
         config.pages[pageId] = DefaultPages[pageId]();
 }
 
+function checkProperty(prop, defaultValue)
+{
+    return !prop ? defaultValue : prop;
+}
+
 function initDefaultConfig(config)
 {
-    if (!config)
-        config = {};
+    config = checkProperty(config, {});
 
-    if (!config.converters)
-        config.converters = {};
+    config.debug            = checkProperty(config.debug,            {});
+    config.debug.status     = checkProperty(config.debug.status,     false);
+//    config.debug.save_xhtml = checkProperty(config.debug.save_xhtml, true);
+//    config.debug.save_xsl   = checkProperty(config.debug.save_xsl,   true);
+
+    config.converters = checkProperty(config.converters, {});
 
     // xslt is a default converter
     if (!checkObjectFields(config.converters.xslt, ["klass", "mime"]))
@@ -95,8 +103,7 @@ function initDefaultConfig(config)
         };
     }
 
-    if (!config.formatters)
-        config.formatters = {};
+    config.formatters = checkProperty(config.formatters, {});
 
     // fb2 is a default formatter
     if (!checkObjectFields(config.formatters.fb2, ["converter", "xsl"]))
@@ -109,8 +116,7 @@ function initDefaultConfig(config)
         };
     }
 
-    if (!config.savers)
-        config.savers = {};
+    config.savers = checkProperty(config.savers, {});
 
     // fs is a default saver
     if (!checkObjectFields(config.savers.fs, ["klass"]))
@@ -121,8 +127,7 @@ function initDefaultConfig(config)
         };
     }
 
-    if (!config.pages)
-        config.pages = {};
+    config.pages = checkProperty(config.pages, {});
 
 //    // habr_article is a default page
 //    if (!checkObjectFields(config.pages.habr_article, ["name", "addr", "formatters"]))

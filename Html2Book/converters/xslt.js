@@ -55,11 +55,11 @@ XsltConverter.prototype = {
 
     convert: function(page_data, formatter_params, onfinish)
     {
-        var xml_data = HTMLtoXML(page_data);
-        xml_data = xml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
+        var xhtml_data = HTMLtoXML(page_data);
+        xhtml_data = xhtml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
 
         var xsl_doc = str2XML(this.xsl_data);
-        var xml_doc = str2XML(xml_data);
+        var xml_doc = str2XML(xhtml_data);
 
         var formatter_handler = null;
         var transform_params = {};
@@ -78,16 +78,17 @@ XsltConverter.prototype = {
         // do page post transformation work if needed
         if (formatter_handler && formatter_handler.postTransform)
         {
+            var xsl_data = this.xsl_data;
 //            sendResponse({status: "message", message: "Applying post transform step..."});
             formatter_handler.postTransform(result, function()
             {
 //                sendResponse({status: "message", message: " done", type: "add"});
-                onfinish({xml: result, title: title});
+                onfinish({data: result, title: title, xhtml: xhtml_data, xsl: xsl_data});
             });
         }
         else
         {
-            onfinish({xml: result, title: title});
+            onfinish({data: result, title: title, xhtml: xhtml_data, xsl: this.xsl_data});
         }
     },
 

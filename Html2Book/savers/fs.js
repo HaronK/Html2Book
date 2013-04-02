@@ -1,18 +1,18 @@
 
 // Saver to filesystem
 
-function FsSaver(file_name)
+function FsSaver(mime)
 {
-    this.file_name = file_name;
+    this.mime = mime;
 }
 
 FsSaver.prototype = {
-    save : function(data, mime)
+    save : function(file_name, data)
     {
         if (data)
         {
             var Blob = window.Blob || window.WebKitBlob || window.MozBlob;
-            saveAs(new Blob([data], { type : mime }), this.file_name);
+            saveAs(new Blob([data], { type : this.mime }), file_name);
         }
         else
             alert("Data is undefined");

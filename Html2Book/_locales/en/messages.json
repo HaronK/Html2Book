@@ -14,6 +14,12 @@
     "page_action_add_comments": {
         "message": "Add comments"
     },
+    "page_action_save_xhtml": {
+        "message": "Save XHTML"
+    },
+    "page_action_save_xsl": {
+        "message": "Save XSL"
+    },
     "page_action_converting_to": {
         "message": "Converting to '$1'... "
     },
@@ -64,5 +70,11 @@
     },
     "options_savers_label": {
         "message": "Savers"
+    },
+    "options_save": {
+        "message": "Save"
+    },
+    "options_debug_mode": {
+        "message": "Debug mode"
     }
 }

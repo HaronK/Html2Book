@@ -14,6 +14,12 @@
     "page_action_add_comments": {
         "message": "Добавить комментарии"
     },
+    "page_action_save_xhtml": {
+        "message": "Сохранить XHTML"
+    },
+    "page_action_save_xsl": {
+        "message": "Сохранить XSL"
+    },
     "page_action_converting_to": {
         "message": "Конвертация в '$1'... "
     },
@@ -64,5 +70,11 @@
     },
     "options_savers_label": {
         "message": "Сохранение"
+    },
+    "options_save": {
+        "message": "Сохранить"
+    },
+    "options_debug_mode": {
+        "message": "Режим отладки"
     }
 }
