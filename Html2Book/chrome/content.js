@@ -13,6 +13,37 @@ utilityPort.onMessage.addListener(function(message)
     }
 });
 
+chrome.runtime.onConnect.addListener(function(port)
+{
+    if (port.name != "h2b_pageCommand")
+        return;
+
+    port.onMessage.addListener(function(message)
+    {
+        processPageCommand(message, port.postMessage);
+    });
+});
+
+function processPageCommand(message, sendResponse)
+{
+    switch (message.id)
+    {
+    case "generate":
+        try
+        {
+            generate(message.data, function(data)
+            {
+                sendResponse({id: "generate", data: data});
+            });
+        }
+        catch (e)
+        {
+            sendResponse({id: "generate", data: {status: "failure", message: e.message /*+ "Stack: " + e.stack*/}});
+        }
+        break;
+    }
+}
+
 function saveBook(book_xml, convert_handler, save_handler, sendResponse)
 {
     sendResponse({status: "message", message: "Saving..."});
@@ -51,29 +82,3 @@ function generate(data, sendResponse)
         sendResponse({status: "message", message: "Converting page done"});
     });
 }
-
-chrome.runtime.onConnect.addListener(function(port)
-{
-    if (port.name != "h2b_pageCommand")
-        return;
-
-    port.onMessage.addListener(function(message)
-    {
-        switch (message.id)
-        {
-        case "generate":
-            try
-            {
-                generate(message.data, function(data)
-                {
-                    port.postMessage({id: "generate", data: data});
-                });
-            }
-            catch (e)
-            {
-                port.postMessage({id: "generate", data: {status: "failure", message: e.message /*+ "Stack: " + e.stack*/}});
-            }
-            break;
-        }
-    });
- });

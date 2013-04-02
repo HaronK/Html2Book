@@ -15,35 +15,16 @@ var Html2BookConfig = null;
 
 var onPageCommandRespond = null;
 var pageCommandPort = null;
-chrome.windows.getCurrent(function(w)
+
+function processPageCommand(message)
 {
-    chrome.tabs.getSelected(w.id, function(t)
+    switch (message.id)
     {
-        storage.get('html2book_config', function(config)
-        {
-            Html2BookConfig = checkConfig(config.html2book_config);
-
-            var pageId = getPageConfig(Html2BookConfig, t.url);
-
-            // generate buttons and button's scripts
-            for (var formatterId in Html2BookConfig.pages[pageId].formatters)
-            {
-                generateButton(t.id, pageId, formatterId, "fs");
-            }
-        });
-
-        pageCommandPort = chrome.tabs.connect(t.id, {name: "h2b_pageCommand"});
-        pageCommandPort.onMessage.addListener(function(message)
-        {
-            switch (message.id)
-            {
-            case "generate":
-                onPageCommandRespond(message.data);
-                break;
-            }
-        });
-    });
-});
+    case "generate":
+        onPageCommandRespond(message.data);
+        break;
+    }
+}
 
 function generateButton(tabId, pageId, formatterId, saverId) //, name, converter_klass, converter_params, saver_klass, mime)
 {
@@ -83,10 +64,18 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
                 	break;
                 }
             };
-            pageCommandPort.postMessage({id: "generate",
-                                         data: {pageId: pageId, formatterId: formatterId,
-                                                saverId: "fs", config: Html2BookConfig,
-                                                formatterParams: {addComments: addComments}}});
+
+            try
+            {
+                pageCommandPort.postMessage({id: "generate",
+                                             data: {pageId: pageId, formatterId: formatterId,
+                                                    saverId: "fs", config: Html2BookConfig,
+                                                    formatterParams: {addComments: addComments}}});
+            }
+            catch (e)
+            {
+                setMessage("Error: " + e.message /*+ "Stack: " + e.stack*/);
+            }
         }
     };
 
@@ -100,6 +89,35 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
 
 window.onload = function()
 {
+    chrome.windows.getCurrent(function(w)
+    {
+        chrome.tabs.getSelected(w.id, function(t)
+        {
+            storage.get('html2book_config', function(config)
+            {
+                Html2BookConfig = checkConfig(config.html2book_config);
+
+                var pageId = getPageConfig(Html2BookConfig, t.url);
+
+                // generate buttons and button's scripts
+                for (var formatterId in Html2BookConfig.pages[pageId].formatters)
+                {
+                    generateButton(t.id, pageId, formatterId, "fs");
+                }
+            });
+
+            pageCommandPort = chrome.tabs.connect(t.id, {name: "h2b_pageCommand"});
+            pageCommandPort.onMessage.addListener(function(message)
+            {
+                processPageCommand(message);
+            });
+            pageCommandPort.onDisconnect.addListener(function()
+            {
+                pageCommandPort = null;
+            });
+        });
+    });
+
     document.querySelector('#message').innerText = MSG("page_action_msg");
     document.querySelector('#commentsLabel').innerText = MSG("page_action_add_comments");
 };

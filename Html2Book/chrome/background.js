@@ -140,19 +140,19 @@ chrome.storage.onChanged.addListener(function(changes, namespace)
     }
 });
 
-(function()
-{
-    if (Html2BookConfig)
-    {
-        updateTabsPageActions();
-    }
-    else
-    {
-        storage.get('html2book_config', function(config)
-        {
-            Html2BookConfig = checkConfig(config.html2book_config);
-            updateTabsPageActions();
-        });
-    }
-})();
+//(function()
+//{
+//    if (Html2BookConfig)
+//    {
+//        updateTabsPageActions();
+//    }
+//    else
+//    {
+//        storage.get('html2book_config', function(config)
+//        {
+//            Html2BookConfig = checkConfig(config.html2book_config);
+//            updateTabsPageActions();
+//        });
+//    }
+//})();
 
