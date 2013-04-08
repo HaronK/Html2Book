@@ -1,4 +1,5 @@
 
+var pagePort = null;
 var onUtilityRespond = null;
 
 var utilityPort = chrome.runtime.connect({name: "h2b_utility"});
@@ -10,6 +11,9 @@ utilityPort.onMessage.addListener(function(message)
     case "loadFile":
         onUtilityRespond(message.data);
         break;
+    case "error":
+        pagePort.postMessage({id: "generate", data: {status: "failure", message: message.data}});
+        break;
     }
 });
 
@@ -18,29 +22,34 @@ chrome.runtime.onConnect.addListener(function(port)
     if (port.name != "h2b_pageCommand")
         return;
 
-    port.onMessage.addListener(function(message)
+    pagePort = port;
+    pagePort.onMessage.addListener(function(message)
     {
-        processPageCommand(message, port.postMessage);
+        processPageCommand(message);
+    });
+    pagePort.onDisconnect.addListener(function()
+    {
+        pagePort = null;
     });
 });
 
-function processPageCommand(message, sendResponse)
+function processPageCommand(message)
 {
-    switch (message.id)
+    try
     {
-    case "generate":
-        try
+        switch (message.id)
         {
+        case "generate":
             generate(message.data, function(data)
             {
-                sendResponse({id: "generate", data: data});
+                pagePort.postMessage({id: "generate", data: data});
             });
+            break;
         }
-        catch (e)
-        {
-            sendResponse({id: "generate", data: {status: "failure", message: e.message /*+ "Stack: " + e.stack*/}});
-        }
-        break;
+    }
+    catch (e)
+    {
+        pagePort.postMessage({id: "generate", data: {status: "failure", message: e.message /*+ "Stack: " + e.stack*/}});
     }
 }
 
@@ -65,7 +74,7 @@ function generate(data, sendResponse)
         sendResponse({status: "message", message: " done", type: "add"});
 
         sendResponse({status: "message", message: "Converting page..."});
-        convert_handler.convert(document.documentElement.outerHTML, data.formatterParams, function(converted_data)
+        convert_handler.convert(location.href, document.documentElement.outerHTML, data.formatterParams, function(converted_data)
         {
             var book_data = converted_data.data;
             var book_title = converted_data.title;

@@ -53,7 +53,7 @@ XsltConverter.prototype = {
         this.xsl_data = this.formatterXsl.replace(/<!--\s*PAGE_INCLUDE\s*-->/, pageData[1]);
     },
 
-    convert: function(page_data, formatter_params, onfinish)
+    convert: function(pageUrl, page_data, formatter_params, onfinish)
     {
         var xhtml_data = HTMLtoXML(page_data);
         xhtml_data = xhtml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
@@ -80,7 +80,7 @@ XsltConverter.prototype = {
         {
             var xsl_data = this.xsl_data;
 //            sendResponse({status: "message", message: "Applying post transform step..."});
-            formatter_handler.postTransform(result, function()
+            formatter_handler.postTransform(pageUrl, result, function()
             {
 //                sendResponse({status: "message", message: " done", type: "add"});
                 onfinish({data: result, title: title, xhtml: xhtml_data, xsl: xsl_data});

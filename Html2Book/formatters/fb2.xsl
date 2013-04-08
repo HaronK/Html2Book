@@ -90,9 +90,7 @@
 	</xsl:template>
 	
 	<xsl:template name="title-info.annotation">
-		<xsl:if test="string($title-info.annotation) != ''">
-			<annotation><p><xsl:value-of select="$title-info.annotation"/></p></annotation>
-		</xsl:if>
+		<annotation><xsl:call-template name="title-info.annotation.data"/></annotation>
 	</xsl:template>
 	
 	<xsl:template name="title-info.keywords">

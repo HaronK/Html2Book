@@ -191,7 +191,7 @@
 	<xsl:variable name="title-info.author.email"/>
 	<xsl:variable name="title-info.author.id"/>
 	<xsl:variable name="title-info.book-title" select="//title"/> <!-- Mandatory -->
-	<xsl:variable name="title-info.annotation"/>
+	<xsl:template name="title-info.annotation.data"/>
 	<xsl:variable name="title-info.keywords"/>
 	<xsl:variable name="title-info.date"/>
 	<xsl:variable name="title-info.coverpage.image"/> <!-- Mandatory if title-info.coverpage is on -->

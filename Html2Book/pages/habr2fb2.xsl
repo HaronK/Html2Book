@@ -235,12 +235,15 @@
 	<xsl:variable name="title-info.author.email"/>
 	<xsl:variable name="title-info.author.id"/>
 	<xsl:variable name="title-info.book-title" select="//title"/> <!-- Mandatory -->
-	<xsl:variable name="title-info.annotation">
-		<xsl:for-each select="//div[@class='hubs']/a">
+	<xsl:template name="title-info.annotation.data">
+		<xsl:variable name="article-url" select="//meta[@property='og:url']/@content"/>
+		<p><xsl:for-each select="//div[@class='hubs']/a">
 			<xsl:if test="position() > 1">, </xsl:if>
 			<xsl:value-of select="."/>
-		</xsl:for-each>
-	</xsl:variable>
+		</xsl:for-each></p>
+		<empty-line/>
+		<p>Источник: <a href="{$article-url}"><xsl:value-of select="$article-url"/></a></p>
+	</xsl:template>
 	<xsl:variable name="title-info.keywords">
 		<xsl:for-each select="//ul[@class='tags']//a">
 			<xsl:if test="position() > 1">, </xsl:if>

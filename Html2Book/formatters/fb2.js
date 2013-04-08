@@ -21,7 +21,7 @@ function processImage(data)
     if (data.index < data.images.length)
     {
         var ext = 'png';
-        var imgHref = data.images[data.index].getAttribute("alt");
+        var imgHref = absolutizeURI(data.pageUrl, data.images[data.index].getAttribute("alt"));
         onUtilityRespond = function(imageData)
         {
             data.images[data.index].setAttribute("xlink:href", "#img" + data.index + "." + ext);
@@ -53,11 +53,12 @@ Fb2Formatter.prototype = {
         return result;
     },
 
-    postTransform: function(xml_doc, onfinish)
+    postTransform: function(pageUrl, xml_doc, onfinish)
     {
         var images = xml_doc.getElementsByTagName("image");
         processImage({
             index:    0,
+            pageUrl:  pageUrl,
             images:   images,
             doc:      xml_doc,
             onfinish: onfinish

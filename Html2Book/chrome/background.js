@@ -100,20 +100,27 @@ chrome.runtime.onConnect.addListener(function(port)
 
     port.onMessage.addListener(function(message)
     {
-        switch (message.id)
+        try
         {
-        case "image2base64":
-            image2base64(message.imageHref, function(data)
+            switch (message.id)
             {
-                port.postMessage({id: "image2base64", data: data});
-            });
-            break;
-        case "loadFile":
-            requestFileAsync(message.filePath, null, function(xhr, obj)
-            {
-                port.postMessage({id: "loadFile", data: xhr.responseText});
-            });
-            break;
+            case "image2base64":
+                image2base64(message.imageHref, function(data)
+                {
+                    port.postMessage({id: "image2base64", data: data});
+                });
+                break;
+            case "loadFile":
+                requestFileAsync(message.filePath, null, function(xhr, obj)
+                {
+                    port.postMessage({id: "loadFile", data: xhr.responseText});
+                });
+                break;
+            }
+        }
+        catch (e)
+        {
+            port.postMessage({id: "error", data: "Error: " + e.message /*+ "Stack: " + e.stack*/});
         }
     });
 });
