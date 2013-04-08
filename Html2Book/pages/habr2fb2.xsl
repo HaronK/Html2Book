@@ -237,7 +237,7 @@
 	<xsl:variable name="title-info.book-title" select="//title"/> <!-- Mandatory -->
 	<xsl:template name="title-info.annotation.data">
 		<xsl:variable name="article-url" select="//meta[@property='og:url']/@content"/>
-		<p><xsl:for-each select="//div[@class='hubs']/a">
+		<p>Теги: <xsl:for-each select="//div[@class='hubs']/a">
 			<xsl:if test="position() > 1">, </xsl:if>
 			<xsl:value-of select="."/>
 		</xsl:for-each></p>

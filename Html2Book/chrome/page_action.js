@@ -31,11 +31,6 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
     var h2b_button = document.createElement("button");
     h2b_button.type = "button";
 
-    if (Html2BookConfig.pages[pageId].formatters[formatterId].commentsSupported)
-    {
-        document.querySelector('#comments').disabled = false;
-    }
-
     var listener = {
         handleEvent : function(evt)
         {
@@ -104,6 +99,10 @@ window.onload = function()
                 {
                     generateButton(t.id, pageId, formatterId, "fs");
                 }
+
+                // check comments exporting availability
+                document.querySelector('#commentsBlock').style.display =
+                    Html2BookConfig.pages[pageId].formatters[formatterId].commentsSupported ? "block" : "none";
 
                 // check debug mode
                 document.querySelector('#debug').style.display =
