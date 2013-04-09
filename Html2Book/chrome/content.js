@@ -105,7 +105,7 @@ function generate(data)
                 }
                 if (data.config.debug.save_xsl && converted_data.xsl)
                 {
-                    save_handler.save(fileName + '.xsl', converted_data.xsl);
+                    save_handler.save(page.name + '.xsl', converted_data.xsl);
                 }
             }
 
