@@ -75,14 +75,21 @@ XsltConverter.prototype = {
         var title = xml_doc.evaluate(this.fileNameRegEx, xml_doc, null, XPathResult.ANY_TYPE, null)
                         .iterateNext().textContent;
 
+        if (!result)
+        {
+            sendPageResponse("generate", {status: "failure", message: "Result of applying XSL transformation is null"});
+            onfinish({data: null, title: title, xhtml: xhtml_data, xsl: this.xsl_data});
+            return;
+        }
+
         // do page post transformation work if needed
         if (formatter_handler && formatter_handler.postTransform)
         {
             var xsl_data = this.xsl_data;
-//            sendResponse({status: "message", message: "Applying post transform step..."});
+            showPageMessage({message: "Applying post transform step..."});
             formatter_handler.postTransform(pageUrl, result, function()
             {
-//                sendResponse({status: "message", message: " done", type: "add"});
+                showPageMessage({message: " done", type: "add"});
                 onfinish({data: result, title: title, xhtml: xhtml_data, xsl: xsl_data});
             });
         }

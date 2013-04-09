@@ -63,10 +63,25 @@ function initDefaultKniganewsConfig()
     };
 }
 
+function initDefaultWikipediaConfig()
+{
+    return {
+        name: 'Wikipedia',
+        addr: ['http://\\w\\w\\.wikipedia\\.org/wiki/'], // pages url template
+        formatters: {
+            fb2: {
+                xsl: 'chrome|../pages/wikipedia2fb2.xsl',
+                fileNameRegEx: "//h1[@id='firstHeading']",
+            },
+        },
+    };
+}
+
 var DefaultPages = {
     habr_article: initDefaultHabrConfig,
     samlib_page:  initDefaultSamlibConfig,
     kniganews:    initDefaultKniganewsConfig,
+    wikipedia:    initDefaultWikipediaConfig,
 };
 
 function initDefaultPages(config)
@@ -129,23 +144,14 @@ function initDefaultConfig(config)
 
     config.pages = checkProperty(config.pages, {});
 
-//    // habr_article is a default page
-//    if (!checkObjectFields(config.pages.habr_article, ["name", "addr", "formatters"]))
-//    {
-//        config.pages.habr_article = initDefaultHabrConfig();
-//    }
-//
-//    // samlib_page is a default page
-//    if (!checkObjectFields(config.pages.samlib_page, ["name", "addr", "formatters"]))
-//    {
-//        config.pages.samlib_page = initDefaultSamlibConfig();
-//    }
-//
-//    // kniganews is a default page
-//    if (!checkObjectFields(config.pages.kniganews, ["name", "addr", "formatters"]))
-//    {
-//        config.pages.kniganews = initDefaultKniganewsConfig();
-//    }
+    // reset default pages
+    for (var pageId in DefaultPages)
+    {
+        if (!checkObjectFields(config.pages[pageId], ["name", "addr", "formatters"]))
+        {
+            config.pages[pageId] = DefaultPages[pageId]();
+        }
+    }
 
     return config;
 }

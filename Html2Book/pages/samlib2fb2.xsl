@@ -6,13 +6,14 @@
 	<xsl:key name="bits"
 		match="node()[not(self::dd|self::br
 							|self::ul|self::ol
-							|self::h2|self::h3|self::h4|self::h5|self::h6
+							|self::h1|self::h2|self::h3|self::h4|self::h5|self::h6
 							|self::table|self::code
 							|self::pre|self::div)]"
 		use="generate-id((..|preceding-sibling::dd[1]
 							|preceding-sibling::br[1]
 							|preceding-sibling::ul[1]
 							|preceding-sibling::ol[1]
+							|preceding-sibling::h1[1]
 							|preceding-sibling::h2[1]
 							|preceding-sibling::h3[1]
 							|preceding-sibling::h4[1]
@@ -101,11 +102,7 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="dd" mode="content">
-		<p><xsl:call-template name="parse-paragraph"/></p>
-	</xsl:template>
-
-	<xsl:template match="br" mode="content">
+	<xsl:template match="dd|br" mode="content">
 		<p><xsl:call-template name="parse-paragraph"/></p>
 	</xsl:template>
 
@@ -125,27 +122,7 @@
 		</xsl:for-each>
 	</xsl:template>
 	
-	<xsl:template match="h2" mode="content">
-		<empty-line/>
-		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
-	</xsl:template>
-	
-	<xsl:template match="h3" mode="content">
-		<empty-line/>
-		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
-	</xsl:template>
-	
-	<xsl:template match="h4" mode="content">
-		<empty-line/>
-		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
-	</xsl:template>
-	
-	<xsl:template match="h5" mode="content">
-		<empty-line/>
-		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
-	</xsl:template>
-	
-	<xsl:template match="h6" mode="content">
+	<xsl:template match="h1|h2|h3|h4|h5|h6" mode="content">
 		<empty-line/>
 		<subtitle><xsl:call-template name="parse-paragraph"/></subtitle>
 	</xsl:template>
@@ -172,7 +149,7 @@
 	</xsl:template>
 	
 	<xsl:template name="parse-tags">
-		<xsl:apply-templates select="(dd|br|ul|ol|h2|h3|h4|h5|h6|table|code|pre|div)" mode="content"/>
+		<xsl:apply-templates select="(dd|br|ul|ol|h1|h2|h3|h4|h5|h6|table|code|pre|div)" mode="content"/>
 	</xsl:template>
 	
 	<xsl:template name="parse-paragraph">

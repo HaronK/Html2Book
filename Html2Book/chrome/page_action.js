@@ -16,12 +16,18 @@ var Html2BookConfig = null;
 var onPageCommandRespond = null;
 var pageCommandPort = null;
 
-function processPageCommand(message)
+function processPageCommand(response)
 {
-    switch (message.id)
+    switch (response.id)
     {
     case "generate":
-        onPageCommandRespond(message.data);
+        onPageCommandRespond(response.data);
+        break;
+    case "message":
+        if (response.data.type == "add")
+            addMessage(response.data.message);
+        else
+            setMessage(response.data.message);
         break;
     }
 }
@@ -69,7 +75,7 @@ function generateButton(tabId, pageId, formatterId, saverId) //, name, converter
             }
             catch (e)
             {
-                setMessage("Error: " + e.message /*+ "Stack: " + e.stack*/);
+                setMessage("Exception: " + e.message + "\nStack: " + e.stack);
             }
         }
     };

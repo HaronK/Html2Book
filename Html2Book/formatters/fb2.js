@@ -38,8 +38,6 @@ function processImage(data)
         };
         utilityPort.postMessage({id: "image2base64", imageHref: imgHref});
     }
-    else if (data.onfinish)
-        data.onfinish();
 }
 
 Fb2Formatter.prototype = {
@@ -56,12 +54,17 @@ Fb2Formatter.prototype = {
     postTransform: function(pageUrl, xml_doc, onfinish)
     {
         var images = xml_doc.getElementsByTagName("image");
-        processImage({
-            index:    0,
-            pageUrl:  pageUrl,
-            images:   images,
-            doc:      xml_doc,
-            onfinish: onfinish
-        });
+        if (images.length > 0)
+        {
+            showPageMessage({message: "Process images..."});
+            processImage({
+                index:    0,
+                pageUrl:  pageUrl,
+                images:   images,
+                doc:      xml_doc,
+            });
+            showPageMessage({message: " done", type: "add"});
+        }
+        onfinish();
     },
 };

@@ -3,7 +3,7 @@
 
   "name": "Html2Book",
   "description": "HTML pages to book format converter (fb2, epub, etc.).",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "homepage_url": "https://github.com/HaronK/Html2Book",
 
   "default_locale": "ru",
