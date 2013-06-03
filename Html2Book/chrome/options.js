@@ -131,10 +131,7 @@ function saveOptions()
     }
 
     ownSave = true;
-    storage.set({'html2book_config': Html2BookConfig}, function()
-    {
-        // TODO: check errors
-    });
+    saveConfig(Html2BookConfig);
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
@@ -229,7 +226,7 @@ document.querySelector('#restoreAllPages').onclick = function()
 {
     if (confirm(MSG("options_restore_all_pages")))
     {
-        initDefaultPages(Html2BookConfig);
+        Html2BookConfig = initDefaultPages(Html2BookConfig);
         for (var pageId in DefaultPages)
         {
             if (!isSelectorHasOption(pageId))

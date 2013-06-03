@@ -154,10 +154,13 @@ chrome.storage.onChanged.addListener(function(changes, namespace)
 
 // Fired when the extension is first installed, when the extension is updated to a new version,
 // and when Chrome is updated to a new version.
-//chrome.runtime.onInstalled.addListener(function(details)
-//{
-//    // https://developer.chrome.com/extensions/runtime.html#event-onInstalled
-//});
+chrome.runtime.onInstalled.addListener(function(details)
+{
+    // https://developer.chrome.com/extensions/runtime.html#event-onInstalled
+    alert("To make new version of extension work properly default settings should be reloaded."); // TODO: localize
+    Html2BookConfig = initDefaultConfig(Html2BookConfig);
+    saveConfig(Html2BookConfig);
+});
 
 //(function()
 //{

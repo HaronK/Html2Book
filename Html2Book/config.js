@@ -1,24 +1,6 @@
 
 // Config functions
 
-function loadConfig(config_text)
-{
-    var config_str = "var Html2BookConfig = {" + config_text + "};";
-    eval(config_str);
-}
-
-function checkObjectFields(obj, fields)
-{
-    if (!obj)
-        return false;
-    for (var i = 0; i < fields.length; ++i)
-    {
-        if (!obj.hasOwnProperty(fields[i]))
-            return false;
-    }
-    return true;
-}
-
 var DefaultConverters = {
     xslt: {
         imports : ['extern/htmlparser.js', 'converters/xslt.js'],
@@ -95,59 +77,76 @@ var DefaultPages = {
     }
 };
 
-function initDefaultPages(config)
-{
-    for (var pageId in DefaultPages)
-        config.pages[pageId] = DefaultPages[pageId];
-}
-
 function checkProperty(prop, defaultValue)
 {
     return !prop ? defaultValue : prop;
 }
 
+function initConfigLevel1(config)
+{
+    config            = checkProperty(config,            {});
+    config.converters = checkProperty(config.converters, {});
+    config.formatters = checkProperty(config.formatters, {});
+    config.savers     = checkProperty(config.savers,     {});
+    config.pages      = checkProperty(config.pages,      {});
+
+    config.debug      = checkProperty(config.debug,      {});
+
+    return config;
+}
+
+function initDefaultPages(config)
+{
+    config = initConfigLevel1(config);
+
+    for (var pageId in DefaultPages)
+        config.pages[pageId] = DefaultPages[pageId];
+
+    return config;
+}
+
+function checkObjectFields(obj, prop, fields, defaultValue)
+{
+    if (!obj)
+    {
+        alert("Object is null"); // TODO: localize
+        return;
+    }
+    if (!obj.hasOwnProperty(prop))
+    {
+        obj[prop] = {};
+    }
+    for (var i = 0; i < fields.length; ++i)
+    {
+        if (!obj[prop].hasOwnProperty(fields[i]))
+        {
+            obj[prop] = defaultValue;
+            return;
+        }
+    }
+}
+
 function initDefaultConfig(config)
 {
-    config = checkProperty(config, {});
+    config = initConfigLevel1(config);
 
-    config.debug            = checkProperty(config.debug,            {});
     config.debug.status     = checkProperty(config.debug.status,     false);
 //    config.debug.save_xhtml = checkProperty(config.debug.save_xhtml, true);
 //    config.debug.save_xsl   = checkProperty(config.debug.save_xsl,   true);
 
-    config.converters = checkProperty(config.converters, {});
-
     // xslt is a default converter
-    if (!checkObjectFields(config.converters.xslt, ["klass", "mime"]))
-    {
-        config.converters.xslt = DefaultConverters.xslt;
-    }
-
-    config.formatters = checkProperty(config.formatters, {});
+    checkObjectFields(config.converters, "xslt", ["klass", "mime"], DefaultConverters.xslt);
 
     // fb2 is a default formatter
-    if (!checkObjectFields(config.formatters.fb2, ["converter", "xsl"]))
-    {
-        config.formatters.fb2 = DefaultFormatters.fb2;
-    }
-
-    config.savers = checkProperty(config.savers, {});
+    checkObjectFields(config.formatters, "fb2", ["converter", "xsl"], DefaultFormatters.fb2);
 
     // fs is a default saver
-    if (!checkObjectFields(config.savers.fs, ["klass"]))
-    {
-        config.savers.fs = DefaultSavers.fs;
-    }
-
-    config.pages = checkProperty(config.pages, {});
+    checkObjectFields(config.savers, "fs", ["klass"], DefaultSavers.fs);
 
     // reset default pages
     for (var pageId in DefaultPages)
     {
-        if (!checkObjectFields(config.pages[pageId], ["name", "addr", "formatters"]))
-        {
-            config.pages[pageId] = DefaultPages[pageId];
-        }
+        checkObjectFields(config.pages, pageId, ["name", "addr", "formatters"], DefaultPages[pageId]);
     }
 
     return config;
@@ -296,4 +295,12 @@ function getPageConfig(config, location)
         }
     }
     return null;
+}
+
+function saveConfig(config)
+{
+    storage.set({'html2book_config': config}, function()
+    {
+        // TODO: check errors
+    });
 }

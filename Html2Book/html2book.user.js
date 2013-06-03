@@ -43,6 +43,12 @@ function initConfig()
     });
 }
 
+function loadConfig(config_text)
+{
+    var config_str = "var Html2BookConfig = {" + config_text + "};";
+    eval(config_str);
+}
+
 (function() {
 
     alert("Html2Book start");
