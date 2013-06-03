@@ -25,6 +25,19 @@ function requestFileAsync(filePath, obj, onload)
     utilityPort.postMessage({id: "loadFile", filePath: filePath});
 }
 
+function requestXslChain(data, result)
+{
+    if (data.index == data.chain.length)
+        return;
+
+    requestFileAsync(resolvePath(data.chain[data.index++]), null, function(fileData, obj)
+    {
+        result.push(fileData);
+        if (data.index < data.chain.length)
+            requestXslChain(data, result);
+    });
+}
+
 // XSLT converter
 
 function XsltConverter(formatter, pageFormatter, onload)
@@ -32,33 +45,56 @@ function XsltConverter(formatter, pageFormatter, onload)
     this.formatter = formatter;
     this.fileNameRegEx = pageFormatter.fileNameRegEx;
 
-    requestFileAsync(resolvePath(formatter.xsl), this, function(fileData, obj)
+    if (pageFormatter.xslChain != null)
     {
-        obj.formatterXsl = fileData;
-
-        requestFileAsync(resolvePath(pageFormatter.xsl), obj, function(fileData, obj)
+        this.xsl_data = null;
+        this.xslChain = [];
+        requestXslChain({index: 0, chain: pageFormatter.xslChain}, this.xslChain);
+        onload(this);
+    }
+    else
+    {
+        this.xsl_data = null;
+        this.xslChain = null;
+        requestFileAsync(resolvePath(formatter.xsl), this, function(fileData, obj)
         {
-            obj.pageXsl = fileData;
+            var formatterXsl = fileData;
 
-            obj._embed();
-            onload();
+            requestFileAsync(resolvePath(pageFormatter.xsl), obj, function(fileData, obj)
+            {
+                // embed pageXsl into formatterXsl
+                var pageData = fileData.match(/<!--\s*BEGIN\s*-->\s*([\s\S]*)\s*<!--\s*END\s*-->/m);
+                obj.xsl_data = formatterXsl.replace(/<!--\s*PAGE_INCLUDE\s*-->/, pageData[1]);
+                onload(this);
+            });
         });
-    });
+    }
 }
 
 XsltConverter.prototype = {
-    _embed: function() // embed pageXsl into formatterXsl
+    _applyXSLT: function(xml_doc, transform_params)
     {
-        var pageData = this.pageXsl.match(/<!--\s*BEGIN\s*-->\s*([\s\S]*)\s*<!--\s*END\s*-->/m);
-        this.xsl_data = this.formatterXsl.replace(/<!--\s*PAGE_INCLUDE\s*-->/, pageData[1]);
-    },
+        if (this.xsl_data != null)
+        {
+            var xsl_doc = str2XML(this.xsl_data);
+            return applyXSLT(xsl_doc, xml_doc, transform_params);
+        }
 
+        // parse xsl chain
+        var result = xml_doc;
+        for (var i = 0; i < this.xslChain.length; i++)
+        {
+            var xsl_doc = str2XML(this.xslChain[i]);
+            var res = applyXSLT(xsl_doc, result, transform_params);
+            result = res;
+        }
+        return result;
+    },
     convert: function(pageUrl, page_data, formatter_params, onfinish)
     {
         var xhtml_data = HTMLtoXML(page_data);
         xhtml_data = xhtml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
 
-        var xsl_doc = str2XML(this.xsl_data);
         var xml_doc = str2XML(xhtml_data);
 
         var formatter_handler = null;
@@ -70,7 +106,7 @@ XsltConverter.prototype = {
                 transform_params = formatter_handler.getTransformParams(formatter_params);
         }
 
-        var result = applyXSLT(xsl_doc, xml_doc, transform_params);
+        var result = this._applyXSLT(xml_doc, transform_params);
 
         var title = xml_doc.evaluate(this.fileNameRegEx, xml_doc, null, XPathResult.ANY_TYPE, null)
                         .iterateNext().textContent;

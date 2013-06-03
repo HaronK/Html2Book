@@ -95,6 +95,10 @@
 		</xsl:if>
 	</xsl:template>
 	
+	<xsl:template match="node()" mode="content-p">
+		<xsl:apply-templates mode="content-p"/>
+	</xsl:template>
+	
 	<xsl:template match="text()" mode="content-p">
 		<xsl:variable name="content-text" select="."/>
 		<xsl:if test="normalize-space($content-text) != ''">
@@ -161,7 +165,7 @@
 	</xsl:template>
 	
 	<xsl:template match="div" mode="content">
-		<xsl:call-template name="parse-tags"/>
+		<xsl:apply-templates mode="content"/>
 	</xsl:template>
 	
 	<xsl:template match="@*|node()" mode="content">
@@ -213,9 +217,13 @@
 	<xsl:variable name="body.image"/>
 	<xsl:variable name="body.title"/>
 	<xsl:variable name="body.epigraph"/>
+	
+	<xsl:variable name="hrBegin" select="(//hr)[2]/following-sibling::*"/>
+	<xsl:variable name="hrEnd" select="(//hr)[count(//hr)-1]/preceding-sibling::*"/>
+	
 	<xsl:template name="body.sections.data"> <!-- Mandatory -->
 		<section>
-			<xsl:apply-templates select="/html/body/hr/following-sibling::*" mode="content"/>
+			<xsl:apply-templates select="$hrBegin[count(.| $hrEnd)=count($hrEnd)]" mode="content"/>
 		</section>
 	</xsl:template>
 

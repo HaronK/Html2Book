@@ -38,6 +38,8 @@ function processImage(data)
         };
         utilityPort.postMessage({id: "image2base64", imageHref: imgHref});
     }
+    else
+        data.onfinish();
 }
 
 Fb2Formatter.prototype = {
@@ -62,9 +64,11 @@ Fb2Formatter.prototype = {
                 pageUrl:  pageUrl,
                 images:   images,
                 doc:      xml_doc,
+                onfinish: onfinish,
             });
             showPageMessage({message: " done", type: "add"});
         }
-        onfinish();
+        else
+            onfinish();
     },
 };

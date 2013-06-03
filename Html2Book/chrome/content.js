@@ -83,12 +83,12 @@ function generate(data)
     var saver     = data.config.savers[data.saverId];            // TODO: check if not null if needed
 
     showPageMessage({message: "Initializing '" + formatter.converter + "' converter..."});
-    var convert_handler = new window[converter.klass](formatter, page.formatters[data.formatterId], function()
+    new window[converter.klass](formatter, page.formatters[data.formatterId], function(obj)
     {
         showPageMessage({message: " done", type: "add"});
 
         showPageMessage({message: "Converting page..."});
-        convert_handler.convert(location.href, document.documentElement.outerHTML, data.formatterParams, function(converted_data)
+        obj.convert(location.href, document.documentElement.outerHTML, data.formatterParams, function(converted_data)
         {
             var book_title = converted_data.title;
 
@@ -111,7 +111,7 @@ function generate(data)
 
             if (converted_data.data)
             {
-                saveBook(converted_data.data, fileName + '.' + data.formatterId, convert_handler, save_handler);
+                saveBook(converted_data.data, fileName + '.' + data.formatterId, obj, save_handler);
             }
 
             sendPageResponse("generate", {status: "succeed"});

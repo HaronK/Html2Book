@@ -19,9 +19,34 @@ function checkObjectFields(obj, fields)
     return true;
 }
 
-function initDefaultHabrConfig()
-{
-    return {
+var DefaultConverters = {
+    xslt: {
+        imports : ['extern/htmlparser.js', 'converters/xslt.js'],
+        klass : "XsltConverter",
+        mime : 'text/xml;charset=' + document.characterSet,
+        formatterFields: ["xsl"],
+        pageFormatterFields: ["fileNameRegEx"],
+    }
+};
+
+var DefaultFormatters = {
+    fb2: {
+        imports : ['formatters/fb2.js'],
+        klass : "Fb2Formatter",
+        converter: "xslt",
+        xsl: "chrome|../formatters/fb2.xsl",
+    }
+};
+
+var DefaultSavers = {
+    fs: {
+        imports : [ 'extern/FileSaver.js', 'savers/fs.js'],
+        klass : "FsSaver",
+    }
+};
+
+var DefaultPages = {
+    habr_article: {
         name: 'Habrahabr',
         addr: ['http://habrahabr\\.ru/post/\\d+',
                'http://habrahabr\\.ru/company/\\w+/blog/\\d+'], // pages url template
@@ -32,26 +57,23 @@ function initDefaultHabrConfig()
                 commentsSupported: true,
             },
         },
-    };
-}
-
-function initDefaultSamlibConfig()
-{
-    return {
+    },
+    samlib_page: {
         name: 'Samizdat',
         addr: ['http://samlib\\.ru/\\w/\\w+/.+?\\.s?html'], // pages url template
         formatters: {
             fb2: {
-                xsl: 'chrome|../pages/samlib2fb2.xsl',
-                fileNameRegEx: "//body/center/h2",
+//                xsl: 'chrome|../pages/samlib2fb2.xsl',
+                xslChain: [
+                    'chrome|../pages/samizdat/step1.xsl',
+                    'chrome|../pages/samizdat/step2.xsl',
+                    'chrome|../pages/steps2fb2.xsl'
+                ],
+                fileNameRegEx: "//title",
             },
         },
-    };
-}
-
-function initDefaultKniganewsConfig()
-{
-    return {
+    },
+    kniganews: {
         name: 'KnigaNews',
         addr: ['http://kniganews\\.org/\\d\\d\\d\\d/\\d\\d/\\d\\d/.+?/'], // pages url template
         formatters: {
@@ -60,12 +82,8 @@ function initDefaultKniganewsConfig()
                 fileNameRegEx: "//h1[@class='entry-title']",
             },
         },
-    };
-}
-
-function initDefaultWikipediaConfig()
-{
-    return {
+    },
+    wikipedia: {
         name: 'Wikipedia',
         addr: ['http://\\w\\w\\.wikipedia\\.org/wiki/'], // pages url template
         formatters: {
@@ -74,20 +92,13 @@ function initDefaultWikipediaConfig()
                 fileNameRegEx: "//h1[@id='firstHeading']",
             },
         },
-    };
-}
-
-var DefaultPages = {
-    habr_article: initDefaultHabrConfig,
-    samlib_page:  initDefaultSamlibConfig,
-    kniganews:    initDefaultKniganewsConfig,
-    wikipedia:    initDefaultWikipediaConfig,
+    }
 };
 
 function initDefaultPages(config)
 {
     for (var pageId in DefaultPages)
-        config.pages[pageId] = DefaultPages[pageId]();
+        config.pages[pageId] = DefaultPages[pageId];
 }
 
 function checkProperty(prop, defaultValue)
@@ -109,13 +120,7 @@ function initDefaultConfig(config)
     // xslt is a default converter
     if (!checkObjectFields(config.converters.xslt, ["klass", "mime"]))
     {
-        config.converters.xslt = {
-            imports : ['extern/htmlparser.js', 'converters/xslt.js'],
-            klass : "XsltConverter",
-            mime : 'text/xml;charset=' + document.characterSet,
-            formatterFields: ["xsl"],
-            pageFormatterFields: ["xsl", "fileNameRegEx"],
-        };
+        config.converters.xslt = DefaultConverters.xslt;
     }
 
     config.formatters = checkProperty(config.formatters, {});
@@ -123,12 +128,7 @@ function initDefaultConfig(config)
     // fb2 is a default formatter
     if (!checkObjectFields(config.formatters.fb2, ["converter", "xsl"]))
     {
-        config.formatters.fb2 = {
-            imports : ['formatters/fb2.js'],
-            klass : "Fb2Formatter",
-            converter: "xslt",
-            xsl: "chrome|../formatters/fb2.xsl",
-        };
+        config.formatters.fb2 = DefaultFormatters.fb2;
     }
 
     config.savers = checkProperty(config.savers, {});
@@ -136,10 +136,7 @@ function initDefaultConfig(config)
     // fs is a default saver
     if (!checkObjectFields(config.savers.fs, ["klass"]))
     {
-        config.savers.fs = {
-            imports : [ 'extern/FileSaver.js', 'savers/fs.js'],
-            klass : "FsSaver",
-        };
+        config.savers.fs = DefaultSavers.fs;
     }
 
     config.pages = checkProperty(config.pages, {});
@@ -149,7 +146,7 @@ function initDefaultConfig(config)
     {
         if (!checkObjectFields(config.pages[pageId], ["name", "addr", "formatters"]))
         {
-            config.pages[pageId] = DefaultPages[pageId]();
+            config.pages[pageId] = DefaultPages[pageId];
         }
     }
 
