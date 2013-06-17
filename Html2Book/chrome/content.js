@@ -5,11 +5,13 @@ function sendPageResponse(id, data)
 {
     try
     {
+        console.log("H2B: " + JSON.stringify(data));
         pagePort.postMessage({id: id, data: data});
     }
     catch (e)
     {
-        console.log("Cannot send page response: id='" + id + "', data: " + data + "\nException: " + e.message);
+        console.log("Cannot send page response: id='" + id + "', data: " + JSON.stringify(data) +
+                    "\nException: " + e.message);
     }
 }
 
@@ -83,39 +85,42 @@ function generate(data)
     var saver     = data.config.savers[data.saverId];            // TODO: check if not null if needed
 
     showPageMessage({message: "Initializing '" + formatter.converter + "' converter..."});
-    new window[converter.klass](formatter, page.formatters[data.formatterId], function(obj)
-    {
-        showPageMessage({message: " done", type: "add"});
-
-        showPageMessage({message: "Converting page..."});
-        obj.convert(location.href, document.documentElement.outerHTML, data.formatterParams, function(converted_data)
+    new window[converter.klass](
+        {formatter: formatter, pageFormatter: page.formatters[data.formatterId], sendResponse: sendPageResponse},
+        function(obj)
         {
-            var book_title = converted_data.title;
+            showPageMessage({message: " converter initialized"});
 
-            showPageMessage({message: "Initializing '" + data.saverId + "' saver..."});
-            var save_handler = new window[saver.klass](converter.mime);
-            showPageMessage({message: " done", type: "add"});
-
-            var fileName = page.name + '.' + book_title.replace(/[\s"]/g, '_');
-            if (data.config.debug.status)
+            showPageMessage({message: "Converting page..."});
+            obj.convert(location.href, document.documentElement.outerHTML, data.formatterParams, function(converted_data)
             {
-                if (data.config.debug.save_xhtml && converted_data.xhtml)
-                {
-                    save_handler.save(fileName + '.xml', converted_data.xhtml);
-                }
-                if (data.config.debug.save_xsl && converted_data.xsl)
-                {
-                    save_handler.save(page.name + '.xsl', converted_data.xsl);
-                }
-            }
+                var book_title = converted_data.title;
 
-            if (converted_data.data)
-            {
-                saveBook(converted_data.data, fileName + '.' + data.formatterId, obj, save_handler);
-            }
+                showPageMessage({message: "Initializing '" + data.saverId + "' saver..."});
+                var save_handler = new window[saver.klass](converter.mime);
+                showPageMessage({message: " saver initialized"});
 
-            sendPageResponse("generate", {status: "succeed"});
-        });
+                var fileName = page.name + '.' + book_title.replace(/[\s"]/g, '_');
+                if (data.config.debug.status)
+                {
+                    if (data.config.debug.save_xhtml && converted_data.xhtml)
+                    {
+                        save_handler.save(fileName + '.xml', converted_data.xhtml);
+                    }
+                    if (data.config.debug.save_xsl && converted_data.xsl)
+                    {
+                        save_handler.save(page.name + '.xsl', converted_data.xsl);
+                    }
+                }
+
+                if (converted_data.data)
+                {
+                    saveBook(converted_data.data, fileName + '.' + data.formatterId, obj, save_handler);
+                }
+
+                sendPageResponse("generate", {status: "succeed"});
+            }
+        );
         showPageMessage({message: "Converting page done"});
     });
 }

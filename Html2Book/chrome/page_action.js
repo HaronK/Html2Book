@@ -10,9 +10,6 @@ function addMessage(msg)
     document.querySelector('#message').innerText += msg;
 }
 
-var storage = chrome.storage.sync;
-var Html2BookConfig = null;
-
 var onPageCommandRespond = null;
 var pageCommandPort = null;
 
@@ -94,11 +91,11 @@ window.onload = function()
     {
         chrome.tabs.getSelected(w.id, function(t)
         {
-            storage.get('html2book_config', function(config)
+            Html2BookConfig.load(function()
             {
-                Html2BookConfig = checkConfig(config.html2book_config);
+                Html2BookConfig.checkConfig();
 
-                var pageId = getPageConfig(Html2BookConfig, t.url);
+                var pageId = Html2BookConfig.getPageConfig(t.url);
 
                 // generate buttons and button's scripts
                 for (var formatterId in Html2BookConfig.pages[pageId].formatters)

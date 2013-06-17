@@ -13,8 +13,6 @@ document.querySelector('#save').innerHtml = MSG("options_save");
 
 document.querySelector('#debugModeLabel').innerHtml = MSG("options_debug_mode");
 
-var storage = chrome.storage.sync;
-var Html2BookConfig = null;
 var pageSelector = document.querySelector('#pageSelector');
 
 document.querySelector('#debugMode').onchange = function()
@@ -93,13 +91,18 @@ function isSelectorHasOption(pageId)
 
 pageSelector.onchange = onChangePageSelector;
 
+var configLoaded = false;
+
 // Restores select box state to saved value from localStorage.
 function restoreOptions()
 {
-    storage.get('html2book_config', function(config)
+    if (configLoaded)
+        return;
+
+    Html2BookConfig.load(function()
     {
         // check configuration is valid
-        Html2BookConfig = checkConfig(config.html2book_config);
+        Html2BookConfig.checkConfig();
 
         // generate sites/pages tab content
         for (var pageId in Html2BookConfig.pages)
@@ -116,6 +119,7 @@ function restoreOptions()
 
         // TODO: generate savers tab content
 
+        configLoaded = true;
     });
 }
 
@@ -131,7 +135,7 @@ function saveOptions()
     }
 
     ownSave = true;
-    saveConfig(Html2BookConfig);
+    Html2BookConfig.save();
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
@@ -139,8 +143,8 @@ document.querySelector('#save').addEventListener('click', saveOptions);
 
 chrome.storage.onChanged.addListener(function(changes, namespace)
 {
-    var config = changes["html2book_config"];
-    if (config)
+    var hasChanges = Html2BookConfig.hasChanges(changes);
+    if (hasChanges)
     {
         if (ownSave)
             ownSave = false;
@@ -226,7 +230,7 @@ document.querySelector('#restoreAllPages').onclick = function()
 {
     if (confirm(MSG("options_restore_all_pages")))
     {
-        Html2BookConfig = initDefaultPages(Html2BookConfig);
+        Html2BookConfig.initDefaultPages();
         for (var pageId in DefaultPages)
         {
             if (!isSelectorHasOption(pageId))

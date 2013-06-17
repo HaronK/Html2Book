@@ -1,7 +1,4 @@
 
-var storage = chrome.storage.sync;
-var Html2BookConfig = null;
-
 function injectImports(tabId, imports)
 {
     for (var i = 0; i < imports.length; i++)
@@ -41,7 +38,7 @@ function injectPageScripts(tabId, pageId)
 
 function preparePages(tab)
 {
-    var pageId = getPageConfig(Html2BookConfig, tab.url);
+    var pageId = Html2BookConfig.getPageConfig(tab.url);
     if (pageId)
     {
         // inject content script
@@ -55,19 +52,22 @@ function preparePages(tab)
     }
 }
 
+var configLoaded = false;
+
 // Listen for any changes to the URL of any tab.
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab)
 {
-    if (Html2BookConfig)
+    if (configLoaded)
     {
         preparePages(tab);
     }
     else
     {
-        storage.get('html2book_config', function(config)
+        Html2BookConfig.load(function()
         {
-            Html2BookConfig = checkConfig(config.html2book_config);
+            Html2BookConfig.checkConfig();
             preparePages(tab);
+            configLoaded = true;
         });
     }
 });
@@ -138,13 +138,11 @@ function updateTabsPageActions()
 
 chrome.storage.onChanged.addListener(function(changes, namespace)
 {
-    if (changes.html2book_config)
+    Html2BookConfig.onChanged(changes, function()
     {
-        Html2BookConfig = changes.html2book_config.newValue;
-
         // refresh pageActions for all tabs
         updateTabsPageActions();
-    }
+    });
 });
 
 //chrome.management.onInstalled.addListener(function(info)
@@ -157,23 +155,29 @@ chrome.storage.onChanged.addListener(function(changes, namespace)
 chrome.runtime.onInstalled.addListener(function(details)
 {
     // https://developer.chrome.com/extensions/runtime.html#event-onInstalled
-    alert("To make new version of extension work properly default settings should be reloaded."); // TODO: localize
-    Html2BookConfig = initDefaultConfig(Html2BookConfig);
-    saveConfig(Html2BookConfig);
+
+    // NOTE: remove old data. This code should be removed in new version of extension.
+//    chrome.storage.sync.clear();
+    chrome.storage.sync.remove('html2book_config');
+
+//    alert("To make new version of extension work properly default settings should be reloaded."); // TODO: localize
+    Html2BookConfig.initDefaultConfig();
+//    Html2BookConfig.save();
 });
 
 //(function()
 //{
-//    if (Html2BookConfig)
+//    if (configLoaded)
 //    {
 //        updateTabsPageActions();
 //    }
 //    else
 //    {
-//        storage.get('html2book_config', function(config)
+//        Html2BookConfig.load(function()
 //        {
-//            Html2BookConfig = checkConfig(config.html2book_config);
+//            Html2BookConfig.checkConfig();
 //            updateTabsPageActions();
+//            configLoaded = true;
 //        });
 //    }
 //})();

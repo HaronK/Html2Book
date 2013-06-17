@@ -25,95 +25,119 @@ function requestFileAsync(filePath, obj, onload)
     utilityPort.postMessage({id: "loadFile", filePath: filePath});
 }
 
-function requestXslChain(data, result)
+function requestXslChain(data, result, obj, onload)
 {
-    if (data.index == data.chain.length)
+    if (data.index >= data.chain.length)
         return;
 
-    requestFileAsync(resolvePath(data.chain[data.index++]), null, function(fileData, obj)
+    obj.showMessage({message: "Loading " + data.chain[data.index] + "..."});
+    requestFileAsync(resolvePath(data.chain[data.index++]), obj, function(fileData, obj)
     {
         result.push(fileData);
+
+        obj.showMessage({message: " loaded", type: "add"});
+
         if (data.index < data.chain.length)
-            requestXslChain(data, result);
+            requestXslChain(data, result, obj, onload);
+        else
+            onload(obj);
     });
 }
 
 // XSLT converter
 
-function XsltConverter(formatter, pageFormatter, onload)
+function XsltConverter(data, onload)
 {
-    this.formatter = formatter;
-    this.fileNameRegEx = pageFormatter.fileNameRegEx;
+    this.init_data = data;
 
-    if (pageFormatter.xslChain != null)
+    if (data.pageFormatter.xslChain != null)
     {
         this.xsl_data = null;
         this.xslChain = [];
-        requestXslChain({index: 0, chain: pageFormatter.xslChain}, this.xslChain);
-        onload(this);
+        requestXslChain({index: 0, chain: data.pageFormatter.xslChain}, this.xslChain, this, onload);
     }
     else
     {
         this.xsl_data = null;
         this.xslChain = null;
-        requestFileAsync(resolvePath(formatter.xsl), this, function(fileData, obj)
+        requestFileAsync(resolvePath(data.formatter.xsl), this, function(fileData, obj)
         {
             var formatterXsl = fileData;
 
-            requestFileAsync(resolvePath(pageFormatter.xsl), obj, function(fileData, obj)
+            requestFileAsync(resolvePath(data.pageFormatter.xsl), obj, function(fileData, obj)
             {
                 // embed pageXsl into formatterXsl
                 var pageData = fileData.match(/<!--\s*BEGIN\s*-->\s*([\s\S]*)\s*<!--\s*END\s*-->/m);
                 obj.xsl_data = formatterXsl.replace(/<!--\s*PAGE_INCLUDE\s*-->/, pageData[1]);
-                onload(this);
+                onload(obj);
             });
         });
     }
 }
 
 XsltConverter.prototype = {
+    sendResponse: function(id, data)
+    {
+        this.init_data.sendResponse(id, data);
+    },
+    showMessage: function(data)
+    {
+        this.init_data.sendResponse("message", data);
+    },
     _applyXSLT: function(xml_doc, transform_params)
     {
         if (this.xsl_data != null)
         {
+            this.showMessage({message: "Applying XSLT..."});
             var xsl_doc = str2XML(this.xsl_data);
-            return applyXSLT(xsl_doc, xml_doc, transform_params);
+            var res = applyXSLT(xsl_doc, xml_doc, transform_params);
+            this.showMessage({message: " applied", type: "add"});
+            return res;
         }
 
         // parse xsl chain
         var result = xml_doc;
         for (var i = 0; i < this.xslChain.length; i++)
         {
+            this.showMessage({message: "Applying " + this.init_data.pageFormatter.xslChain[i] + "..."});
             var xsl_doc = str2XML(this.xslChain[i]);
             var res = applyXSLT(xsl_doc, result, transform_params);
             result = res;
+            this.showMessage({message: " applied", type: "add"});
         }
         return result;
     },
     convert: function(pageUrl, page_data, formatter_params, onfinish)
     {
+        this.showMessage({message: "Converting HTML to XHTML..."});
         var xhtml_data = HTMLtoXML(page_data);
-        xhtml_data = xhtml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
+        this.showMessage({message: " converted", type: "add"});
 
+        this.showMessage({message: "Removing xmlns attributes..."});
+        xhtml_data = xhtml_data.replace(/\s+xmlns="[^"]*"/, ""); // HACK!!!
+        this.showMessage({message: " removed", type: "add"});
+
+        this.showMessage({message: "Parsing XHTML..."});
         var xml_doc = str2XML(xhtml_data);
+        this.showMessage({message: " parsed", type: "add"});
 
         var formatter_handler = null;
         var transform_params = {};
-        if (this.formatter.klass)
+        if (this.init_data.formatter.klass)
         {
-            formatter_handler = new window[this.formatter.klass];
+            formatter_handler = new window[this.init_data.formatter.klass];
             if (formatter_handler.getTransformParams)
                 transform_params = formatter_handler.getTransformParams(formatter_params);
         }
 
         var result = this._applyXSLT(xml_doc, transform_params);
 
-        var title = xml_doc.evaluate(this.fileNameRegEx, xml_doc, null, XPathResult.ANY_TYPE, null)
-                        .iterateNext().textContent;
+        var title = xml_doc.evaluate(this.init_data.pageFormatter.fileNameRegEx, xml_doc, null,
+                XPathResult.ANY_TYPE, null).iterateNext().textContent;
 
         if (!result)
         {
-            sendPageResponse("generate", {status: "failure", message: "Result of applying XSL transformation is null"});
+            this.sendResponse("generate", {status: "failure", message: "Result of applying XSL transformation is null"});
             onfinish({data: null, title: title, xhtml: xhtml_data, xsl: this.xsl_data});
             return;
         }
@@ -122,10 +146,10 @@ XsltConverter.prototype = {
         if (formatter_handler && formatter_handler.postTransform)
         {
             var xsl_data = this.xsl_data;
-            showPageMessage({message: "Applying post transform step..."});
+            this.showMessage({message: "Applying post transform step..."});
             formatter_handler.postTransform(pageUrl, result, function()
             {
-                showPageMessage({message: " done", type: "add"});
+//                this.showMessage({message: " done", type: "add"});
                 onfinish({data: result, title: title, xhtml: xhtml_data, xsl: xsl_data});
             });
         }

@@ -1,6 +1,8 @@
 
 // Config functions
 
+var storage = chrome.storage.sync;
+
 var DefaultConverters = {
     xslt: {
         imports : ['extern/htmlparser.js', 'converters/xslt.js'],
@@ -77,230 +79,331 @@ var DefaultPages = {
     }
 };
 
-function checkProperty(prop, defaultValue)
+function Html2BookConfigImpl()
 {
-    return !prop ? defaultValue : prop;
+    this.converters = {};
+    this.formatters = {};
+    this.savers = {};
+    this.pages = {};
+
+    this.debug = {};
 }
 
-function initConfigLevel1(config)
-{
-    config            = checkProperty(config,            {});
-    config.converters = checkProperty(config.converters, {});
-    config.formatters = checkProperty(config.formatters, {});
-    config.savers     = checkProperty(config.savers,     {});
-    config.pages      = checkProperty(config.pages,      {});
-
-    config.debug      = checkProperty(config.debug,      {});
-
-    return config;
-}
-
-function initDefaultPages(config)
-{
-    config = initConfigLevel1(config);
-
-    for (var pageId in DefaultPages)
-        config.pages[pageId] = DefaultPages[pageId];
-
-    return config;
-}
-
-function checkObjectFields(obj, prop, fields, defaultValue)
-{
-    if (!obj)
+Html2BookConfigImpl.prototype = {
+    _checkProperty: function(prop, defaultValue)
     {
-        alert("Object is null"); // TODO: localize
-        return;
-    }
-    if (!obj.hasOwnProperty(prop))
+        return !prop ? defaultValue : prop;
+    },
+
+    initDefaultPages: function()
     {
-        obj[prop] = {};
-    }
-    for (var i = 0; i < fields.length; ++i)
+        for (var pageId in DefaultPages)
+            this.pages[pageId] = DefaultPages[pageId];
+    },
+
+    _checkObjectFields: function(obj, prop, fields, defaultValue)
     {
-        if (!obj[prop].hasOwnProperty(fields[i]))
+        if (!obj)
         {
-            obj[prop] = defaultValue;
+            alert("Object is null"); // TODO: localize
             return;
         }
-    }
-}
-
-function initDefaultConfig(config)
-{
-    config = initConfigLevel1(config);
-
-    config.debug.status     = checkProperty(config.debug.status,     false);
-//    config.debug.save_xhtml = checkProperty(config.debug.save_xhtml, true);
-//    config.debug.save_xsl   = checkProperty(config.debug.save_xsl,   true);
-
-    // xslt is a default converter
-    checkObjectFields(config.converters, "xslt", ["klass", "mime"], DefaultConverters.xslt);
-
-    // fb2 is a default formatter
-    checkObjectFields(config.formatters, "fb2", ["converter", "xsl"], DefaultFormatters.fb2);
-
-    // fs is a default saver
-    checkObjectFields(config.savers, "fs", ["klass"], DefaultSavers.fs);
-
-    // reset default pages
-    for (var pageId in DefaultPages)
-    {
-        checkObjectFields(config.pages, pageId, ["name", "addr", "formatters"], DefaultPages[pageId]);
-    }
-
-    return config;
-}
-
-function validateMandatoryFields(fields, obj, objName)
-{
-    for (var i = 0; i < fields.length; ++i)
-    {
-        if (!obj.hasOwnProperty(fields[i]))
+        if (!obj.hasOwnProperty(prop))
         {
-            return {errorMessage: MSG("obj_mandatory_field", [objName, field[i], fields])};
+            obj[prop] = {};
         }
-    }
-    return {succeed: true};
-}
+        for (var i = 0; i < fields.length; ++i)
+        {
+            if (!obj[prop].hasOwnProperty(fields[i]))
+            {
+                obj[prop] = defaultValue;
+                return;
+            }
+        }
+    },
 
-function checkConfigConverters(config)
-{
-    for (var converterId in config.converters)
+    initDefaultConfig: function()
     {
-        var result = validateMandatoryFields(["klass", "mime"], config.converters[converterId], converterId);
-        if (!result.succeed)
-        {
-            alert(result.errorMessage);
-            return null;
-        }
-    }
-}
+        this.debug.status = this._checkProperty(this.debug.status, false);
+//        this.debug.save_xhtml = this._checkProperty(this.debug.save_xhtml, true);
+//        this.debug.save_xsl   = this._checkProperty(this.debug.save_xsl,   true);
 
-function checkConfigFormatters(config)
-{
-    for (var formatterId in config.formatters)
+        // xslt is a default converter
+        this._checkObjectFields(this.converters, "xslt", ["klass", "mime"], DefaultConverters.xslt);
+
+        // fb2 is a default formatter
+        this._checkObjectFields(this.formatters, "fb2", ["converter", "xsl"], DefaultFormatters.fb2);
+
+        // fs is a default saver
+        this._checkObjectFields(this.savers, "fs", ["klass"], DefaultSavers.fs);
+
+        // reset default pages
+        for (var pageId in DefaultPages)
+        {
+            this._checkObjectFields(this.pages, pageId, ["name", "addr", "formatters"], DefaultPages[pageId]);
+        }
+    },
+
+    _validateMandatoryFields: function(fields, obj, objName)
     {
-        var formatter = config.formatters[formatterId];
-
-        var result = validateMandatoryFields(["converter"], formatter, formatterId);
-        if (!result.succeed)
+        for (var i = 0; i < fields.length; ++i)
         {
-            alert(result.errorMessage);
-            return null;
+            if (!obj.hasOwnProperty(fields[i]))
+            {
+                return {errorMessage: MSG("obj_mandatory_field", [objName, field[i], fields])};
+            }
         }
+        return {succeed: true};
+    },
 
-        if (!config.converters.hasOwnProperty(formatter.converter))
+    _checkConfigConverters: function()
+    {
+        for (var converterId in this.converters)
         {
-            alert(MSG("formatter_unknown_converter", [formatterId, formatter.converter]));
-            return null;
-        }
-
-        // check formatter fields required by converter
-        var converter = config.converters[formatter.converter];
-        if (converter.formatterFields)
-        {
-            result = validateMandatoryFields(converter.formatterFields, formatter, formatterId);
+            var result = this._validateMandatoryFields(["klass", "mime"], this.converters[converterId], converterId);
             if (!result.succeed)
             {
                 alert(result.errorMessage);
                 return null;
             }
         }
-    }
-}
+    },
 
-function checkConfigSavers(config)
-{
-    for (var saverId in config.savers)
+    _checkConfigFormatters: function()
     {
-        var result = validateMandatoryFields(["klass"], config.savers[saverId], saverId);
-        if (!result.succeed)
+        for (var formatterId in this.formatters)
         {
-            alert(result.errorMessage);
-            return null;
-        }
-    }
-}
+            var formatter = this.formatters[formatterId];
 
-function validateConfigPage(config, pageId)
-{
-    var page = config.pages[pageId];
-    var result = validateMandatoryFields(["name", "addr", "formatters"], page, pageId);
-    if (!result.succeed)
-    {
-        alert(result.errorMessage);
-        return null;
-    }
-
-    for (var formatterId in page.formatters)
-    {
-        if (!config.formatters.hasOwnProperty(formatterId))
-            return {errorMessage: MSG("page_unknown_formatter", [pageId, formatterId])};
-
-        var converter = config.converters[config.formatters[formatterId].converter];
-        if (converter.pageFormatterFields)
-        {
-            result = validateMandatoryFields(converter.pageFormatterFields, page.formatters[formatterId],
-                    pageId + "." + formatterId);
+            var result = this._validateMandatoryFields(["converter"], formatter, formatterId);
             if (!result.succeed)
             {
                 alert(result.errorMessage);
                 return null;
             }
-        }
-    }
-    return {succeed: true};
-}
 
-function checkCofigPages(config)
-{
-    for (var pageId in config.pages)
-    {
-        var result = validateConfigPage(config, pageId);
-        if (!result.succeed)
-        {
-            alert(result.errorMessage);
-            return null;
-        }
-    }
-}
-
-function checkConfig(config)
-{
-    config = initDefaultConfig(config);
-
-    checkConfigConverters(config);
-    checkConfigSavers(config);
-    checkCofigPages(config);
-
-    return config;
-}
-
-function getPageConfig(config, location)
-{
-    if (config.pages)
-    {
-        for (var pageId in config.pages)
-        {
-            var addr = config.pages[pageId].addr;
-            for (var i = 0; i < addr.length; i++)
+            if (!this.converters.hasOwnProperty(formatter.converter))
             {
-                var patt = new RegExp(addr[i]);
-                if (patt.test(location))
+                alert(MSG("formatter_unknown_converter", [formatterId, formatter.converter]));
+                return null;
+            }
+
+            // check formatter fields required by converter
+            var converter = this.converters[formatter.converter];
+            if (converter.formatterFields)
+            {
+                result = this._validateMandatoryFields(converter.formatterFields, formatter, formatterId);
+                if (!result.succeed)
                 {
-                    return pageId;
+                    alert(result.errorMessage);
+                    return null;
                 }
             }
         }
-    }
-    return null;
-}
+    },
 
-function saveConfig(config)
-{
-    storage.set({'html2book_config': config}, function()
+    _checkConfigSavers: function()
     {
-        // TODO: check errors
-    });
-}
+        for (var saverId in this.savers)
+        {
+            var result = this._validateMandatoryFields(["klass"], this.savers[saverId], saverId);
+            if (!result.succeed)
+            {
+                alert(result.errorMessage);
+                return null;
+            }
+        }
+    },
+
+    _validateConfigPage: function(pageId)
+    {
+        var page = this.pages[pageId];
+        var result = this._validateMandatoryFields(["name", "addr", "formatters"], page, pageId);
+        if (!result.succeed)
+        {
+            alert(result.errorMessage);
+            return null;
+        }
+
+        for (var formatterId in page.formatters)
+        {
+            if (!this.formatters.hasOwnProperty(formatterId))
+                return {errorMessage: MSG("page_unknown_formatter", [pageId, formatterId])};
+
+            var converter = this.converters[this.formatters[formatterId].converter];
+            if (converter.pageFormatterFields)
+            {
+                result = this._validateMandatoryFields(converter.pageFormatterFields, page.formatters[formatterId],
+                        pageId + "." + formatterId);
+                if (!result.succeed)
+                {
+                    alert(result.errorMessage);
+                    return null;
+                }
+            }
+        }
+        return {succeed: true};
+    },
+
+    _checkConfigPages: function()
+    {
+        for (var pageId in this.pages)
+        {
+            var result = this._validateConfigPage(pageId);
+            if (!result.succeed)
+            {
+                alert(result.errorMessage);
+                return null;
+            }
+        }
+    },
+
+    checkConfig: function()
+    {
+        this.initDefaultConfig();
+
+        this._checkConfigConverters();
+        this._checkConfigFormatters();
+        this._checkConfigSavers();
+        this._checkConfigPages();
+    },
+
+    getPageConfig: function(location)
+    {
+        if (this.pages)
+        {
+            for (var pageId in this.pages)
+            {
+                var addr = this.pages[pageId].addr;
+                for (var i = 0; i < addr.length; i++)
+                {
+                    var patt = new RegExp(addr[i]);
+                    if (patt.test(location))
+                    {
+                        return pageId;
+                    }
+                }
+            }
+        }
+        return null;
+    },
+
+    _load: function(item, onload)
+    {
+        chrome.storage.sync.get('html2book_' + item, function(data)
+        {
+            this[item] = data;
+            if (onload)
+                onload();
+        });
+    },
+
+    loadConverters: function(onload)
+    {
+        this._load("converters", onload);
+    },
+
+    loadFormatters: function(onload)
+    {
+        this._load("formatters", onload);
+    },
+
+    loadSavers: function(onload)
+    {
+        this._load("savers", onload);
+    },
+
+    loadPages: function(onload)
+    {
+        this._load("pages", onload);
+    },
+
+    load: function(onload)
+    {
+        this.loadConverters();
+        this.loadFormatters();
+        this.loadSavers();
+        this.loadPages();
+
+        if (onload)
+            onload();
+    },
+
+    _save: function(item)
+    {
+        var data = {};
+        data['html2book_' + item] = this[item];
+        chrome.storage.sync.set({'html2book_test': this[item]}, function()
+        {
+            if (chrome.runtime.lastError)
+                alert("Cannot save html2book_" + item + ": " + chrome.runtime.lastError);
+        });
+    },
+
+    saveConverters: function()
+    {
+        this._save("converters");
+    },
+
+    saveFormatters: function()
+    {
+        this._save("formatters");
+    },
+
+    saveSavers: function()
+    {
+        this._save("savers");
+    },
+
+    savePages: function()
+    {
+        this._save("pages");
+    },
+
+    save: function()
+    {
+        this.saveConverters();
+        this.saveFormatters();
+        this.saveSavers();
+        this.savePages();
+    },
+
+    hasChanges: function(changes)
+    {
+        return changes.html2book_converters ||
+            changes.html2book_formatters ||
+            changes.html2book_savers ||
+            changes.html2book_pages;
+    },
+
+    onChanged: function(changes, onchange)
+    {
+        var changed = false;
+
+        if (changes.html2book_converters)
+        {
+            this.converters = changes.html2book_converters;
+            changed = true;
+        }
+        if (changes.html2book_formatters)
+        {
+            this.formatters = changes.html2book_formatters;
+            changed = true;
+        }
+        if (changes.html2book_savers)
+        {
+            this.savers = changes.html2book_savers;
+            changed = true;
+        }
+        if (changes.html2book_pages)
+        {
+            this.pages = changes.html2book_pages;
+            changed = true;
+        }
+
+        if (changed && onchange)
+            onchange();
+    }
+};
+
+var Html2BookConfig = new Html2BookConfigImpl();
