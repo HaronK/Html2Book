@@ -292,7 +292,8 @@ Html2BookConfigImpl.prototype = {
     {
         chrome.storage.sync.get('html2book_' + item, function(data)
         {
-            this[item] = data;
+            // HACK!!! It is not possible to use 'this' here because of different scope.
+            Html2BookConfig[item] = data['html2book_' + item];
             if (onload)
                 onload();
         });
@@ -332,11 +333,12 @@ Html2BookConfigImpl.prototype = {
     _save: function(item)
     {
         var data = {};
-        data['html2book_' + item] = this[item];
-        chrome.storage.sync.set({'html2book_test': this[item]}, function()
+        var key = 'html2book_' + item;
+        data[key] = this[item];
+        chrome.storage.sync.set(data, function()
         {
             if (chrome.runtime.lastError)
-                alert("Cannot save html2book_" + item + ": " + chrome.runtime.lastError);
+                alert("Cannot save " + key + ": " + chrome.runtime.lastError);
         });
     },
 
